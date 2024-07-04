@@ -17,11 +17,11 @@ public class Response<T> {
     }
 
     public static <T> Response<T> success(int statusCode, String message, T result) {
-        return new Response<>(statusCode, message, result);
+        return new Response<T>(statusCode, message, result);
     }
 
     public static <T> Response<T> error(int statusCode, String message, T result) {
-        return new Response<>(statusCode, message, result);
+        return new Response<T>(statusCode, message, result);
     }
 
     @Builder
