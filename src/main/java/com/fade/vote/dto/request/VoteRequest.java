@@ -1,13 +1,7 @@
 package com.fade.vote.dto.request;
 
-import com.fade.vote.constant.VoteType;
-
-import java.time.LocalDateTime;
+import java.util.List;
 
 public record VoteRequest(
-        long postId,
-
-        VoteType voteType,
-
-        LocalDateTime votedAt) {
+        List<VoteItemRequest> voteItems) {
 }
