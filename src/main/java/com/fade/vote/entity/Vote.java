@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class Vote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "vote_id")
     private long id;
 
     @Enumerated(EnumType.STRING)
@@ -23,11 +24,11 @@ public class Vote {
     private LocalDateTime votedAt;
 
 //    @ManyToOne
-//    @JoinColumn(name = "id")
+//    @JoinColumn(name = "member_id")
 //    private Member member;
 
 //    @ManyToOne
-//    @JoinColumn(name = "id")
+//    @JoinColumn(name = "post_id")
 //    private Post post;
 
     @Builder
