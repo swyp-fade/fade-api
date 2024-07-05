@@ -31,8 +31,8 @@ public class Vote {
 //    private Post post;
 
     @Builder
-    public Vote(VoteType hasVoted, LocalDateTime votedAt) {
-        this.voteType = hasVoted;
+    public Vote(VoteType voteType, LocalDateTime votedAt) {
+        this.voteType = voteType;
         this.votedAt = votedAt;
     }
 }
