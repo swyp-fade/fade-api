@@ -16,13 +16,13 @@ public record CreateFeedRequest(
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minLength = 1)
         @NotNull
         @Length(min = 1)
-        List<String> styles
+        List<Integer> styleIds
 ) {
 
         public record DressedUpItem(
-                @NotEmpty
+                @NotNull
                 @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-                String categoryCode,
+                Integer categoryId,
                 @NotEmpty
                 @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
                 String brandName,
