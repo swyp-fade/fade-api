@@ -10,8 +10,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -44,7 +42,7 @@ public class Attachment {
     })
     private Set<AttachmentLink> attachmentLinks = new HashSet<>();
 
-    @JoinColumn(name = "uploader_member_id", nullable = false)
+    @Column(name = "uploader_member_id", nullable = false)
     private Long uploaderMemberId;
 
     @Column(name = "status", nullable = false)
@@ -54,4 +52,25 @@ public class Attachment {
     @Column(nullable = false, name = "type")
     @Enumerated(EnumType.STRING)
     private AttachmentType type;
+
+    @Column()
+    private String checksum;
+
+    public Attachment(
+        String path,
+        String filename,
+        String originalFilename,
+        Long uploaderMemberId,
+        AttachmentStatus status,
+        AttachmentType type,
+        String checksum
+    ) {
+        this.path = path;
+        this.filename = filename;
+        this.originalFilename = originalFilename;
+        this.uploaderMemberId = uploaderMemberId;
+        this.status = status;
+        this.type = type;
+        this.checksum = checksum;
+    }
 }

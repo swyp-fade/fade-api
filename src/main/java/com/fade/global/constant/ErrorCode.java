@@ -18,7 +18,11 @@ public enum ErrorCode {
 
     //POST
     POST_UPDATE_DENIED(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-    POST_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다.");
+    POST_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+
+    //ATTACHMENT
+    ALREADY_EXISTS_ATTACHMENT(HttpStatus.CONFLICT, "이미 동일한 이미지로 업로드된 파일이 존재합니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;
