@@ -1,11 +1,10 @@
-package com.fade.bookmark.entitiy;
+package com.fade.bookmark.entity;
 
+import com.fade.feed.entity.Feed;
+import com.fade.member.entity.Member;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 
 @Entity
 @Getter
@@ -51,4 +50,29 @@ public class Bookmark {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    // Getter and Setter for feed
+    public Feed getFeed() {
+        return feed;
+    }
+
+    public void setFeed(Feed feed) {
+        this.feed = feed;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    @ManyToOne
+    @JoinColumn(name = "feed_id")
+    private Feed feed;
 }

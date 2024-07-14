@@ -1,5 +1,6 @@
 package com.fade.member.entity;
 
+import com.fade.bookmark.entity.Bookmark;
 import com.fade.global.constant.GenderType;
 import com.fade.sociallogin.entity.SocialLogin;
 import jakarta.persistence.Column;
@@ -32,4 +33,15 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private Set<SocialLogin> socialLogins = new HashSet<>();
+
+    @OneToMany(mappedBy = "member")
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

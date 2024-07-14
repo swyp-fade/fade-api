@@ -1,5 +1,6 @@
 package com.fade.feed.entity;
 
+import com.fade.bookmark.entity.Bookmark;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,4 +28,15 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed")
     private Set<FeedDressedUp> feedDressedUpList = new HashSet<>();
+
+    @OneToMany(mappedBy = "feed")
+    private Set<Bookmark> bookmarks = new HashSet<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
