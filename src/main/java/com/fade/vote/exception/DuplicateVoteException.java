@@ -5,7 +5,7 @@ import com.fade.global.exception.ApplicationException;
 
 public class DuplicateVoteException extends ApplicationException {
 
-    public DuplicateVoteException(ErrorCode errorCode) {
-        super(errorCode);
+    public DuplicateVoteException() {
+        super(ErrorCode.DUPLICATE_VOTE_ERROR);
     }
 }

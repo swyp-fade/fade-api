@@ -41,7 +41,7 @@ public class VoteService {
                             member.getId(), feed.getId());
 
                     if (hasAlreadyVoted) {
-                        throw new DuplicateVoteException(ErrorCode.DUPLICATE_VOTE_ERROR);
+                        throw new DuplicateVoteException();
                     }
 
                     return createVote(member, feed, voteItem.voteType(), createVotedAt);
