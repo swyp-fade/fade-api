@@ -13,7 +13,9 @@ import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
@@ -25,6 +27,7 @@ import lombok.Getter;
         }
 )
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AttachmentLink {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,4 +47,16 @@ public class AttachmentLink {
 
     @Column(nullable = false, name = "linkable_id")
     private Long linkableId;
+
+    public AttachmentLink(
+            Attachment attachment,
+            AttachmentLinkType type,
+            AttachmentLinkableType attachmentLinkableType,
+            Long linkableId
+    ) {
+        this.attachment = attachment;
+        this.type = type;
+        this.linkableId = linkableId;
+        this.attachmentLinkableType = attachmentLinkableType;
+    }
 }

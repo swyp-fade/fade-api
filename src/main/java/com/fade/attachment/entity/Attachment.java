@@ -73,4 +73,8 @@ public class Attachment {
         this.type = type;
         this.checksum = checksum;
     }
+
+    public void successUpload() {
+        this.status = AttachmentStatus.SUCCESS;
+    }
 }

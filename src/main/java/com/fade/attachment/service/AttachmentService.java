@@ -1,14 +1,12 @@
 package com.fade.attachment.service;
 
-import com.amazonaws.HttpMethod;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.Headers;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
+import com.fade.attachment.constant.AttachmentLinkType;
+import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.constant.AttachmentStatus;
 import com.fade.attachment.constant.AttachmentType;
 import com.fade.attachment.dto.response.GeneratePresignURLResponse;
 import com.fade.attachment.entity.Attachment;
+import com.fade.attachment.entity.AttachmentLink;
 import com.fade.attachment.repository.AttachmentLinkRepository;
 import com.fade.attachment.repository.AttachmentRepository;
 import com.fade.global.component.FileUtils;
@@ -25,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AttachmentService {
     private final AttachmentRepository attachmentRepository;
     private final AttachmentLinkRepository attachmentLinkRepository;
+    private final AttachmentCommonService attachmentCommonService;
     private final FileUtils fileUtils;
     private final PresignUrlGenerator presignUrlGenerator;
 
@@ -64,5 +63,27 @@ public class AttachmentService {
 
     public boolean existsAttachmentByChecksum(String checksum) {
         return this.attachmentRepository.existsByChecksum(checksum);
+    }
+
+    @Transactional
+    public Long linkAttachment(
+            Long attachmentId,
+            AttachmentLinkableType attachmentLinkableType,
+            AttachmentLinkType type,
+            Long linkableId
+    ) {
+        final var attachment = this.attachmentCommonService.findById(attachmentId);
+        attachment.successUpload();
+
+        final var attachmentLink = new AttachmentLink(
+                attachment,
+                type,
+                attachmentLinkableType,
+                linkableId
+        );
+
+        this.attachmentLinkRepository.save(attachmentLink);
+
+        return attachmentLink.getId();
     }
 }
