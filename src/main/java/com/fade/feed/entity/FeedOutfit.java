@@ -12,9 +12,9 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 
 @Entity
-@Table(name = "feed_dressed_ups")
+@Table(name = "feed_outfits")
 @Getter
-public class FeedDressedUp {
+public class FeedOutfit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
