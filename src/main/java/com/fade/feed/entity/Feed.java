@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,7 +28,7 @@ public class Feed {
     private List<String> styles;
 
     @OneToMany(mappedBy = "feed")
-    private Set<FeedDressedUp> feedDressedUpList = new HashSet<>();
+    private List<FeedDressedUp> feedDressedUpList = new ArrayList<>();
 
     @OneToMany(mappedBy = "feed")
     private Set<Bookmark> bookmarks = new HashSet<>();
