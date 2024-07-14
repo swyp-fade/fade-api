@@ -36,4 +36,12 @@ public class Feed {
 
     @OneToMany(mappedBy = "feed")
     private List<FeedDressedUp> feedDressedUpList = new ArrayList<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }

@@ -32,4 +32,12 @@ public class Member {
 
     @OneToMany(mappedBy = "member")
     private Set<SocialLogin> socialLogins = new HashSet<>();
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
