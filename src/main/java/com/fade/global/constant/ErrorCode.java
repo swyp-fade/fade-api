@@ -18,7 +18,18 @@ public enum ErrorCode {
 
     //POST
     POST_UPDATE_DENIED(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-    POST_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다.");
+    POST_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+
+    //ATTACHMENT
+    ALREADY_EXISTS_ATTACHMENT(HttpStatus.CONFLICT, "이미 동일한 이미지로 업로드된 파일이 존재합니다."),
+    NOT_FOUND_ATTACHMENT(HttpStatus.NOT_FOUND, "존재하지 않는 파일입니다."),
+
+    //CATEGORY
+    NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "카테고리 정보를 찾을 수 없습니다."),
+
+    //STYLE
+    NOT_FOUND_STYLE(HttpStatus.NOT_FOUND, "스타일 정보를 찾을 수 없습니다.")
+    ;
 
     private final HttpStatus httpStatus;
     private final String message;

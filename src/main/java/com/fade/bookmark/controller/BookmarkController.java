@@ -1,14 +1,9 @@
 package com.fade.bookmark.controller;
 
-import com.fade.bookmark.dto.BookmarkDto;
 import com.fade.bookmark.dto.BookmarkRequestDto;
 import com.fade.bookmark.dto.BookmarkResponseDto;
 import com.fade.bookmark.entity.Bookmark;
-import com.fade.bookmark.repository.FeedRepository;
 import com.fade.bookmark.service.BookmarkService;
-import com.fade.feed.entity.Feed;
-import com.fade.member.entity.Member;
-import com.fade.member.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

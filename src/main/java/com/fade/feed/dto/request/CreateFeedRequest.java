@@ -12,14 +12,13 @@ public record CreateFeedRequest(
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         Long attachmentId,
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        List<DressedUpItem> dressedUpList,
+        List<OutfitItem> outfits,
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, minLength = 1)
         @NotNull
         @Length(min = 1)
         List<Integer> styleIds
 ) {
-
-        public record DressedUpItem(
+        public record OutfitItem(
                 @NotNull
                 @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
                 Integer categoryId,
