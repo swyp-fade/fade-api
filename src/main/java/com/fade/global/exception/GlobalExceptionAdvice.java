@@ -27,8 +27,8 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(DuplicateVoteException.class)
-    public Response<?> handleDuplicateVoteException(DuplicateVoteException e) {
+    @ExceptionHandler(ApplicationException.class)
+    public Response<?> handleApplicationException(ApplicationException e) {
         return Response.error(e.getErrorCode().getHttpStatus().value(), e.getMessage(), e.getErrorCode().toString());
     }
 }
