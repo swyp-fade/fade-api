@@ -16,9 +16,15 @@ public enum ErrorCode {
     ALREADY_EXIST_MEMBER_ID(HttpStatus.CONFLICT, "이미 사용중인 아이디입니다."),
     INVALID_MEMBER_ID_AND_PASSWORD(HttpStatus.BAD_REQUEST, "아이디 혹은 비밀번호를 확인해주세요."),
 
-    //POST
-    POST_UPDATE_DENIED(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
-    POST_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+    //FEED
+    NOT_FOUND_FEED(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
+    FEED_UPDATE_DENIED(HttpStatus.FORBIDDEN, "게시글 수정 권한이 없습니다."),
+    FEED_DELETE_DENIED(HttpStatus.FORBIDDEN, "게시글 삭제 권한이 없습니다."),
+
+    //VOTE
+    DUPLICATE_VOTE_ERROR(HttpStatus.BAD_REQUEST, "중복된 투표입니다."),
+
+
 
     //ATTACHMENT
     ALREADY_EXISTS_ATTACHMENT(HttpStatus.CONFLICT, "이미 동일한 이미지로 업로드된 파일이 존재합니다."),

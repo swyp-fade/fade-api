@@ -1,10 +1,16 @@
 package com.fade.vote.service;
 
 import com.fade.feed.entity.Feed;
+import com.fade.feed.service.FeedCommonService;
+import com.fade.global.constant.ErrorCode;
+import com.fade.global.exception.ApplicationException;
 import com.fade.member.entity.Member;
+import com.fade.member.service.MemberCommonService;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
+import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
 import com.fade.vote.entity.Vote;
+import com.fade.vote.exception.DuplicateVoteException;
 import com.fade.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,30 +24,36 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class VoteService {
 
+    private final MemberCommonService memberCommonService;
+    private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
 
     @Transactional
-    public void createVote(List<CreateVoteItemRequest> createVoteItemsRequest) {
+    public List<CreateVoteItemResponse> createVote(Long memberId, List<CreateVoteItemRequest> createVoteItemsRequest) {
+        final var member = memberCommonService.findById(memberId);
+
         LocalDateTime createVotedAt = LocalDateTime.now();
-        //TODO:: MemberRepository, FeedRepository
 
-
-        //TODO:: 일단 피드 존재 검증 후 유저가 해당 피드에 투표를 했다면 중복 투표 예외 던지기
         List<Vote> voteItems = createVoteItemsRequest.stream()
-                .map(voteItem -> createVote(voteItem.voteType(), createVotedAt))
+                .map(voteItem -> {
+                    final var feed = feedCommonService.findById(voteItem.feedId());
+                    boolean hasAlreadyVoted = voteRepository.existsByMemberIdAndFeedId(
+                            member.getId(), feed.getId());
+
+                    if (hasAlreadyVoted) {
+                        throw new DuplicateVoteException();
+                    }
+
+                    return createVote(member, feed, voteItem.voteType(), createVotedAt);
+                })
                 .collect(Collectors.toList());
-
         voteRepository.saveAll(voteItems);
+
+        return voteItems.stream()
+                .map(vote -> new CreateVoteItemResponse(vote.getId()))
+                .collect(Collectors.toList());
     }
 
-    private Vote createVote(VoteType voteType, LocalDateTime votedAt) {
-        return Vote.builder()
-                .voteType(voteType)
-                .votedAt(votedAt)
-                .build();
-    }
-
-    //TODO:: 레포지토리 연결 후 적용
     private Vote createVote(Member member, Feed feed, VoteType voteType, LocalDateTime votedAt) {
         return Vote.builder()
                 .member(member)
