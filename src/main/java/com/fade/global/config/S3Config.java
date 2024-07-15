@@ -1,4 +1,4 @@
-package com.fade.config;
+package com.fade.global.config;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;

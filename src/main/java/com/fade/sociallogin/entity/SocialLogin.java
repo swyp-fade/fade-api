@@ -24,7 +24,7 @@ import java.util.Map;
         name = "social_logins",
         uniqueConstraints = {
             @UniqueConstraint(
-                columnNames = {"social_type", "code"}
+                columnNames = {"code", "social_type"}
             ),
             @UniqueConstraint(
                 columnNames = {"member_id", "social_type"}

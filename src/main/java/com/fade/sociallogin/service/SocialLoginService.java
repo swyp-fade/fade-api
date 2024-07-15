@@ -1,6 +1,5 @@
 package com.fade.sociallogin.service;
 
-import com.fade.member.repository.MemberRepository;
 import com.fade.sociallogin.constant.SocialType;
 import com.fade.sociallogin.dto.request.ExistsSocialLoginRequest;
 import com.fade.sociallogin.dto.request.SigninByCodeRequest;
@@ -8,18 +7,13 @@ import com.fade.sociallogin.dto.request.SignupByCodeRequest;
 import com.fade.sociallogin.dto.response.ExistsSocialLoginResponse;
 import com.fade.sociallogin.dto.response.SigninResponse;
 import com.fade.sociallogin.repository.SocialLoginRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class SocialLoginService {
-
     private final SocialLoginRepository socialLoginRepository;
-    private final MemberRepository memberRepository;
-
-    public SocialLoginService(SocialLoginRepository socialLoginRepository, MemberRepository memberRepository) {
-        this.socialLoginRepository = socialLoginRepository;
-        this.memberRepository = memberRepository;
-    }
 
     public SigninResponse signinByCode(SocialType socialType, SigninByCodeRequest request) {
         // 로그인 로직 구현

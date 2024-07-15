@@ -6,12 +6,14 @@ import com.fade.sociallogin.dto.request.SigninByCodeRequest;
 import com.fade.sociallogin.dto.request.SignupByCodeRequest;
 import com.fade.sociallogin.dto.response.ExistsSocialLoginResponse;
 import com.fade.sociallogin.dto.response.SigninResponse;
+import com.fade.sociallogin.service.SocialLoginService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,8 +25,11 @@ import org.springframework.web.bind.annotation.RestController;
         @Tag(name = "Social Login")
 })
 @RequestMapping("social-login")
+@RequiredArgsConstructor
 public class SocialLoginController {
-    @PostMapping("/{socialType}/signin/by-code")
+    private final SocialLoginService socialLoginService;
+
+    @PostMapping("/{socialType}/signin")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
                 schema = @Schema(implementation = SigninResponse.class)
@@ -37,7 +42,7 @@ public class SocialLoginController {
         return null;
     }
 
-    @PostMapping("/{socialType}/signup/by-code")
+    @PostMapping("/{socialType}/signup")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = SigninResponse.class)

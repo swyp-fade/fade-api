@@ -1,4 +1,4 @@
-package com.fade.config;
+package com.fade.global.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
