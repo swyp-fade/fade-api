@@ -33,7 +33,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(HttpMethod.POST, "/auth/social-login/**/*").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/social-login/**").permitAll()
                                 .requestMatchers(SWAGGER_URIS).permitAll()
                                 .requestMatchers("/actuator/**").permitAll()
                                 .anyRequest()

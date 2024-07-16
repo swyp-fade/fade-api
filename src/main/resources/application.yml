@@ -24,9 +24,12 @@ spring:
   sql.init.mode: always
 
 kakao:
-  apiKey: ${KAKAO_API_KEY}
-  secretKey: ${KAKAO_SECRET_KEY}
-  oAuthUrl: https://kauth.kakao.com
+  oauth:
+    client-id: ${KAKAO_API_KEY}
+    client-secret: ${KAKAO_SECRET_KEY}
+    token-url: https://kauth.kakao.com/oauth/token
+    profile-url: https://kapi.kakao.com/v2/user/me
+    scope: profile
 
 aws:
   accessKey: ${AWS_ACCESS_KEY}

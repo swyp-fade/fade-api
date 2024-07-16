@@ -52,4 +52,16 @@ public class SocialLogin {
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    public SocialLogin(
+            String code,
+            SocialType socialType,
+            Map<String, Object> rawData,
+            Member member
+    ) {
+        this.code = code;
+        this.socialType = socialType;
+        this.rawData = rawData;
+        this.member = member;
+    }
 }

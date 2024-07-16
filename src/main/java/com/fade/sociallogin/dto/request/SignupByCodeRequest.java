@@ -20,6 +20,9 @@ public record SignupByCodeRequest(
         String username,
         @NotNull
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "성별")
-        GenderType genderType
+        GenderType genderType,
+        @NotNull
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인에 사용했던 OAuth redirectUri")
+        String redirectUri
 ) {
 }

@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserJwtClaim implements IJwtClaim {
+public class MemberJwtClaim implements IJwtClaim {
     private Long id;
 
-    public UserJwtClaim(Long id) {
+    public MemberJwtClaim(Long id) {
         this.id = id;
     }
 }

@@ -35,11 +35,15 @@ public class SocialLoginController {
                 schema = @Schema(implementation = SigninResponse.class)
             ))
     })
-    public SigninResponse signinByCode(
+    public SigninResponse signin(
             @PathVariable("socialType") SocialType socialType,
             SigninByCodeRequest signinByCodeRequest
     ) {
-        return null;
+        return this.socialLoginService.signinByCode(
+                socialType,
+                signinByCodeRequest.code(),
+                signinByCodeRequest.redirectUri()
+        );
     }
 
     @PostMapping("/{socialType}/signup")
@@ -48,10 +52,11 @@ public class SocialLoginController {
                     schema = @Schema(implementation = SigninResponse.class)
             ))
     })
-    public SigninResponse signupByCode(
+    public SigninResponse signup(
             @PathVariable("socialType") SocialType socialType,
             SignupByCodeRequest signupByCodeRequest
     ) {
+//        this.sign
         return null;
     }
 
@@ -65,6 +70,8 @@ public class SocialLoginController {
             @PathVariable("socialType") SocialType socialType,
             ExistsSocialLoginRequest existsSocialLoginRequest
     ) {
-        return null;
+        return new ExistsSocialLoginResponse(
+                this.socialLoginService.hasSocialLoginInfo(socialType, existsSocialLoginRequest.code())
+        );
     }
 }
