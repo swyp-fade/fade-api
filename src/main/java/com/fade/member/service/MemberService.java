@@ -2,7 +2,8 @@ package com.fade.member.service;
 
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.GenderType;
-import com.fade.global.vo.MemberJwtClaim;
+import com.fade.member.constant.MemberRole;
+import com.fade.member.vo.MemberJwtClaim;
 import com.fade.member.entity.Member;
 import com.fade.member.entity.RefreshToken;
 import com.fade.member.repository.MemberRepository;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.time.Duration;
-import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -42,7 +43,10 @@ public class MemberService {
     public SigninResponse signin(Long memberId) {
         final var member = memberCommonService.findById(memberId);
 
-        final var memberClaim = new MemberJwtClaim(member.getId());
+        final var memberClaim = new MemberJwtClaim(
+                member.getId(),
+                List.of(MemberRole.USER)
+        );
 
         final var accessToken = this.jwtTokenProvider.createToken(memberClaim);
         final var refreshToken = DigestUtils.md5DigestAsHex(UUID.randomUUID().toString().getBytes());

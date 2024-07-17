@@ -28,12 +28,12 @@ public class SecurityConfig {
     };
 
     @Bean
-    public SecurityFilterChain apiFilterChain(HttpSecurity http, AuthenticationConfiguration authenticationConfiguration)
+    public SecurityFilterChain apiFilterChain(HttpSecurity http)
             throws Exception {
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(HttpMethod.POST, "/social-login/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
                                 .requestMatchers(SWAGGER_URIS).permitAll()
                                 .requestMatchers("/actuator/**").permitAll()
                                 .anyRequest()

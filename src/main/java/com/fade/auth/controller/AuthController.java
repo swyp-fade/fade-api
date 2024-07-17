@@ -1,5 +1,8 @@
-package com.fade.sociallogin.controller;
+package com.fade.auth.controller;
 
+import com.fade.auth.dto.request.CreateAccessTokenByRefreshTokenRequest;
+import com.fade.auth.dto.response.CreateAccessTokenByRefreshTokenResponse;
+import com.fade.auth.service.AuthService;
 import com.fade.sociallogin.constant.SocialType;
 import com.fade.sociallogin.dto.request.ExistsSocialLoginRequest;
 import com.fade.sociallogin.dto.request.SigninByCodeRequest;
@@ -11,8 +14,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,19 +21,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
-@Tags({
-        @Tag(name = "Social Login")
-})
-@RequestMapping("social-login")
+@RestController()
+@RequestMapping("auth")
 @RequiredArgsConstructor
-public class SocialLoginController {
+public class AuthController {
     private final SocialLoginService socialLoginService;
+    private final AuthService authService;
 
-    @PostMapping("/{socialType}/signin")
+    @PostMapping("/social-login/{socialType}/signin")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
-                schema = @Schema(implementation = SigninResponse.class)
+                    schema = @Schema(implementation = SigninResponse.class)
             ))
     })
     public SigninResponse signin(
@@ -46,7 +45,7 @@ public class SocialLoginController {
         );
     }
 
-    @PostMapping("/{socialType}/signup")
+    @PostMapping("/social-login/{socialType}/signup")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = SigninResponse.class)
@@ -56,11 +55,14 @@ public class SocialLoginController {
             @PathVariable("socialType") SocialType socialType,
             SignupByCodeRequest signupByCodeRequest
     ) {
-//        this.sign
-        return null;
+        return this.socialLoginService.signupByCode(
+                socialType,
+                signupByCodeRequest.code(),
+                signupByCodeRequest
+        );
     }
 
-    @GetMapping("/{socialType}/exists")
+    @GetMapping("/social-login/{socialType}/exists")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
                     schema = @Schema(implementation = ExistsSocialLoginResponse.class)
@@ -73,5 +75,31 @@ public class SocialLoginController {
         return new ExistsSocialLoginResponse(
                 this.socialLoginService.hasSocialLoginInfo(socialType, existsSocialLoginRequest.code())
         );
+    }
+
+    @PostMapping("/token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = CreateAccessTokenByRefreshTokenResponse.class)
+            ))
+    })
+    public CreateAccessTokenByRefreshTokenResponse generateAccessToken(
+            CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
+    ) {
+        return new CreateAccessTokenByRefreshTokenResponse(
+                this.authService.generateAccessToken(createAccessTokenByRefreshTokenRequest.refreshToken())
+        );
+    }
+
+    @PostMapping("/token/refresh-token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = @Content(
+                    schema = @Schema(implementation = SigninResponse.class)
+            ))
+    })
+    public SigninResponse generateRefreshToken(
+            CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
+    ) {
+        return this.authService.generateRefreshToken(createAccessTokenByRefreshTokenRequest.refreshToken());
     }
 }

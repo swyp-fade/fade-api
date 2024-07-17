@@ -1,8 +1,8 @@
 package com.fade.global.filter;
 
 import com.fade.global.component.JwtTokenProvider;
-import com.fade.global.vo.MemberJwtClaim;
-import com.fade.global.vo.UserVo;
+import com.fade.member.vo.MemberJwtClaim;
+import com.fade.member.vo.UserVo;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -43,7 +43,7 @@ public class JwtFilter extends GenericFilterBean {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
                         new UserVo(memberJwtClaim.getId()),
                         null,
-                        Collections.emptyList()
+                        memberJwtClaim.getMemberRoles()
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             });

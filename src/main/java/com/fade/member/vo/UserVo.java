@@ -1,4 +1,4 @@
-package com.fade.global.vo;
+package com.fade.member.vo;
 
 import lombok.Getter;
 import org.springframework.security.core.userdetails.User;
