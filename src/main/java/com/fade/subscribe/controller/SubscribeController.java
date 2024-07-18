@@ -31,15 +31,16 @@ public class SubscribeController {
         return Response.success(subscribeService.subscribe(fromMemberId, toMemberId));
     }
 
-    @PostMapping("/unsubscribe{toMemberId}")
+    @DeleteMapping("/unsubscribe/{toMemberId}")
     @SecurityRequirement(name = "access-token")
     @ApiResponses(
             @ApiResponse(
-                    responseCode = "200",
+                    responseCode = "204",
                     description = "구독 취소"
             )
     )
-    public Response<Long> unSubscribe(Long fromMemberId, @PathVariable Long toMemberId) {
-        return Response.success(subscribeService.unSubscribe(fromMemberId, toMemberId));
+    public Response<Void> unSubscribe(Long fromMemberId, @PathVariable Long toMemberId) {
+        subscribeService.unSubscribe(fromMemberId, toMemberId);
+        return Response.success();
     }
 }

@@ -2,7 +2,6 @@ package com.fade.subscribe.service;
 
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
-import com.fade.subscribe.constant.SubscribeStatus;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ public class SubscribeService {
         Subscribe subscribeFromMember = Subscribe.builder()
                 .fromMember(fromMember)
                 .toMember(toMember)
-                .subscribeStatus(SubscribeStatus.SUBSCRIBE)
                 .build();
 
         subscribeRepository.save(subscribeFromMember);
@@ -33,10 +31,9 @@ public class SubscribeService {
     }
 
     @Transactional
-    public Long unSubscribe(Long fromMemberId, Long toMemberId) {
+    public void unSubscribe(Long fromMemberId, Long toMemberId) {
         Subscribe subscribe = subscribeCommonService.findByFromMemberIdAndToMemberId(fromMemberId, toMemberId);
 
-        subscribe.modifySubscribeStatus(SubscribeStatus.UNSUBSCRIBE);
-        return subscribe.getId();
+        subscribeRepository.delete(subscribe);
     }
 }

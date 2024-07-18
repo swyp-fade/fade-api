@@ -1,7 +1,6 @@
 package com.fade.subscribe.entity;
 
 import com.fade.member.entity.Member;
-import com.fade.subscribe.constant.SubscribeStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,10 +28,6 @@ public class Subscribe {
     @Column(name = "subscribed_at")
     private LocalDateTime subScribedAt = LocalDateTime.now();
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "subscribeStatus", nullable = false)
-    private SubscribeStatus subscribeStatus;
-
     @ManyToOne
     @JoinColumn(name = "from_member_id")
     private Member fromMember;
@@ -42,14 +37,9 @@ public class Subscribe {
     private Member toMember;
 
     @Builder
-    public Subscribe(Member fromMember, Member toMember, SubscribeStatus subscribeStatus, LocalDateTime subScribedAt) {
+    public Subscribe(Member fromMember, Member toMember, LocalDateTime subScribedAt) {
         this.fromMember = fromMember;
         this.toMember = toMember;
-        this.subscribeStatus = subscribeStatus;
         this.subScribedAt = subScribedAt;
-    }
-
-    public void modifySubscribeStatus(SubscribeStatus subscribeStatus) {
-        this.subscribeStatus = subscribeStatus;
     }
 }

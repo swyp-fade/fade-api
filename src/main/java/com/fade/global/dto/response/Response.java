@@ -14,7 +14,7 @@ public class Response<T> {
     private T result;
 
     public static <T> Response<T> success() {
-        return new Response<T>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
+        return new Response<T>(HttpStatus.NO_CONTENT.value(), HttpStatus.NO_CONTENT.getReasonPhrase(), null);
     }
 
     public static <T> Response<T> success(T result) {
