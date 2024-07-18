@@ -21,7 +21,7 @@ public class BookmarkService {
     private final BookmarkCommonService bookMarkCommonService;
 
     @Transactional
-    public Long bookmark(Long memberId, Long feedId) {
+    public Long addBookmark(Long memberId, Long feedId) {
         Member member = memberCommonService.findById(memberId);
         Feed feed = feedCommonService.findById(feedId);
 

@@ -22,8 +22,8 @@ public class BookmarkController {
                     description = "북마크 성공"
             )
     )
-    public Response<Long> bookmark(Long memberId, @PathVariable Long feedId) {
-        return Response.success(bookmarkService.bookmark(memberId, feedId));
+    public Response<Long> addBookmark(Long memberId, @PathVariable Long feedId) {
+        return Response.success(bookmarkService.addBookmark(memberId, feedId));
     }
 
     @SecurityRequirement(name = "access-token")
