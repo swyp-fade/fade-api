@@ -2,69 +2,42 @@ package com.fade.bookmark.service;
 
 
 import com.fade.bookmark.entity.Bookmark;
-import com.fade.bookmark.exception.BookmarkNotFoundException;
 import com.fade.bookmark.repository.BookmarkRepository;
 import com.fade.feed.entity.Feed;
-import com.fade.feed.repository.FeedRepository;
+import com.fade.feed.service.FeedCommonService;
 import com.fade.member.entity.Member;
-import com.fade.member.repository.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.fade.member.service.MemberCommonService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class BookmarkService {
 
-    @Autowired
-    private BookmarkRepository bookmarkRepository;
+    private final MemberCommonService memberCommonService;
+    private final FeedCommonService feedCommonService;
+    private final BookmarkRepository bookmarkRepository;
+    private final BookmarkCommonService bookMarkCommonService;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    @Transactional
+    public Long bookmark(Long memberId, Long feedId) {
+        Member member = memberCommonService.findById(memberId);
+        Feed feed = feedCommonService.findById(feedId);
 
-    @Autowired
-    private FeedRepository feedRepository;
+        Bookmark bookmark = Bookmark.builder()
+                .member(member)
+                .feed(feed)
+                .build();
 
-    public List<Bookmark> getAllBookmarks() {
-        return bookmarkRepository.findAll();
+        bookmarkRepository.save(bookmark);
+        return bookmark.getId();
     }
 
-    public Bookmark getBookmarkById(Long id) {
-        return bookmarkRepository.findById(id).orElseThrow(() -> new BookmarkNotFoundException(id));
-    }
+    @Transactional
+    public void cancelBookmark(Long memberId, Long feedId) {
+        Bookmark bookmark = bookMarkCommonService.findByMemberIdAndFeedId(memberId, feedId);
 
-    public Bookmark createBookmark(Bookmark bookmark, Long memberId, Long feedId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(() -> new RuntimeException("Member not found"));
-        Feed feed = feedRepository.findById(feedId).orElseThrow(() -> new RuntimeException("Feed not found"));
-
-        bookmark.setMember(member);
-        bookmark.setFeed(feed);
-
-        return bookmarkRepository.save(bookmark);
-    }
-
-    public Bookmark updateBookmark(Long id, Bookmark bookmarkDetails) {
-        Bookmark bookmark = bookmarkRepository.findById(id)
-                .orElseThrow(() -> new BookmarkNotFoundException(id));
-
-        bookmark.setTitle(bookmarkDetails.getTitle());
-        bookmark.setUrl(bookmarkDetails.getUrl());
-        bookmark.setDescription(bookmarkDetails.getDescription());
-
-        if (bookmarkDetails.getMember() != null) {
-            bookmark.setMember(bookmarkDetails.getMember());
-        }
-
-        if (bookmarkDetails.getFeed() != null) {
-            bookmark.setFeed(bookmarkDetails.getFeed());
-        }
-
-        return bookmarkRepository.save(bookmark);
-    }
-
-    public void deleteBookmark(Long id) {
-        Bookmark bookmark = bookmarkRepository.findById(id)
-                .orElseThrow(() -> new BookmarkNotFoundException(id));
         bookmarkRepository.delete(bookmark);
     }
 }
