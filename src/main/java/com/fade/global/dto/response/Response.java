@@ -3,6 +3,7 @@ package com.fade.global.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 
 @Getter
 @NoArgsConstructor
@@ -13,11 +14,11 @@ public class Response<T> {
     private T result;
 
     public static <T> Response<T> success() {
-        return new Response<T>(200, "요청에 성공했습니다.", null);
+        return new Response<T>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), null);
     }
 
-    public static <T> Response<T> success(int statusCode, String message, T result) {
-        return new Response<T>(statusCode, message, result);
+    public static <T> Response<T> success(T result) {
+        return new Response<T>(HttpStatus.OK.value(), HttpStatus.OK.getReasonPhrase(), result);
     }
 
     public static <T> Response<T> error(int statusCode, String message, T result) {
