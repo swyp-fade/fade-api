@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,6 +37,7 @@ public class AuthController {
     })
     public SigninResponse signin(
             @PathVariable("socialType") SocialType socialType,
+            @RequestBody
             SigninByCodeRequest signinByCodeRequest
     ) {
         return this.socialLoginService.signinByCode(
@@ -53,6 +55,7 @@ public class AuthController {
     })
     public SigninResponse signup(
             @PathVariable("socialType") SocialType socialType,
+            @RequestBody
             SignupByCodeRequest signupByCodeRequest
     ) {
         return this.socialLoginService.signupByCode(
@@ -68,6 +71,7 @@ public class AuthController {
             ))
     })
     public CreateAccessTokenByRefreshTokenResponse generateAccessToken(
+            @RequestBody
             CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
     ) {
         return new CreateAccessTokenByRefreshTokenResponse(
@@ -82,6 +86,7 @@ public class AuthController {
             ))
     })
     public SigninResponse generateRefreshToken(
+            @RequestBody
             CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
     ) {
         return this.authService.generateRefreshToken(createAccessTokenByRefreshTokenRequest.refreshToken());

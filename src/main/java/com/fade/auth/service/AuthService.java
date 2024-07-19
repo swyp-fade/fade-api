@@ -39,6 +39,7 @@ public class AuthService {
         return this.jwtTokenProvider.createToken(memberClaim);
     }
 
+    @Transactional
     public SigninResponse generateRefreshToken(String refreshToken) {
         final var rt = this.refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.TOKEN_NOT_EXIST));
@@ -46,6 +47,8 @@ public class AuthService {
         if (LocalDateTime.now().isAfter(rt.getExpiredAt())) {
             throw new ApplicationException(ErrorCode.TOKEN_NOT_EXIST);
         }
+
+        this.refreshTokenRepository.delete(rt);
 
         return this.memberService.signin(rt.getMember().getId());
     }
