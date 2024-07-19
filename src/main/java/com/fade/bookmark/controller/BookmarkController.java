@@ -1,92 +1,41 @@
 package com.fade.bookmark.controller;
 
-import com.fade.bookmark.dto.BookmarkRequestDto;
-import com.fade.bookmark.dto.BookmarkResponseDto;
-import com.fade.bookmark.entity.Bookmark;
 import com.fade.bookmark.service.BookmarkService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import com.fade.global.dto.response.Response;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
-@RequestMapping("/api/bookmarks")
+@RequestMapping("bookmark")
+@RequiredArgsConstructor
 public class BookmarkController {
+    private final BookmarkService bookmarkService;
 
-    @Autowired
-    private BookmarkService bookmarkService;
-
-    @GetMapping
-    public List<BookmarkResponseDto> getAllBookmarks() {
-        return bookmarkService.getAllBookmarks().stream()
-                .map(bookmark -> new BookmarkResponseDto(
-                        bookmark.getId(),
-                        bookmark.getTitle(),
-                        bookmark.getUrl(),
-                        bookmark.getDescription(),
-                        bookmark.getMember().getId(),
-                        bookmark.getFeed().getId()
-                ))
-                .collect(Collectors.toList());
+    @PostMapping("/{feedId}")
+    @SecurityRequirement(name = "access-token")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "북마크 성공"
+            )
+    )
+    public Response<Long> addBookmark(Long memberId, @PathVariable Long feedId) {
+        return Response.success(bookmarkService.addBookmark(memberId, feedId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BookmarkResponseDto> getBookmarkById(@PathVariable Long id) {
-        Bookmark bookmark = bookmarkService.getBookmarkById(id);
-        BookmarkResponseDto response = new BookmarkResponseDto(
-                bookmark.getId(),
-                bookmark.getTitle(),
-                bookmark.getUrl(),
-                bookmark.getDescription(),
-                bookmark.getMember().getId(),
-                bookmark.getFeed().getId()
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping
-    public ResponseEntity<BookmarkResponseDto> createBookmark(@RequestBody BookmarkRequestDto bookmarkRequestDto) {
-        Bookmark bookmark = new Bookmark();
-        bookmark.setTitle(bookmarkRequestDto.title());
-        bookmark.setUrl(bookmarkRequestDto.url());
-        bookmark.setDescription(bookmarkRequestDto.description());
-
-        Bookmark createdBookmark = bookmarkService.createBookmark(bookmark, bookmarkRequestDto.memberId(), bookmarkRequestDto.feedId());
-        BookmarkResponseDto response = new BookmarkResponseDto(
-                createdBookmark.getId(),
-                createdBookmark.getTitle(),
-                createdBookmark.getUrl(),
-                createdBookmark.getDescription(),
-                createdBookmark.getMember().getId(),
-                createdBookmark.getFeed().getId()
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<BookmarkResponseDto> updateBookmark(@PathVariable Long id, @RequestBody BookmarkRequestDto bookmarkRequestDto) {
-        Bookmark bookmark = new Bookmark();
-        bookmark.setTitle(bookmarkRequestDto.title());
-        bookmark.setUrl(bookmarkRequestDto.url());
-        bookmark.setDescription(bookmarkRequestDto.description());
-
-        Bookmark updatedBookmark = bookmarkService.updateBookmark(id, bookmark);
-        BookmarkResponseDto response = new BookmarkResponseDto(
-                updatedBookmark.getId(),
-                updatedBookmark.getTitle(),
-                updatedBookmark.getUrl(),
-                updatedBookmark.getDescription(),
-                updatedBookmark.getMember().getId(),
-                updatedBookmark.getFeed().getId()
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBookmark(@PathVariable Long id) {
-        bookmarkService.deleteBookmark(id);
-        return ResponseEntity.noContent().build();
+    @SecurityRequirement(name = "access-token")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "북마크 취소"
+            )
+    )
+    @DeleteMapping("/{feedId}")
+    public Response<Void> cancelBookmark(Long memberId, @PathVariable Long feedId) {
+        bookmarkService.cancelBookmark(memberId, feedId);
+        return Response.success();
     }
 }
