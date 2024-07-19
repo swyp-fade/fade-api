@@ -2,7 +2,7 @@ package com.fade.global.config;
 
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.filter.JwtFilter;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -12,15 +12,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
         securedEnabled = true
 )
-@RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final List<String> allowOriginHosts;
 
     private static final String[] SWAGGER_URIS = {
             "/api-docs/**",
@@ -28,9 +32,19 @@ public class SecurityConfig {
             "/swagger-ui/**"
     };
 
+    public SecurityConfig(
+            JwtTokenProvider jwtTokenProvider,
+            @Value("${cors.allow-origin-hosts}")
+            List<String> allowOriginHosts
+    ) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.allowOriginHosts = allowOriginHosts;
+    }
+
     @Bean
     public SecurityFilterChain apiFilterChain(HttpSecurity http)
             throws Exception {
+
         http
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
@@ -43,6 +57,17 @@ public class SecurityConfig {
                 .addFilterBefore(new JwtFilter(this.jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class
                 )
+                .cors((cors) -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(this.allowOriginHosts);
+                    configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+                    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "set-cookie"));
+
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", configuration);
+
+                    cors.configurationSource(source);
+                })
                 .csrf(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .sessionManagement(AbstractHttpConfigurer::disable)
