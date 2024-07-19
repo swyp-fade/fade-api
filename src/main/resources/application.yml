@@ -23,9 +23,20 @@ spring:
   h2.console.enabled: false
   sql.init.mode: always
 
+kakao:
+  oauth:
+    client-id: ${KAKAO_API_KEY}
+    client-secret: ${KAKAO_SECRET_KEY}
+    token-url: https://kauth.kakao.com/oauth/token
+    profile-url: https://kapi.kakao.com/v2/user/me
+    scope: profile
+
 aws:
   accessKey: ${AWS_ACCESS_KEY}
   secretKey: ${AWS_SECRET_KEY}
   region: ${AWS_REGION}
   s3:
     bucketName: ${AWS_S3_BUCKET_NAME}
+
+jwt:
+  secretKey: ${JWT_SECRET_KEY}

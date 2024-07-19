@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 public record SignupByCodeRequest(
         @NotNull
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인 OAuth 서버에서 전달받은 code값")
-        String code,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인 OAuth 서버에서 전달받은 accessToken값")
+        String socialAccessToken,
         @NotNull
         @Schema(
                 requiredMode = Schema.RequiredMode.REQUIRED,

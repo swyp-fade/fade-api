@@ -11,12 +11,17 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Table(name = "members")
 @Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,11 +38,8 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<SocialLogin> socialLogins = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Member(String username, GenderType genderType) {
+        this.username = username;
+        this.genderType = genderType;
     }
 }
