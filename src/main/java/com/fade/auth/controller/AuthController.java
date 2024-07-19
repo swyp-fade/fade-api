@@ -57,23 +57,7 @@ public class AuthController {
     ) {
         return this.socialLoginService.signupByCode(
                 socialType,
-                signupByCodeRequest.code(),
                 signupByCodeRequest
-        );
-    }
-
-    @GetMapping("/social-login/{socialType}/exists")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(
-                    schema = @Schema(implementation = ExistsSocialLoginResponse.class)
-            ))
-    })
-    public ExistsSocialLoginResponse hasSocialLoginInfo(
-            @PathVariable("socialType") SocialType socialType,
-            ExistsSocialLoginRequest existsSocialLoginRequest
-    ) {
-        return new ExistsSocialLoginResponse(
-                this.socialLoginService.hasSocialLoginInfo(socialType, existsSocialLoginRequest.code())
         );
     }
 

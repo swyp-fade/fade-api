@@ -7,8 +7,8 @@ import org.hibernate.validator.constraints.Length;
 
 public record SignupByCodeRequest(
         @NotNull
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인 OAuth 서버에서 전달받은 code값")
-        String code,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인 OAuth 서버에서 전달받은 accessToken값")
+        String socialAccessToken,
         @NotNull
         @Schema(
                 requiredMode = Schema.RequiredMode.REQUIRED,
@@ -20,9 +20,6 @@ public record SignupByCodeRequest(
         String username,
         @NotNull
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "성별")
-        GenderType genderType,
-        @NotNull
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "소셜 로그인에 사용했던 OAuth redirectUri")
-        String redirectUri
+        GenderType genderType
 ) {
 }

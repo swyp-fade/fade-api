@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -33,16 +35,33 @@ public class SocialLoginService {
             String code,
             String redirectUri
     ) {
+        final String socialAccessToken;
+
+        switch (socialType) {
+            case KAKAO:
+                socialAccessToken = this.kakaoOAuth2Provider.getAccessToken(code, redirectUri);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported social type: " + socialType);
+        }
+
         final var profile = this.getProfile(
-                code,
-                redirectUri,
+                socialAccessToken,
                 socialType
         );
 
         final var socialLogin = this.socialLoginRepository.findByCodeAndSocialType(
                 profile.getCode(),
                 profile.getSocialType()
-        ).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_MATCH_SOCIAL_MEMBER));
+        ).orElseThrow(() ->
+                new ApplicationException(
+                        ErrorCode.NOT_MATCH_SOCIAL_MEMBER,
+                        Map.of(
+                                "socialType", socialType.name(),
+                                "socialAccessToken", socialAccessToken
+                        )
+                )
+        );
 
         return this.memberService.signin(socialLogin.getMember().getId());
     }
@@ -50,12 +69,10 @@ public class SocialLoginService {
     @Transactional
     public SigninResponse signupByCode(
             SocialType socialType,
-            String code,
             SignupByCodeRequest signupByCodeRequest
     ) {
         final var profile = this.getProfile(
-                code,
-                signupByCodeRequest.redirectUri(),
+                signupByCodeRequest.socialAccessToken(),
                 socialType
         );
 
@@ -71,7 +88,7 @@ public class SocialLoginService {
                 signupByCodeRequest.genderType()
         );
         final var socialLogin = new SocialLogin(
-                code,
+                profile.getCode(),
                 socialType,
                 profile.getRawData(),
                 this.memberCommonService.findById(
@@ -84,20 +101,14 @@ public class SocialLoginService {
         return this.memberService.signin(memberId);
     }
 
-    public boolean hasSocialLoginInfo(SocialType socialType, String code) {
-        return socialLoginRepository.existsByCodeAndSocialType(code, socialType);
-    }
-
     /**
      * TODO: 추후 더 객체지향 적으로 수정
      */
-    private OAuthProfile getProfile(String code, String redirectUri, SocialType socialType) {
+    private OAuthProfile getProfile(String socialAccessToken, SocialType socialType) {
         final OAuthProfile profile;
 
         switch (socialType) {
             case KAKAO:
-                String socialAccessToken =
-                        this.kakaoOAuth2Provider.getAccessToken(code, redirectUri);
                 profile = this.kakaoOAuth2Provider.getProfile(socialAccessToken);
                 break;
             default:
