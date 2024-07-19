@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Map;
 
 
 @RestControllerAdvice
@@ -29,6 +30,13 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ApplicationException.class)
     public Response<?> handleApplicationException(ApplicationException e) {
-        return Response.error(e.getErrorCode().getHttpStatus().value(), e.getMessage(), e.getErrorCode().toString());
+        return Response.error(
+                e.getErrorCode().getHttpStatus().value(),
+                e.getMessage(),
+                Map.of(
+                        "errorCode", e.getErrorCode().name(),
+                        "data", e.getData()
+                )
+        );
     }
 }

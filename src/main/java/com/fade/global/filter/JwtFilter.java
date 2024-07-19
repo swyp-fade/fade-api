@@ -41,7 +41,7 @@ public class JwtFilter extends GenericFilterBean {
             .map((token) -> jwtTokenProvider.decodeJwt(token, MemberJwtClaim.class))
             .ifPresent((memberJwtClaim) -> {
                 Authentication authentication = new UsernamePasswordAuthenticationToken(
-                        new UserVo(memberJwtClaim.getId()),
+                        new UserVo(memberJwtClaim.getId(), memberJwtClaim.getMemberRoles()),
                         null,
                         memberJwtClaim.getMemberRoles()
                 );
