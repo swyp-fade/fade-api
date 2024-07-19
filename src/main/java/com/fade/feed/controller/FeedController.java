@@ -4,6 +4,7 @@ import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.response.CreateFeedResponse;
 import com.fade.feed.service.FeedService;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +31,7 @@ public class FeedController {
 
     @PostMapping("")
     @SecurityRequirement(name = "access-token")
-@Secured(MemberRole.USER_TYPE)
+    @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
             @ApiResponse(
                 responseCode = "200",
@@ -37,10 +39,11 @@ public class FeedController {
             )
     )
     public CreateFeedResponse createFeed(
-            @RequestBody CreateFeedRequest createFeedRequest
+            @RequestBody CreateFeedRequest createFeedRequest,
+            @AuthenticationPrincipal UserVo userVo
     ) {
         return new CreateFeedResponse(
-                feedService.createFeed(1L, createFeedRequest)
+                feedService.createFeed(userVo.getId(), createFeedRequest)
         );
     }
 }

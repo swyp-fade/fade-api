@@ -3,6 +3,7 @@ package com.fade.global.exception;
 import com.fade.global.constant.ErrorCode;
 import lombok.Getter;
 
+import java.util.Collections;
 import java.util.Map;
 
 @Getter
@@ -14,7 +15,7 @@ public class ApplicationException extends RuntimeException{
     public ApplicationException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
-        this.data = null;
+        this.data = Collections.emptyMap();
     }
 
     public ApplicationException(ErrorCode errorCode, Map<String, Object> data) {
