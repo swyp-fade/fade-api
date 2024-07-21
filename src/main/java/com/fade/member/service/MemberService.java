@@ -3,6 +3,7 @@ package com.fade.member.service;
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.GenderType;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.vo.MemberJwtClaim;
 import com.fade.member.entity.Member;
 import com.fade.member.entity.RefreshToken;
@@ -62,6 +63,16 @@ public class MemberService {
         return new SigninResponse(
                 accessToken,
                 refreshToken
+        );
+    }
+
+    public FindMemberDetailResponse findMemberDetail(Long memberId) {
+        final var member = this.memberCommonService.findById(memberId);
+
+        return new FindMemberDetailResponse(
+                member.getId(),
+                member.getGenderType(),
+                member.getUsername()
         );
     }
 }
