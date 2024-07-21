@@ -2,13 +2,13 @@ package com.fade.vote.service;
 
 import com.fade.feed.entity.Feed;
 import com.fade.feed.service.FeedCommonService;
-import com.fade.global.constant.ErrorCode;
-import com.fade.global.exception.ApplicationException;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
+import com.fade.vote.dto.response.VoteResultResponse;
+import com.fade.vote.dto.response.VoteResultResponse.VoteResultItemResponse;
 import com.fade.vote.entity.Vote;
 import com.fade.vote.exception.DuplicateVoteException;
 import com.fade.vote.repository.VoteRepository;
@@ -16,7 +16,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +54,46 @@ public class VoteService {
         return voteItems.stream()
                 .map(vote -> new CreateVoteItemResponse(vote.getId()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public VoteResultResponse getVoteResult(Long memberId, LocalDate cursor, int size, String type) {
+
+        LocalDateTime startDate;
+        LocalDateTime endDate;
+
+        switch (type) {
+            case "0":
+                startDate = cursor.minusDays(size).atStartOfDay();
+                endDate = cursor.atTime(LocalTime.MAX);
+                break;
+            case "1":
+                startDate = cursor.atStartOfDay();
+                endDate = cursor.plusDays(size).atTime(LocalTime.MAX);
+                break;
+            case "2":
+                startDate = cursor.minusDays(size).atStartOfDay();
+                endDate = cursor.plusDays(size).atTime(LocalTime.MAX);
+            default:
+                throw new IllegalArgumentException("Invalid type value: " + type);
+        }
+        List<VoteResultItemResponse> voteResult = voteRepository.getVoteResultUsingNoOffset(memberId, startDate, endDate);
+        return new VoteResultResponse(voteResult, calculateLastCursor(voteResult, type));
+    }
+
+    private LocalDate calculateLastCursor(List<VoteResultItemResponse> voteResult, String type) {
+        if (voteResult.isEmpty()) {
+            return null;
+        }
+
+        LocalDateTime lastVotedAt;
+        if (type.equals("0")) {
+            lastVotedAt = voteResult.get(voteResult.size() - 1).votedAt();
+        } else {
+            lastVotedAt = voteResult.get(0).votedAt();
+        }
+
+        return lastVotedAt.toLocalDate();
     }
 
     private Vote createVote(Member member, Feed feed, VoteType voteType, LocalDateTime votedAt) {
