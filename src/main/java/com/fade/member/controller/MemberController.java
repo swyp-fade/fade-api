@@ -1,7 +1,7 @@
 package com.fade.member.controller;
 
-import com.fade.feed.dto.response.CreateFeedResponse;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
@@ -14,7 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,5 +38,20 @@ public class MemberController {
             @AuthenticationPrincipal UserVo userVo
     ) {
         return this.memberService.findMemberDetail(userVo.getId());
+    }
+
+    @PutMapping("/me")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204"
+            )
+    )
+    public void modifyUser(
+            @RequestBody ModifyMemberRequest modifyMemberRequest,
+            @AuthenticationPrincipal UserVo userVo
+    ) {
+        this.memberService.modifyMember(userVo.getId(), modifyMemberRequest);
     }
 }

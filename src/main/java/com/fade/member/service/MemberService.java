@@ -3,6 +3,7 @@ package com.fade.member.service;
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.GenderType;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.vo.MemberJwtClaim;
 import com.fade.member.entity.Member;
@@ -74,5 +75,18 @@ public class MemberService {
                 member.getGenderType(),
                 member.getUsername()
         );
+    }
+
+    @Transactional
+    public Long modifyMember(Long memberId, ModifyMemberRequest modifyMemberRequest) {
+        final var member = this.memberCommonService.findById(memberId);
+
+        if (modifyMemberRequest.username() != null) {
+            member.modifyUsername(modifyMemberRequest.username());
+        }
+
+        this.memberRepository.save(member);
+
+        return member.getId();
     }
 }
