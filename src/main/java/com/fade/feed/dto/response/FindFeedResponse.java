@@ -10,6 +10,7 @@ public record FindFeedResponse(
 ) {
     public record FindFeedItemResponse(
             Long id,
+            String imageUrl,
             List<FindFeedStyleResponse> styles,
             List<FindFeedOutfitResponse> feedOutfitList,
             Long memberId

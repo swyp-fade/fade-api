@@ -67,6 +67,11 @@ public class FeedService {
         return new FindFeedResponse(
                 feeds.stream().map((feed) -> new FindFeedResponse.FindFeedItemResponse(
                         feed.getId(),
+                        this.attachmentService.getUrl(
+                                feed.getId(),
+                                AttachmentLinkableType.FEED,
+                                AttachmentLinkType.IMAGE
+                        ),
                         feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(
                                 style.getId(),
                                 style.getName()
