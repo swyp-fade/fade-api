@@ -2,10 +2,12 @@ package com.fade.feed.service;
 
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
-import com.fade.attachment.constant.AttachmentType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.category.service.CategoryCommonService;
 import com.fade.feed.dto.request.CreateFeedRequest;
+import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.FeedOutfit;
 import com.fade.feed.repository.FeedRepository;
@@ -57,5 +59,30 @@ public class FeedService {
         );
 
         return feed.getId();
+    }
+
+    public FindFeedResponse findFeeds(FindFeedRequest findFeedRequest) {
+        final var feeds = this.feedRepository.findFeeds(findFeedRequest);
+
+        return new FindFeedResponse(
+                feeds.stream().map((feed) -> new FindFeedResponse.FindFeedItemResponse(
+                        feed.getId(),
+                        feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(
+                                style.getId(),
+                                style.getName()
+                        )).toList(),
+                        feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
+                                feedOutfit.getId(),
+                                feedOutfit.getBrandName(),
+                                feedOutfit.getProductName(),
+                                new FindCategoryListResponse.FindCategoryItemResponse(
+                                        feedOutfit.getCategory().getId(),
+                                        feedOutfit.getCategory().getName()
+                                )
+                        )).toList(),
+                        feed.getMember().getId()
+                )).toList(),
+                !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
+        );
     }
 }
