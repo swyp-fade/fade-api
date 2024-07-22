@@ -20,6 +20,7 @@ public class VoteScheduler {
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
     private final DailyPopularFeedRepository dailyPopularFeedRepository;
+
     @Scheduled(cron = "0 0 0 * * ?")
     public void createDailyPopularFeed() {
         FindDailyPopularFeedDto dailyPopularFeedDto = voteRepository.findDailyPopularFeed();
