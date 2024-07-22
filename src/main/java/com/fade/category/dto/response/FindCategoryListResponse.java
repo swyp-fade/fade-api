@@ -10,9 +10,9 @@ public record FindCategoryListResponse(
 
     public record FindCategoryItemResponse(
             @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-            String name,
+            Integer code,
             @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-            String code
+            String name
     ) {
 
     }

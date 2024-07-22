@@ -14,6 +14,7 @@ import com.fade.global.component.PresignUrlGenerator;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.exception.ApplicationException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,11 @@ public class AttachmentService {
     private final AttachmentCommonService attachmentCommonService;
     private final FileUtils fileUtils;
     private final PresignUrlGenerator presignUrlGenerator;
+
+    @Value("${aws.region}")
+    private String region;
+    @Value("${aws.s3.bucketName}")
+    private String bucket;
 
     @Transactional
     public GeneratePresignURLResponse genereatePresignUrl(
@@ -85,5 +91,23 @@ public class AttachmentService {
         this.attachmentLinkRepository.save(attachmentLink);
 
         return attachmentLink.getId();
+    }
+
+    public String getUrl(
+            Long linkableId,
+            AttachmentLinkableType attachmentLinkableType,
+            AttachmentLinkType attachmentLinkType
+    ) {
+        final var attachmentLink =  this.attachmentLinkRepository.findByLinkableIdAndTypeAndAttachmentLinkableType(
+                linkableId,
+                attachmentLinkableType,
+                attachmentLinkType
+        ).orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_ATTACHMENT));
+
+        return this.getRootUrl() + "/" + attachmentLink.getAttachment().getPath() + '/' + attachmentLink.getAttachment().getFilename();
+    }
+
+    private String getRootUrl() {
+        return "https://" + this.bucket + ".s3" + this.region + ".amazonaws.com/attachments";
     }
 }
