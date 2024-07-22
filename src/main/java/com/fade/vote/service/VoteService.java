@@ -5,14 +5,18 @@ import com.fade.feed.service.FeedCommonService;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.vote.constant.VoteType;
+import com.fade.vote.dto.FindDailyPopularFeedDto;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
+import com.fade.vote.entity.DailyPopularFeed;
 import com.fade.vote.entity.Vote;
 import com.fade.vote.exception.DuplicateVoteException;
+import com.fade.vote.repository.DailyPopularFeedRepository;
 import com.fade.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +34,7 @@ public class VoteService {
     private final MemberCommonService memberCommonService;
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
+    private final DailyPopularFeedRepository dailyPopularFeedRepository;
 
     @Transactional
     public List<CreateVoteItemResponse> createVote(Long memberId, List<CreateVoteItemRequest> createVoteItemsRequest) {
@@ -134,5 +139,18 @@ public class VoteService {
                 .voteType(voteType)
                 .votedAt(votedAt)
                 .build();
+    }
+
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void createDailyPopularFeed() {
+        FindDailyPopularFeedDto dailyPopularFeedDto = voteRepository.findDailyPopularFeed();
+        Feed feed = feedCommonService.findById(dailyPopularFeedDto.feedId());
+        Member member = memberCommonService.findById(dailyPopularFeedDto.memberId());
+
+        DailyPopularFeed dailyPopularFeed = DailyPopularFeed.builder()
+                .feed(feed)
+                .member(member)
+                .build();
+        dailyPopularFeedRepository.save(dailyPopularFeed);
     }
 }
