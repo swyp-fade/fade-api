@@ -4,7 +4,9 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.global.component.JwtTokenProvider;
+import com.fade.global.constant.ErrorCode;
 import com.fade.global.constant.GenderType;
+import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
@@ -74,10 +76,24 @@ public class MemberService {
     public FindMemberDetailResponse findMemberDetail(Long memberId) {
         final var member = this.memberCommonService.findById(memberId);
 
+        String profileImageUrl = null;
+        try {
+            profileImageUrl = this.attachmentService.getUrl(
+                    member.getId(),
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        } catch (ApplicationException e) {
+            if (!e.getErrorCode().equals(ErrorCode.NOT_FOUND_ATTACHMENT)) {
+                throw e;
+            }
+        }
+
         return new FindMemberDetailResponse(
                 member.getId(),
                 member.getGenderType(),
-                member.getUsername()
+                member.getUsername(),
+                profileImageUrl
         );
     }
 
