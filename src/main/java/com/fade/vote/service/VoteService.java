@@ -8,7 +8,6 @@ import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
-import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
 import com.fade.vote.entity.Vote;
 import com.fade.vote.exception.DuplicateVoteException;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
