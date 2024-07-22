@@ -2,13 +2,14 @@ package com.fade.vote.service;
 
 import com.fade.feed.entity.Feed;
 import com.fade.feed.service.FeedCommonService;
-import com.fade.global.constant.ErrorCode;
-import com.fade.global.exception.ApplicationException;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
+import com.fade.vote.dto.response.FindVoteResponse;
+import com.fade.vote.dto.response.FindVoteResponse;
+import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
 import com.fade.vote.entity.Vote;
 import com.fade.vote.exception.DuplicateVoteException;
 import com.fade.vote.repository.VoteRepository;
@@ -16,8 +17,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -52,6 +57,76 @@ public class VoteService {
         return voteItems.stream()
                 .map(vote -> new CreateVoteItemResponse(vote.getId()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public FindVoteResponse findVotes(Long memberId, LocalDate nextCursor, int limit, String scrollType) {
+        Member member = memberCommonService.findById(memberId);
+
+        LocalDateTime startDate;
+        LocalDateTime endDate;
+        String direction;
+
+        switch (scrollType) {
+            case "0":
+                startDate = nextCursor.minusDays(limit).atStartOfDay();
+                endDate = nextCursor.atTime(LocalTime.MAX);
+                direction = "down";
+                break;
+            case "1":
+                startDate = nextCursor.atStartOfDay();
+                endDate = nextCursor.plusDays(limit).atTime(LocalTime.MAX);
+                direction = "up";
+                break;
+            case "2":
+                startDate = nextCursor.minusDays(limit).atStartOfDay();
+                endDate = nextCursor.plusDays(limit).atTime(LocalTime.MAX);
+                direction = "bothSide";
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid type value: " + scrollType);
+        }
+        List<FindVoteItemResponse> voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
+
+
+        //TODO:: 마지막 커서 조회 = 최초 호출 시 값을 저장해 놓고 사용하는 방법 찾기
+        Optional<Vote> latestVote = voteRepository.findLatestVoteByMember(member.getId());
+        Optional<Vote> oldestVote = voteRepository.findOldestVoteByMember(member.getId());
+
+        return new FindVoteResponse(
+                voteItems,
+                findCursorToUpScroll(voteItems),
+                findCursorToDownScroll(voteItems),
+                direction,
+                isLastCursorToUpScroll(latestVote, nextCursor, limit),
+                isLastCursorToDownScroll(oldestVote, nextCursor, limit));
+    }
+
+    private LocalDate findCursorToUpScroll(List<FindVoteItemResponse> voteItems) {
+        if (voteItems.isEmpty()) {
+            return null;
+        }
+        LocalDateTime lastVotedAt = voteItems.get(0).votedAt();
+
+        return lastVotedAt.toLocalDate();
+    }
+
+    private LocalDate findCursorToDownScroll(List<FindVoteItemResponse> voteItems) {
+        if (voteItems.isEmpty()) {
+            return null;
+        }
+        LocalDateTime lastVotedAt = voteItems.get(voteItems.size() - 1).votedAt();
+        return lastVotedAt.toLocalDate();
+    }
+
+    private boolean isLastCursorToUpScroll(Optional<Vote> latestVote, LocalDate nextCursor, int limit) {
+        return latestVote.map(
+                vote -> vote.getVotedAt().toLocalDate().isBefore(nextCursor.plusDays(limit))).orElse(true);
+    }
+
+    private boolean isLastCursorToDownScroll(Optional<Vote> oldestVote, LocalDate nextCursor, int limit) {
+        return oldestVote.map(
+                vote -> vote.getVotedAt().toLocalDate().isAfter(nextCursor.minusDays(limit))).orElse(true);
     }
 
     private Vote createVote(Member member, Feed feed, VoteType voteType, LocalDateTime votedAt) {
