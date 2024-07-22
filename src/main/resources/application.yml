@@ -40,3 +40,6 @@ aws:
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}
+
+cors:
+  allow-origin-hosts: https://fade-frontend-for-deploy.vercel.app, https://api.fadeapp.site, https://localhost:5173, https://fade.swygbro.com
