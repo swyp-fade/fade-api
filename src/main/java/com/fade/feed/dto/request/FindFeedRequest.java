@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
 public record FindFeedRequest(
-            @NotNull
             @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
             Long memberId,
             @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, defaultValue = "10")

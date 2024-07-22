@@ -5,9 +5,11 @@ import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.QFeed;
 import com.fade.feed.repository.CustomFeedRepository;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class FeedRepositoryImpl extends QuerydslRepositorySupport implements CustomFeedRepository {
     public FeedRepositoryImpl() {
         super(Feed.class);
@@ -27,6 +29,7 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
         }
 
         query.limit(findFeedRequest.limit());
+        query.orderBy(feedQ.id.desc());
 
         return query.fetch();
     }

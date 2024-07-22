@@ -42,4 +42,8 @@ public class Member {
         this.username = username;
         this.genderType = genderType;
     }
+
+    public void modifyUsername(String username) {
+        this.username = username;
+    }
 }

@@ -1,11 +1,9 @@
-package com.fade.feed.controller;
+package com.fade.member.controller;
 
-import com.fade.feed.dto.request.CreateFeedRequest;
-import com.fade.feed.dto.request.FindFeedRequest;
-import com.fade.feed.dto.response.CreateFeedResponse;
-import com.fade.feed.dto.response.FindFeedResponse;
-import com.fade.feed.service.FeedService;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.dto.request.ModifyMemberRequest;
+import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,49 +17,47 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController()
-@RequestMapping("feeds")
-@Tags({
-        @Tag(name = "Feed API")
-})
+@RestController
 @RequiredArgsConstructor
-public class FeedController {
-    private final FeedService feedService;
+@Tags({
+        @Tag(name = "Member API")
+})
+@RequestMapping("members")
+public class MemberController {
+    private final MemberService memberService;
 
-    @PostMapping("")
+    @GetMapping("/me")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
             @ApiResponse(
-                responseCode = "200",
-                content = @Content(schema = @Schema(implementation = CreateFeedResponse.class))
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindMemberDetailResponse.class))
             )
     )
-    public CreateFeedResponse createFeed(
-            @RequestBody @Valid CreateFeedRequest createFeedRequest,
+    public FindMemberDetailResponse findMyMemberDetail(
             @AuthenticationPrincipal UserVo userVo
     ) {
-        return new CreateFeedResponse(
-                feedService.createFeed(userVo.getId(), createFeedRequest)
-        );
+        return this.memberService.findMemberDetail(userVo.getId());
     }
 
-    @GetMapping("")
+    @PutMapping("/me")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
-    @ApiResponse(
-            responseCode = "200",
-            content = @Content(schema = @Schema(implementation = FindFeedResponse.class))
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204"
+            )
     )
-    public FindFeedResponse findFeeds(
-            @Valid
-            FindFeedRequest findFeedRequest
+    public void modifyUser(
+            @RequestBody @Valid ModifyMemberRequest modifyMemberRequest,
+            @AuthenticationPrincipal UserVo userVo
     ) {
-        return feedService.findFeeds(findFeedRequest);
+        this.memberService.modifyMember(userVo.getId(), modifyMemberRequest);
     }
 }

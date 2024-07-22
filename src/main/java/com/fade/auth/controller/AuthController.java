@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ public class AuthController {
     public SigninResponse signin(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
+            @Valid
             SigninByCodeRequest signinByCodeRequest
     ) {
         return this.socialLoginService.signinByCode(
@@ -56,6 +58,7 @@ public class AuthController {
     public SigninResponse signup(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
+            @Valid
             SignupByCodeRequest signupByCodeRequest
     ) {
         return this.socialLoginService.signupByCode(
@@ -72,6 +75,7 @@ public class AuthController {
     })
     public CreateAccessTokenByRefreshTokenResponse generateAccessToken(
             @RequestBody
+            @Valid
             CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
     ) {
         return new CreateAccessTokenByRefreshTokenResponse(
@@ -87,6 +91,7 @@ public class AuthController {
     })
     public SigninResponse generateRefreshToken(
             @RequestBody
+            @Valid
             CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
     ) {
         return this.authService.generateRefreshToken(createAccessTokenByRefreshTokenRequest.refreshToken());

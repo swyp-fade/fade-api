@@ -1,8 +1,10 @@
 package com.fade.sociallogin.dto.request;
 
 import com.fade.global.constant.GenderType;
+import com.fade.member.constant.MemberRegexp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 public record SignupByCodeRequest(
@@ -13,10 +15,12 @@ public record SignupByCodeRequest(
         @Schema(
                 requiredMode = Schema.RequiredMode.REQUIRED,
                 description = "유저id",
-                minLength = 3,
-                maxLength = 30
+                minLength = 4,
+                maxLength = 15,
+                pattern = MemberRegexp.USERNAME_REGEXP
         )
-        @Length(min = 3, max = 30)
+        @Pattern(regexp = MemberRegexp.USERNAME_REGEXP)
+        @Length(min = 4, max = 15)
         String username,
         @NotNull
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED, description = "성별")
