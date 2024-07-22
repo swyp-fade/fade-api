@@ -108,7 +108,7 @@ public class VoteService {
     }
 
     @Transactional(readOnly = true)
-    public List<FindDailyPopularFeedArchivingResponse> findDailyFeedArchiving(LocalDate selectedDate) {
+    public List<FindDailyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(LocalDate selectedDate) {
         LocalDateTime startOfDate = selectedDate.withDayOfMonth(1).atStartOfDay();
         LocalDateTime endOfDate = selectedDate.withDayOfMonth(selectedDate.lengthOfMonth()).atTime(LocalTime.MAX);
 

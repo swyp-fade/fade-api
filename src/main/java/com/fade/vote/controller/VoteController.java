@@ -68,7 +68,7 @@ public class VoteController {
                     content = @Content(schema = @Schema(implementation = FindDailyPopularFeedArchivingResponse.class))
             )
     )
-    public List<FindDailyPopularFeedArchivingResponse> findDailyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
-        return voteService.findDailyFeedArchiving(selectDate);
+    public List<FindDailyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
+        return voteService.findMonthlyPopularFeedArchiving(selectDate);
     }
 }
