@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public enum ErrorCode {
+    //COMMON
+    INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR"),
 
     //TOKEN
     TOKEN_SIGNATURE_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
@@ -27,6 +29,8 @@ public enum ErrorCode {
 
     //SOCIAL LOGIN
     NOT_MATCH_SOCIAL_MEMBER(HttpStatus.UNAUTHORIZED, ""),
+    NOT_MATCH_OAUTH_CODE(HttpStatus.UNAUTHORIZED, "인증 code가 존재하지 않습니다."),
+    NOT_ALLOW_OAUTH_REDIRECT_URI(HttpStatus.BAD_REQUEST, "승인되지 않은 redirectURI입니다."),
 
     //ATTACHMENT
     ALREADY_EXISTS_ATTACHMENT(HttpStatus.CONFLICT, "이미 동일한 이미지로 업로드된 파일이 존재합니다."),

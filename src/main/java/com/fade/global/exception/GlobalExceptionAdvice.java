@@ -1,7 +1,9 @@
 package com.fade.global.exception;
 
+import com.fade.global.constant.ErrorCode;
 import com.fade.global.dto.response.Response;
 import com.fade.vote.exception.DuplicateVoteException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,10 +15,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Collections;
 import java.util.Map;
 
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
 
     @Override
@@ -36,6 +40,22 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
                 Map.of(
                         "errorCode", e.getErrorCode().name(),
                         "data", e.getData()
+                )
+        );
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Response<?> handleException(Exception e) {
+        this.logger.error(e.getMessage(), e);
+
+        final ErrorCode errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
+
+        return Response.error(
+                errorCode.getHttpStatus().value(),
+                e.getMessage(),
+                Map.of(
+                        "errorCode", errorCode.name(),
+                        "data", Collections.emptyMap()
                 )
         );
     }
