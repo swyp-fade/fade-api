@@ -59,7 +59,7 @@ public class VoteService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public FindVoteResponse findVotes(Long memberId, LocalDate nextCursor, int limit, String scrollType) {
         Member member = memberCommonService.findById(memberId);
 
