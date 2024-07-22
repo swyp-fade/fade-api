@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DailyPopularFeed {
+public class DailyPopularFeedArchiving {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -30,7 +30,7 @@ public class DailyPopularFeed {
     private Feed feed;
 
     @Builder
-    public DailyPopularFeed(Member member, Feed feed) {
+    public DailyPopularFeedArchiving(Member member, Feed feed) {
         this.member = member;
         this.feed = feed;
     }

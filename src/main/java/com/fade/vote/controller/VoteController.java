@@ -4,6 +4,7 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
+import com.fade.vote.dto.response.FindDailyPopularFeedArchivingResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.service.VoteService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +22,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -54,7 +56,19 @@ public class VoteController {
                     content = @Content(schema = @Schema(implementation = FindVoteResponse.class))
             )
     )
-    public FindVoteResponse getVoteResult(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
+    public FindVoteResponse findVotes(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
         return voteService.findVotes(userVo.getId(), nextCursor, limit, scrollType);
+    }
+
+    @GetMapping("/archiving")
+    @SecurityRequirement(name = "access-token")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindDailyPopularFeedArchivingResponse.class))
+            )
+    )
+    public List<FindDailyPopularFeedArchivingResponse> findDailyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
+        return voteService.findDailyFeedArchiving(selectDate);
     }
 }
