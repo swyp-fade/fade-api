@@ -34,7 +34,6 @@ public class VoteService {
     private final MemberCommonService memberCommonService;
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
-    private final DailyPopularFeedRepository dailyPopularFeedRepository;
 
     @Transactional
     public List<CreateVoteItemResponse> createVote(Long memberId, List<CreateVoteItemRequest> createVoteItemsRequest) {
@@ -139,18 +138,5 @@ public class VoteService {
                 .voteType(voteType)
                 .votedAt(votedAt)
                 .build();
-    }
-
-    @Scheduled(cron = "0 0 0 * * ?")
-    public void createDailyPopularFeed() {
-        FindDailyPopularFeedDto dailyPopularFeedDto = voteRepository.findDailyPopularFeed();
-        Feed feed = feedCommonService.findById(dailyPopularFeedDto.feedId());
-        Member member = memberCommonService.findById(dailyPopularFeedDto.memberId());
-
-        DailyPopularFeed dailyPopularFeed = DailyPopularFeed.builder()
-                .feed(feed)
-                .member(member)
-                .build();
-        dailyPopularFeedRepository.save(dailyPopularFeed);
     }
 }

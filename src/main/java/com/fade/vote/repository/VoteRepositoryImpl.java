@@ -73,6 +73,7 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
         return jpaQueryFactory.select(Projections.constructor(FindDailyPopularFeedDto.class,
                         vote.feed.id,
                         vote.feed.member.id))
+                .from(vote)
                 .where(vote.voteType.eq(VoteType.FADE_IN)
                         .and(vote.votedAt.between(startOfDay, endOfDay)))
                 .groupBy(vote.feed.id)
