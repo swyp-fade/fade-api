@@ -1,5 +1,7 @@
 package com.fade.vote.controller;
 
+import com.fade.member.constant.MemberRole;
+import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
@@ -14,6 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,25 +34,27 @@ public class VoteController {
 
     @PostMapping("")
     @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
                     content = @Content(schema = @Schema(implementation = CreateVoteResponse.class))
             )
     )
-    public CreateVoteResponse vote(@Valid @RequestBody CreateVoteRequest voteRequest) {
-        return new CreateVoteResponse(voteService.createVote(1L, voteRequest.voteItems()));
+    public CreateVoteResponse vote(@AuthenticationPrincipal UserVo userVo, @Valid @RequestBody CreateVoteRequest voteRequest) {
+        return new CreateVoteResponse(voteService.createVote(userVo.getId(), voteRequest.voteItems()));
     }
 
     @GetMapping("")
     @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
                     content = @Content(schema = @Schema(implementation = FindVoteResponse.class))
             )
     )
-    public FindVoteResponse getVoteResult(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
-        return voteService.findVotes(1L, nextCursor, limit, scrollType);
+    public FindVoteResponse getVoteResult(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
+        return voteService.findVotes(userVo.getId(), nextCursor, limit, scrollType);
     }
 }
