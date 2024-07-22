@@ -1,17 +1,21 @@
 package com.fade.global.component.impl;
 
 import com.fade.global.component.OAuth2Provider;
+import com.fade.global.constant.ErrorCode;
 import com.fade.global.dto.OAuthProfile;
+import com.fade.global.exception.ApplicationException;
 import com.fade.sociallogin.constant.SocialType;
-import lombok.Data;
-import lombok.Getter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -19,8 +23,10 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class KakaoOAuth2Provider implements OAuth2Provider {
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
 
     @Value("${kakao.oauth.client-id}")
     private String clientId;
@@ -46,14 +52,18 @@ public class KakaoOAuth2Provider implements OAuth2Provider {
 
         final var httpEntity = new HttpEntity<>(requestBody, headers);
 
-        final var response = this.restTemplate.exchange(
-                this.tokenUrl,
-                HttpMethod.POST,
-                httpEntity,
-                Map.class
-        );
+        try {
+            final var response = this.restTemplate.exchange(
+                    this.tokenUrl,
+                    HttpMethod.POST,
+                    httpEntity,
+                    Map.class
+            );
 
-        return Objects.requireNonNull((String) Objects.requireNonNull(response.getBody()).get("access_token"));
+            return Objects.requireNonNull((String) Objects.requireNonNull(response.getBody()).get("access_token"));
+        } catch (HttpClientErrorException exception) {
+            throw this.kakaoExceptionConverter(exception);
+        }
     }
 
     @Override
@@ -64,17 +74,48 @@ public class KakaoOAuth2Provider implements OAuth2Provider {
 
         final var httpEntity = new HttpEntity<>(headers);
 
-        final var response = this.restTemplate.exchange(
-                this.profileUrl,
-                HttpMethod.POST,
-                httpEntity,
-                Map.class
-        );
+        try {
+            final var response = this.restTemplate.exchange(
+                    this.profileUrl,
+                    HttpMethod.POST,
+                    httpEntity,
+                    Map.class
+            );
 
-        return new OAuthProfile(
-            Objects.requireNonNull(response.getBody()).get("id") + "",
-            response.getBody(),
-            SocialType.KAKAO
-        );
+            return new OAuthProfile(
+                    Objects.requireNonNull(response.getBody()).get("id") + "",
+                    response.getBody(),
+                    SocialType.KAKAO
+            );
+        } catch (HttpClientErrorException exception) {
+            throw this.kakaoExceptionConverter(exception);
+        }
+    }
+
+    /**
+     * TODO: AOP로 전환 가능
+     */
+    private RuntimeException kakaoExceptionConverter(HttpClientErrorException exception) {
+        try {
+            final var error = this.objectMapper.readValue(exception.getResponseBodyAsString(), Map.class);
+            final var errorCode = error.get("error_code");
+
+            if (!Objects.isNull(errorCode)) {
+                if (errorCode.equals("KOE320")) {
+                    return new ApplicationException(ErrorCode.NOT_MATCH_OAUTH_CODE);
+                }
+                if (errorCode.equals("KOE006")) {
+                    return new ApplicationException(ErrorCode.NOT_ALLOW_OAUTH_REDIRECT_URI);
+                }
+            }
+
+            log.error(exception.getMessage(), exception);
+
+            return new ApplicationException(ErrorCode.INTERNAL_SERVER_ERROR);
+        } catch (JsonProcessingException e) {
+            log.error(exception.getMessage(), exception);
+
+            return new RuntimeException(e);
+        }
     }
 }
