@@ -7,7 +7,12 @@ import jakarta.validation.constraints.Pattern;
 
 public record ModifyMemberRequest(
         @Nullable
-        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED, pattern = MemberRegexp.USERNAME_REGEXP)
+        @Schema(
+                requiredMode = Schema.RequiredMode.NOT_REQUIRED,
+                pattern = MemberRegexp.USERNAME_REGEXP,
+                minLength = 4,
+                maxLength = 15
+        )
         @Pattern(regexp = MemberRegexp.USERNAME_REGEXP)
         String username,
         @Nullable
