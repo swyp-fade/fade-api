@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface AttachmentLinkRepository extends JpaRepository<AttachmentLink, Long> {
-    Optional<AttachmentLink> findByLinkableIdAndTypeAndAttachmentLinkableType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
-    Boolean existsByLinkableIdAndTypeAndAttachmentLinkableType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
-    void deleteByLinkableIdAndTypeAndAttachmentLinkableType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
+    Optional<AttachmentLink> findByLinkableIdAndAttachmentLinkableTypeAndType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
+    Boolean existsByLinkableIdAndAttachmentLinkableTypeAndType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
+    void deleteByLinkableIdAndAttachmentLinkableTypeAndType(Long linkableId, AttachmentLinkableType attachmentLinkableType, AttachmentLinkType type);
 }

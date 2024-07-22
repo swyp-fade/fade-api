@@ -44,9 +44,12 @@ public class AttachmentService {
             }
         }
 
+        final var filename = this.fileUtils.getRandomFilename();
+        final var path = this.fileUtils.generateFilepath();
+
         final var attachment = new Attachment(
-                this.fileUtils.generateFilepath(),
-                this.fileUtils.getRandomFilename(),
+                path,
+                filename,
                 null,
                 uploaderMemberId,
                 AttachmentStatus.UPLOAD_WAIT,
@@ -57,8 +60,7 @@ public class AttachmentService {
         this.attachmentRepository.save(attachment);
 
         final var presignUrl = this.presignUrlGenerator.getPreSignedUrl(
-                this.fileUtils.generateFilepath() + "/" +
-                this.fileUtils.getRandomFilename()
+                path + "/" + filename
         );
 
         return new GeneratePresignURLResponse(
@@ -98,7 +100,7 @@ public class AttachmentService {
             AttachmentLinkableType attachmentLinkableType,
             AttachmentLinkType attachmentLinkType
     ) {
-        final var attachmentLink =  this.attachmentLinkRepository.findByLinkableIdAndTypeAndAttachmentLinkableType(
+        final var attachmentLink =  this.attachmentLinkRepository.findByLinkableIdAndAttachmentLinkableTypeAndType(
                 linkableId,
                 attachmentLinkableType,
                 attachmentLinkType
@@ -112,7 +114,7 @@ public class AttachmentService {
             AttachmentLinkableType attachmentLinkableType,
             AttachmentLinkType attachmentLinkType
     ) {
-        return this.attachmentLinkRepository.existsByLinkableIdAndTypeAndAttachmentLinkableType(
+        return this.attachmentLinkRepository.existsByLinkableIdAndAttachmentLinkableTypeAndType(
                 linkableId,
                 attachmentLinkableType,
                 attachmentLinkType
@@ -124,7 +126,7 @@ public class AttachmentService {
             AttachmentLinkableType attachmentLinkableType,
             AttachmentLinkType attachmentLinkType
     ) {
-        this.attachmentLinkRepository.deleteByLinkableIdAndTypeAndAttachmentLinkableType(
+        this.attachmentLinkRepository.deleteByLinkableIdAndAttachmentLinkableTypeAndType(
                 linkableId,
                 attachmentLinkableType,
                 attachmentLinkType
@@ -132,6 +134,6 @@ public class AttachmentService {
     }
 
     private String getRootUrl() {
-        return "https://" + this.bucket + ".s3" + this.region + ".amazonaws.com/attachments";
+        return "https://" + this.bucket + ".s3." + this.region + ".amazonaws.com/attachments";
     }
 }
