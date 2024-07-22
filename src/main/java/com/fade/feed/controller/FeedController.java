@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,7 +43,7 @@ public class FeedController {
             )
     )
     public CreateFeedResponse createFeed(
-            @RequestBody CreateFeedRequest createFeedRequest,
+            @RequestBody @Valid CreateFeedRequest createFeedRequest,
             @AuthenticationPrincipal UserVo userVo
     ) {
         return new CreateFeedResponse(
@@ -58,6 +59,7 @@ public class FeedController {
             content = @Content(schema = @Schema(implementation = FindFeedResponse.class))
     )
     public FindFeedResponse findFeeds(
+            @Valid
             FindFeedRequest findFeedRequest
     ) {
         return feedService.findFeeds(findFeedRequest);

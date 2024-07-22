@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -54,7 +55,7 @@ public class MemberController {
             )
     )
     public void modifyUser(
-            @RequestBody ModifyMemberRequest modifyMemberRequest,
+            @RequestBody @Valid ModifyMemberRequest modifyMemberRequest,
             @AuthenticationPrincipal UserVo userVo
     ) {
         this.memberService.modifyMember(userVo.getId(), modifyMemberRequest);

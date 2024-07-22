@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,7 +45,7 @@ public class AttachmentController {
             )
     })
     public GeneratePresignURLResponse generatePresignURL(
-            @RequestBody() GeneratePresignURLRequest generatePresignURLRequest,
+            @RequestBody() @Valid GeneratePresignURLRequest generatePresignURLRequest,
             @AuthenticationPrincipal UserVo userVo
     ) {
         return this.attachmentService.generatePresignUrl(
@@ -65,6 +66,7 @@ public class AttachmentController {
             )
     })
     public ExistsAttachmentResponse existsAttachment(
+            @Valid
             ExistsAttachmentRequest existsAttachmentRequest
     ) {
         final var exists = this.attachmentService.existsAttachmentByChecksum(existsAttachmentRequest.checksum());
