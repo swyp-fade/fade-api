@@ -34,7 +34,7 @@ public class AttachmentService {
     private String bucket;
 
     @Transactional
-    public GeneratePresignURLResponse genereatePresignUrl(
+    public GeneratePresignURLResponse generatePresignUrl(
             Long uploaderMemberId,
             String checksum
     ) {
