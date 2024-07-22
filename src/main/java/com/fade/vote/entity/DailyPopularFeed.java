@@ -19,7 +19,7 @@ public class DailyPopularFeed {
     private long id;
 
     @Column(name = "archived_at")
-    private LocalDateTime archivedAt = LocalDateTime.now();
+    private LocalDateTime archivedAt = LocalDateTime.now().minusDays(1);
 
     @ManyToOne
     @JoinColumn(name = "member_id")
