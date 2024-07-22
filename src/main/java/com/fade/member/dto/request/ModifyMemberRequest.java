@@ -6,7 +6,10 @@ import jakarta.annotation.Nullable;
 public record ModifyMemberRequest(
         @Nullable
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        String username
+        String username,
+        @Nullable
+        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        Long profileImageAttachmentId
 ) {
 
 }

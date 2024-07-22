@@ -107,6 +107,30 @@ public class AttachmentService {
         return this.getRootUrl() + "/" + attachmentLink.getAttachment().getPath() + '/' + attachmentLink.getAttachment().getFilename();
     }
 
+    public boolean existsLinkable(
+            Long linkableId,
+            AttachmentLinkableType attachmentLinkableType,
+            AttachmentLinkType attachmentLinkType
+    ) {
+        return this.attachmentLinkRepository.existsByLinkableIdAndTypeAndAttachmentLinkableType(
+                linkableId,
+                attachmentLinkableType,
+                attachmentLinkType
+        );
+    }
+
+    public void unLink(
+            Long linkableId,
+            AttachmentLinkableType attachmentLinkableType,
+            AttachmentLinkType attachmentLinkType
+    ) {
+        this.attachmentLinkRepository.deleteByLinkableIdAndTypeAndAttachmentLinkableType(
+                linkableId,
+                attachmentLinkableType,
+                attachmentLinkType
+        );
+    }
+
     private String getRootUrl() {
         return "https://" + this.bucket + ".s3" + this.region + ".amazonaws.com/attachments";
     }

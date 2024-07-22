@@ -1,5 +1,8 @@
 package com.fade.member.service;
 
+import com.fade.attachment.constant.AttachmentLinkType;
+import com.fade.attachment.constant.AttachmentLinkableType;
+import com.fade.attachment.service.AttachmentService;
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.GenderType;
 import com.fade.member.constant.MemberRole;
@@ -28,6 +31,7 @@ public class MemberService {
     private final MemberCommonService memberCommonService;
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final AttachmentService attachmentService;
 
     @Transactional
     public Long signup(
@@ -83,6 +87,27 @@ public class MemberService {
 
         if (modifyMemberRequest.username() != null) {
             member.modifyUsername(modifyMemberRequest.username());
+        }
+
+        if (modifyMemberRequest.profileImageAttachmentId() != null) {
+            if (this.attachmentService.existsLinkable(
+                    member.getId(),
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            )) {
+                this.attachmentService.unLink(
+                        member.getId(),
+                        AttachmentLinkableType.USER,
+                        AttachmentLinkType.PROFILE
+                );
+            }
+
+            this.attachmentService.linkAttachment(
+                    modifyMemberRequest.profileImageAttachmentId(),
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE,
+                    member.getId()
+            );
         }
 
         this.memberRepository.save(member);
