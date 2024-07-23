@@ -33,4 +33,22 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
 
         return query.fetch();
     }
+
+    @Override
+    public List<Feed> findFeedsByMemberIds(List<Long> memberIds, Long nextCursor, int limit) {
+        final var feedQ = QFeed.feed;
+        final var query = super.from(feedQ);
+
+        if (nextCursor != null) {
+            query.where(feedQ.id.lt(nextCursor)
+                    .and(feedQ.member.id.in(memberIds)));
+        } else {
+            query.where(feedQ.member.id.in(memberIds));
+        }
+
+        return query
+                .orderBy(feedQ.id.desc())
+                .limit(limit)
+                .fetch();
+    }
 }
