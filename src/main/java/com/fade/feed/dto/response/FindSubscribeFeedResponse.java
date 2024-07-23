@@ -1,4 +1,4 @@
-package com.fade.subscribe.dto.response;
+package com.fade.feed.dto.response;
 
 import com.fade.category.dto.response.FindCategoryListResponse;
 
