@@ -4,7 +4,7 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
-import com.fade.vote.dto.response.FindDailyPopularFeedArchivingResponse;
+import com.fade.vote.dto.response.FindMonthlyPopularFeedArchivingResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.service.VoteService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,10 +65,10 @@ public class VoteController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = FindDailyPopularFeedArchivingResponse.class))
+                    content = @Content(schema = @Schema(implementation = FindMonthlyPopularFeedArchivingResponse.class))
             )
     )
-    public List<FindDailyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
+    public List<FindMonthlyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
         return voteService.findMonthlyPopularFeedArchiving(selectDate);
     }
 }

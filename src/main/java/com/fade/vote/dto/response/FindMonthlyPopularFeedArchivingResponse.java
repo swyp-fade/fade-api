@@ -1,6 +1,6 @@
 package com.fade.vote.dto.response;
 
-public record FindDailyPopularFeedArchivingResponse(
+public record FindMonthlyPopularFeedArchivingResponse(
         Long feedId,
         Long memberId,
         String imageUrl
