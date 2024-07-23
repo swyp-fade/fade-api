@@ -1,5 +1,8 @@
 package com.fade.vote.service;
 
+import com.fade.attachment.constant.AttachmentLinkType;
+import com.fade.attachment.constant.AttachmentLinkableType;
+import com.fade.attachment.service.AttachmentService;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.service.FeedCommonService;
 import com.fade.member.entity.Member;
@@ -7,10 +10,12 @@ import com.fade.member.service.MemberCommonService;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
+import com.fade.vote.dto.response.FindMonthlyPopularFeedArchivingResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
 import com.fade.vote.entity.Vote;
 import com.fade.vote.exception.DuplicateVoteException;
+import com.fade.vote.repository.DailyPopularFeedArchivingRepository;
 import com.fade.vote.repository.VoteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,6 +35,8 @@ public class VoteService {
     private final MemberCommonService memberCommonService;
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
+    private final DailyPopularFeedArchivingRepository dailyPopularFeedArchivingRepository;
+    private final AttachmentService attachmentService;
 
     @Transactional
     public List<CreateVoteItemResponse> createVote(Long memberId, List<CreateVoteItemRequest> createVoteItemsRequest) {
@@ -98,6 +105,25 @@ public class VoteService {
                 direction,
                 isLastCursorToUpScroll(latestVote, nextCursor, limit),
                 isLastCursorToDownScroll(oldestVote, nextCursor, limit));
+    }
+
+    @Transactional(readOnly = true)
+    public List<FindMonthlyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(LocalDate selectedDate) {
+        LocalDateTime startOfDate = selectedDate.withDayOfMonth(1).atStartOfDay();
+        LocalDateTime endOfDate = selectedDate.withDayOfMonth(selectedDate.lengthOfMonth()).atTime(LocalTime.MAX);
+
+        final var dailyPopularFeeds = this.dailyPopularFeedArchivingRepository.findMonthlyPopularFeedArchiving(startOfDate, endOfDate);
+
+        return dailyPopularFeeds.stream()
+                .map(dailyPopularFeed -> new FindMonthlyPopularFeedArchivingResponse(
+                        dailyPopularFeed.getFeed().getId(),
+                        dailyPopularFeed.getMember().getId(),
+                        this.attachmentService.getUrl(
+                                dailyPopularFeed.getFeed().getId(),
+                                AttachmentLinkableType.FEED,
+                                AttachmentLinkType.IMAGE
+                        )
+                )).collect(Collectors.toList());
     }
 
     private LocalDate findCursorToUpScroll(List<FindVoteItemResponse> voteItems) {
