@@ -62,7 +62,7 @@ public class MemberService {
         final var refreshTokenEntity = new RefreshToken(
                 refreshToken,
                 member,
-                Duration.ofDays(12)
+                Duration.ofDays(14)
         );
 
         this.refreshTokenRepository.save(refreshTokenEntity);

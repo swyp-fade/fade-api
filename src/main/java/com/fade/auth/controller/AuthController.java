@@ -1,22 +1,21 @@
 package com.fade.auth.controller;
 
 import com.fade.auth.dto.request.CreateAccessTokenByRefreshTokenRequest;
-import com.fade.auth.dto.response.CreateAccessTokenByRefreshTokenResponse;
+import com.fade.auth.dto.response.HttpSigninInResponse;
 import com.fade.auth.service.AuthService;
 import com.fade.sociallogin.constant.SocialType;
-import com.fade.sociallogin.dto.request.ExistsSocialLoginRequest;
 import com.fade.sociallogin.dto.request.SigninByCodeRequest;
 import com.fade.sociallogin.dto.request.SignupByCodeRequest;
-import com.fade.sociallogin.dto.response.ExistsSocialLoginResponse;
-import com.fade.sociallogin.dto.response.SigninResponse;
 import com.fade.sociallogin.service.SocialLoginService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,67 +32,78 @@ public class AuthController {
     @PostMapping("/social-login/{socialType}/signin")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
-                    schema = @Schema(implementation = SigninResponse.class)
+                    schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
-    public SigninResponse signin(
+    public HttpSigninInResponse signin(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
             @Valid
-            SigninByCodeRequest signinByCodeRequest
+            SigninByCodeRequest signinByCodeRequest,
+            HttpServletResponse response
     ) {
-        return this.socialLoginService.signinByCode(
+        final var signinRes = this.socialLoginService.signinByCode(
                 socialType,
                 signinByCodeRequest.code(),
                 signinByCodeRequest.redirectUri()
         );
+
+        this.setRefreshTokenCookie(response, signinRes.refreshToken());
+
+        return new HttpSigninInResponse(signinRes.accessToken());
     }
 
     @PostMapping("/social-login/{socialType}/signup")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
-                    schema = @Schema(implementation = SigninResponse.class)
+                    schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
-    public SigninResponse signup(
+    public HttpSigninInResponse signup(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
             @Valid
-            SignupByCodeRequest signupByCodeRequest
+            SignupByCodeRequest signupByCodeRequest,
+            HttpServletResponse response
     ) {
-        return this.socialLoginService.signupByCode(
+        final var signinRes = this.socialLoginService.signupByCode(
                 socialType,
                 signupByCodeRequest
         );
+
+        this.setRefreshTokenCookie(response, signinRes.refreshToken());
+
+        return new HttpSigninInResponse(signinRes.accessToken());
     }
 
     @PostMapping("/token")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = @Content(
-                    schema = @Schema(implementation = CreateAccessTokenByRefreshTokenResponse.class)
+                    schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
-    public CreateAccessTokenByRefreshTokenResponse generateAccessToken(
-            @RequestBody
-            @Valid
-            CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
+    public HttpSigninInResponse generateAccessToken(
+            @CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response
     ) {
-        return new CreateAccessTokenByRefreshTokenResponse(
-                this.authService.generateAccessToken(createAccessTokenByRefreshTokenRequest.refreshToken())
+        final var token = this.authService.generateAccessToken(
+                refreshToken
         );
+
+        this.setRefreshTokenCookie(
+                response,
+                token.refreshToken()
+        );
+
+        return new HttpSigninInResponse(token.accessToken());
     }
 
-    @PostMapping("/token/refresh-token")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", content = @Content(
-                    schema = @Schema(implementation = SigninResponse.class)
-            ))
-    })
-    public SigninResponse generateRefreshToken(
-            @RequestBody
-            @Valid
-            CreateAccessTokenByRefreshTokenRequest createAccessTokenByRefreshTokenRequest
-    ) {
-        return this.authService.generateRefreshToken(createAccessTokenByRefreshTokenRequest.refreshToken());
+    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
+        Cookie cookie = new Cookie("refresh_token", refreshToken);
+        cookie.setMaxAge(7*24*60*60);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+
+        response.addCookie(cookie);
     }
 }
