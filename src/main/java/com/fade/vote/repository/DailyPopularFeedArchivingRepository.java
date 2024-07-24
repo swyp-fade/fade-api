@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface DailyPopularFeedArchivingRepository extends JpaRepository<DailyPopularFeedArchiving, Long>, DailyPopularFeedArchivingRepositoryCustom {
+    boolean existsByFeedId(Long feedId);
 }
