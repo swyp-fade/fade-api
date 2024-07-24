@@ -1,5 +1,6 @@
 package com.fade.vote.controller;
 
+import com.fade.feed.dto.response.ExtractRandomFeedResponse;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
@@ -34,7 +35,20 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("")
+    @GetMapping("/candidates")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = ExtractRandomFeedResponse.class))
+            )
+    )
+    public ExtractRandomFeedResponse extractRandomFeeds(@AuthenticationPrincipal UserVo userVo) {
+        return voteService.extractRandomFeeds(userVo.getId());
+    }
+
+    @PostMapping("/candidates")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
@@ -47,7 +61,7 @@ public class VoteController {
         return new CreateVoteResponse(voteService.createVote(userVo.getId(), voteRequest.voteItems()));
     }
 
-    @GetMapping("")
+    @GetMapping("/history")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(

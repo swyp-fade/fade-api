@@ -4,20 +4,16 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.category.dto.response.FindCategoryListResponse;
-import com.fade.feed.entity.Feed;
 import com.fade.feed.repository.FeedRepository;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
-import com.fade.subscribe.dto.response.FindSubscribeFeedResponse;
+import com.fade.feed.dto.response.FindSubscribeFeedResponse;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
 import com.fade.vote.repository.DailyPopularFeedArchivingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

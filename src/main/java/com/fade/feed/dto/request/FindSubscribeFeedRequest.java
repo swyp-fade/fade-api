@@ -1,4 +1,4 @@
-package com.fade.subscribe.dto.request;
+package com.fade.feed.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
