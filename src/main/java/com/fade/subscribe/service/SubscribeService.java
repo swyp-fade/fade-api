@@ -8,6 +8,7 @@ import com.fade.feed.repository.FeedRepository;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.feed.dto.response.FindSubscribeFeedResponse;
+import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
 import com.fade.vote.repository.DailyPopularFeedArchivingRepository;
@@ -81,6 +82,26 @@ public class SubscribeService {
                         isArchiving(feed.getId())
                 )).toList(),
                 !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public FindSubscriberResponse findSubscribers(Long memberId, Long nextCursor, int limit) {
+        final var member = memberCommonService.findById(memberId);
+        final var subscribers = subscribeRepository.findSubscribersUsingNoOffset(member.getId(), nextCursor, limit);
+
+        return new FindSubscriberResponse(
+                subscribers.stream().map(subscriber -> new FindSubscriberResponse.FindSubscriberItemResponse(
+                        subscriber.getToMember().getId(),
+                        subscriber.getToMember().getUsername(),
+                        this.attachmentService.getUrl(
+                                subscriber.getToMember().getId(),
+                                AttachmentLinkableType.USER,
+                                AttachmentLinkType.PROFILE
+                        )
+                )).toList(),
+                !subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null,
+                subscribers.size()
         );
     }
 
