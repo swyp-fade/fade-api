@@ -1,5 +1,7 @@
 package com.fade.bookmark.controller;
 
+import com.fade.bookmark.dto.request.FindBookmarkRequest;
+import com.fade.bookmark.dto.response.FindBookmarkResponse;
 import com.fade.bookmark.service.BookmarkService;
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
@@ -13,10 +15,23 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("bookmark")
+@RequestMapping("bookmarks")
 @RequiredArgsConstructor
 public class BookmarkController {
     private final BookmarkService bookmarkService;
+
+    @GetMapping("")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "북마크 목록 조회 성공"
+            )
+    )
+    public FindBookmarkResponse findBookmarks(@AuthenticationPrincipal UserVo userVo, FindBookmarkRequest findBookmarkRequest) {
+        return bookmarkService.findBookmarks(userVo.getId(), findBookmarkRequest.nextCursor(), findBookmarkRequest.limit());
+    }
 
     @PostMapping("/{feedId}")
     @SecurityRequirement(name = "access-token")

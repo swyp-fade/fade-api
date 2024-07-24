@@ -1,6 +1,10 @@
 package com.fade.bookmark.service;
 
 
+import com.fade.attachment.constant.AttachmentLinkType;
+import com.fade.attachment.constant.AttachmentLinkableType;
+import com.fade.attachment.service.AttachmentService;
+import com.fade.bookmark.dto.response.FindBookmarkResponse;
 import com.fade.bookmark.entity.Bookmark;
 import com.fade.bookmark.repository.BookmarkRepository;
 import com.fade.feed.entity.Feed;
@@ -19,6 +23,7 @@ public class BookmarkService {
     private final FeedCommonService feedCommonService;
     private final BookmarkRepository bookmarkRepository;
     private final BookmarkCommonService bookMarkCommonService;
+    private final AttachmentService attachmentService;
 
     @Transactional
     public Long addBookmark(Long memberId, Long feedId) {
@@ -39,5 +44,24 @@ public class BookmarkService {
         Bookmark bookmark = bookMarkCommonService.findByMemberIdAndFeedId(memberId, feedId);
 
         bookmarkRepository.delete(bookmark);
+    }
+
+    @Transactional(readOnly = true)
+    public FindBookmarkResponse findBookmarks(Long memberId, Long nextCursor, int limit) {
+        final var member = memberCommonService.findById(memberId);
+        final var bookmarks = bookmarkRepository.findBookmarksUsingNoOffset(member.getId(), nextCursor, limit);
+
+        return new FindBookmarkResponse(
+                bookmarks.stream().map(bookmark -> new FindBookmarkResponse.FindBookmarkItemResponse(
+                        bookmark.getId(),
+                        bookmark.getFeed().getId(),
+                        this.attachmentService.getUrl(
+                                bookmark.getFeed().getId(),
+                                AttachmentLinkableType.FEED,
+                                AttachmentLinkType.IMAGE
+                        )
+                )).toList(),
+                !bookmarks.isEmpty() ? bookmarks.get(bookmarks.size() - 1).getId() : null
+        );
     }
 }
