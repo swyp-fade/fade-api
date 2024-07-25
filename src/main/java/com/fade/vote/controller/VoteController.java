@@ -1,9 +1,11 @@
 package com.fade.vote.controller;
 
+import com.fade.feed.dto.response.ExtractRandomFeedResponse;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
+import com.fade.vote.dto.response.FindMonthlyPopularFeedArchivingResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.service.VoteService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -21,6 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,7 +35,20 @@ public class VoteController {
 
     private final VoteService voteService;
 
-    @PostMapping("")
+    @GetMapping("/candidates")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = ExtractRandomFeedResponse.class))
+            )
+    )
+    public ExtractRandomFeedResponse extractRandomFeeds(@AuthenticationPrincipal UserVo userVo) {
+        return voteService.extractRandomFeeds(userVo.getId());
+    }
+
+    @PostMapping("/candidates")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
@@ -45,7 +61,7 @@ public class VoteController {
         return new CreateVoteResponse(voteService.createVote(userVo.getId(), voteRequest.voteItems()));
     }
 
-    @GetMapping("")
+    @GetMapping("/history")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
@@ -54,7 +70,19 @@ public class VoteController {
                     content = @Content(schema = @Schema(implementation = FindVoteResponse.class))
             )
     )
-    public FindVoteResponse getVoteResult(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
+    public FindVoteResponse findVotes(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
         return voteService.findVotes(userVo.getId(), nextCursor, limit, scrollType);
+    }
+
+    @GetMapping("/archiving")
+    @SecurityRequirement(name = "access-token")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindMonthlyPopularFeedArchivingResponse.class))
+            )
+    )
+    public List<FindMonthlyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
+        return voteService.findMonthlyPopularFeedArchiving(selectDate);
     }
 }
