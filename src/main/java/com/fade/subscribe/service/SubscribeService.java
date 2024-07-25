@@ -55,34 +55,35 @@ public class SubscribeService {
         final var subscribeMemberIds = subscribes.stream()
                 .map(subscribe -> subscribe.getToMember().getId())
                 .toList();
-        final var feeds = feedRepository.findFeedsByMemberIds(subscribeMemberIds, nextCursor, limit);
-
-        return new FindSubscribeFeedResponse(
-                feeds.stream().map(feed -> new FindSubscribeFeedResponse.FindSubscribeFeedItemResponse(
-                        feed.getId(),
-                        this.attachmentService.getUrl(
-                                feed.getId(),
-                                AttachmentLinkableType.FEED,
-                                AttachmentLinkType.IMAGE
-                        ),
-                        feed.getStyles().stream().map(style -> new FindSubscribeFeedResponse.FindSubscribeFeedStyleResponse(
-                                style.getId(),
-                                style.getName()
-                        )).toList(),
-                        feed.getFeedOutfitList().stream().map(feedOutfit -> new FindSubscribeFeedResponse.FindSubscribeFeedOutfitResponse(
-                                feedOutfit.getId(),
-                                feedOutfit.getBrandName(),
-                                feedOutfit.getProductName(),
-                                new FindCategoryListResponse.FindCategoryItemResponse(
-                                        feedOutfit.getCategory().getId(),
-                                        feedOutfit.getCategory().getName()
-                                )
-                        )).toList(),
-                        feed.getMember().getId(),
-                        isArchiving(feed.getId())
-                )).toList(),
-                !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
-        );
+//        final var feeds = feedRepository.findFeedsByMemberIds(subscribeMemberIds, nextCursor, limit);
+//
+//        return new FindSubscribeFeedResponse(
+//                feeds.stream().map(feed -> new FindSubscribeFeedResponse.FindSubscribeFeedItemResponse(
+//                        feed.getId(),
+//                        this.attachmentService.getUrl(
+//                                feed.getId(),
+//                                AttachmentLinkableType.FEED,
+//                                AttachmentLinkType.IMAGE
+//                        ),
+//                        feed.getStyles().stream().map(style -> new FindSubscribeFeedResponse.FindSubscribeFeedStyleResponse(
+//                                style.getId(),
+//                                style.getName()
+//                        )).toList(),
+//                        feed.getFeedOutfitList().stream().map(feedOutfit -> new FindSubscribeFeedResponse.FindSubscribeFeedOutfitResponse(
+//                                feedOutfit.getId(),
+//                                feedOutfit.getBrandName(),
+//                                feedOutfit.getProductName(),
+//                                new FindCategoryListResponse.FindCategoryItemResponse(
+//                                        feedOutfit.getCategory().getId(),
+//                                        feedOutfit.getCategory().getName()
+//                                )
+//                        )).toList(),
+//                        feed.getMember().getId(),
+//                        isArchiving(feed.getId())
+//                )).toList(),
+//                !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
+//        );
+        return null;
     }
 
     @Transactional(readOnly = true)

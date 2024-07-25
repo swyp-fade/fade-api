@@ -61,8 +61,8 @@ public class FeedService {
         return feed.getId();
     }
 
-    public FindFeedResponse findFeeds(FindFeedRequest findFeedRequest) {
-        final var feeds = this.feedRepository.findFeeds(findFeedRequest);
+    public FindFeedResponse findFeeds(FindFeedRequest findFeedRequest, Long memberId) {
+        final var feeds = this.feedRepository.findFeeds(findFeedRequest, memberId);
 
         return new FindFeedResponse(
                 feeds.stream().map((feed) -> new FindFeedResponse.FindFeedItemResponse(
