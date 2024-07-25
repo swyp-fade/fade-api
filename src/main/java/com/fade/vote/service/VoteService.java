@@ -3,7 +3,11 @@ package com.fade.vote.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.category.dto.response.FindCategoryListResponse;
+import com.fade.feed.dto.response.ExtractRandomFeedResponse;
+import com.fade.feed.dto.response.FindSubscribeFeedResponse;
 import com.fade.feed.entity.Feed;
+import com.fade.feed.repository.FeedRepository;
 import com.fade.feed.service.FeedCommonService;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
@@ -35,8 +39,40 @@ public class VoteService {
     private final MemberCommonService memberCommonService;
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
+    private final FeedRepository feedRepository;
     private final DailyPopularFeedArchivingRepository dailyPopularFeedArchivingRepository;
     private final AttachmentService attachmentService;
+
+    @Transactional(readOnly = true)
+    public ExtractRandomFeedResponse extractRandomFeeds(Long memberId) {
+        final var member = memberCommonService.findById(memberId);
+        final var feeds = feedRepository.extractRandomFeeds(member.getId());
+
+        return new ExtractRandomFeedResponse(
+                feeds.stream().map(feed -> new ExtractRandomFeedResponse.ExtractRandomFeedItemResponse(
+                        feed.getId(),
+                        this.attachmentService.getUrl(
+                                feed.getId(),
+                                AttachmentLinkableType.FEED,
+                                AttachmentLinkType.IMAGE
+                        ),
+                        feed.getStyles().stream().map(style -> new ExtractRandomFeedResponse.ExtractRandomFeedStyleResponse(
+                                style.getId(),
+                                style.getName()
+                        )).toList(),
+                        feed.getFeedOutfitList().stream().map(feedOutfit -> new ExtractRandomFeedResponse.ExtractRandomFeedOutfitResponse(
+                                feedOutfit.getId(),
+                                feedOutfit.getBrandName(),
+                                feedOutfit.getProductName(),
+                                new FindCategoryListResponse.FindCategoryItemResponse(
+                                        feedOutfit.getCategory().getId(),
+                                        feedOutfit.getCategory().getName()
+                                )
+                        )).toList(),
+                        feed.getMember().getId()
+                )).toList()
+        );
+    }
 
     @Transactional
     public List<CreateVoteItemResponse> createVote(Long memberId, List<CreateVoteItemRequest> createVoteItemsRequest) {

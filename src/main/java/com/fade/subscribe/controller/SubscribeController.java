@@ -3,6 +3,10 @@ package com.fade.subscribe.controller;
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
+import com.fade.feed.dto.request.FindSubscribeFeedRequest;
+import com.fade.feed.dto.response.FindSubscribeFeedResponse;
+import com.fade.subscribe.dto.request.FindSubscriberRequest;
+import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.service.SubscribeService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -48,5 +52,31 @@ public class SubscribeController {
     public Response<Void> unSubscribe(@AuthenticationPrincipal UserVo userVo, @PathVariable Long toMemberId) {
         subscribeService.unSubscribe(userVo.getId(), toMemberId);
         return Response.success();
+    }
+
+    @GetMapping("/subscribe/feeds")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "구독 피드 조회 성공"
+            )
+    )
+    public FindSubscribeFeedResponse findSubscribeFeeds(@AuthenticationPrincipal UserVo userVo, FindSubscribeFeedRequest findSubscribeFeedRequest) {
+        return subscribeService.findSubscribeFeeds(userVo.getId(), findSubscribeFeedRequest.nextCursor(), findSubscribeFeedRequest.limit());
+    }
+
+    @GetMapping("/subscribe/subscribers")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "구독자 목록 조회 성공"
+            )
+    )
+    public FindSubscriberResponse findSubscribers(@AuthenticationPrincipal UserVo userVo, FindSubscriberRequest findSubscriberRequest) {
+        return subscribeService.findSubscribers(userVo.getId(), findSubscriberRequest.nextCursor(), findSubscriberRequest.limit());
     }
 }
