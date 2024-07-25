@@ -1,17 +1,13 @@
 package com.fade.sociallogin.service;
 
-import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.component.impl.KakaoOAuth2Provider;
 import com.fade.global.constant.ErrorCode;
-import com.fade.global.constant.GenderType;
 import com.fade.global.dto.OAuthProfile;
 import com.fade.global.exception.ApplicationException;
-import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.member.service.MemberService;
+import com.fade.member.vo.UserVo;
 import com.fade.sociallogin.constant.SocialType;
-import com.fade.sociallogin.dto.request.SignupByCodeRequest;
-import com.fade.sociallogin.dto.response.SigninResponse;
 import com.fade.sociallogin.entity.SocialLogin;
 import com.fade.sociallogin.repository.SocialLoginRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +26,7 @@ public class SocialLoginService {
     private final MemberCommonService memberCommonService;
 
     @Transactional
-    public SigninResponse signinByCode(
+    public UserVo findUserVoByCode(
             SocialType socialType,
             String code,
             String redirectUri
@@ -63,16 +59,17 @@ public class SocialLoginService {
                 )
         );
 
-        return this.memberService.signin(socialLogin.getMember().getId());
+        return this.memberService.findUserVo(socialLogin.getMember().getId());
     }
 
     @Transactional
-    public SigninResponse signupByCode(
+    public Long create(
+            Long memberId,
             SocialType socialType,
-            SignupByCodeRequest signupByCodeRequest
+            String socialAccessToken
     ) {
         final var profile = this.getProfile(
-                signupByCodeRequest.socialAccessToken(),
+                socialAccessToken,
                 socialType
         );
 
@@ -83,10 +80,6 @@ public class SocialLoginService {
             throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER);
         }
 
-        final var memberId = this.memberService.signup(
-                signupByCodeRequest.username(),
-                signupByCodeRequest.genderType()
-        );
         final var socialLogin = new SocialLogin(
                 profile.getCode(),
                 socialType,
@@ -98,7 +91,7 @@ public class SocialLoginService {
 
         this.socialLoginRepository.save(socialLogin);
 
-        return this.memberService.signin(memberId);
+        return socialLogin.getId();
     }
 
     /**

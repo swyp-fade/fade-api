@@ -1,6 +1,5 @@
 package com.fade.auth.controller;
 
-import com.fade.auth.dto.request.CreateAccessTokenByRefreshTokenRequest;
 import com.fade.auth.dto.response.HttpSigninInResponse;
 import com.fade.auth.service.AuthService;
 import com.fade.sociallogin.constant.SocialType;
@@ -42,15 +41,17 @@ public class AuthController {
             SigninByCodeRequest signinByCodeRequest,
             HttpServletResponse response
     ) {
-        final var signinRes = this.socialLoginService.signinByCode(
+        final var userVo = this.socialLoginService.findUserVoByCode(
                 socialType,
                 signinByCodeRequest.code(),
                 signinByCodeRequest.redirectUri()
         );
 
-        this.setRefreshTokenCookie(response, signinRes.refreshToken());
+        final var token = this.authService.signin(userVo.getId());
 
-        return new HttpSigninInResponse(signinRes.accessToken());
+        this.setRefreshTokenCookie(response, token.refreshToken());
+
+        return new HttpSigninInResponse(token.accessToken());
     }
 
     @PostMapping("/social-login/{socialType}/signup")
@@ -66,14 +67,13 @@ public class AuthController {
             SignupByCodeRequest signupByCodeRequest,
             HttpServletResponse response
     ) {
-        final var signinRes = this.socialLoginService.signupByCode(
+        final var token = this.authService.signup(
                 socialType,
                 signupByCodeRequest
         );
+        this.setRefreshTokenCookie(response, token.refreshToken());
 
-        this.setRefreshTokenCookie(response, signinRes.refreshToken());
-
-        return new HttpSigninInResponse(signinRes.accessToken());
+        return new HttpSigninInResponse(token.accessToken());
     }
 
     @PostMapping("/token")
@@ -86,16 +86,17 @@ public class AuthController {
             @CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response
     ) {
-        final var token = this.authService.generateAccessToken(
+        final var rt = this.authService.generateRefreshTokenOrEmpty(
                 refreshToken
-        );
+        ).orElse(refreshToken);
+        final var accessToken = this.authService.generateAccessToken(refreshToken);
 
         this.setRefreshTokenCookie(
                 response,
-                token.refreshToken()
+                rt
         );
 
-        return new HttpSigninInResponse(token.accessToken());
+        return new HttpSigninInResponse(accessToken);
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
