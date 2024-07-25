@@ -4,6 +4,8 @@ import com.fade.feed.dto.request.FindFeedRequest;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.QFeed;
 import com.fade.feed.repository.CustomFeedRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -15,22 +17,28 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
         super(Feed.class);
     }
 
+    private final QFeed feedQ = QFeed.feed;
+
     @Override
     public List<Feed> findFeeds(FindFeedRequest findFeedRequest) {
-        final var feedQ = QFeed.feed;
         final var query = super.from(feedQ);
 
-        if (findFeedRequest.memberId() != null) {
-            query.where(feedQ.member.id.eq(findFeedRequest.memberId()));
-        }
-
-        if (findFeedRequest.nextCursor() != null) {
-            query.where(feedQ.id.lt(findFeedRequest.nextCursor()));
-        }
+        query.where(
+            this.nextCursorLt(findFeedRequest.nextCursor()),
+            this.memberIdEq(findFeedRequest.memberId())
+        );
 
         query.limit(findFeedRequest.limit());
         query.orderBy(feedQ.id.desc());
 
         return query.fetch();
+    }
+
+    private BooleanExpression nextCursorLt(Long nextCursor) {
+        return nextCursor != null ? feedQ.id.lt(nextCursor) : null;
+    }
+
+    private BooleanExpression memberIdEq(Long memberId) {
+        return memberId != null ? feedQ.member.id.eq(memberId) : null;
     }
 }
