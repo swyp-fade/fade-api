@@ -2,11 +2,13 @@ package com.fade.vote.entity;
 
 import com.fade.feed.entity.Feed;
 import com.fade.member.entity.Member;
+import com.fade.notification.dto.CreateNotificationDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 
@@ -33,5 +35,9 @@ public class DailyPopularFeedArchiving {
     public DailyPopularFeedArchiving(Member member, Feed feed) {
         this.member = member;
         this.feed = feed;
+    }
+
+    public void publishEvent(ApplicationEventPublisher eventPublisher, CreateNotificationDto createNotificationDto) {
+        eventPublisher.publishEvent(createNotificationDto);
     }
 }

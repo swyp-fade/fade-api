@@ -4,10 +4,10 @@ import lombok.Getter;
 
 @Getter
 public enum NotificationType {
-    REPORT_FEED("내 사진 신고"),
-    DELETE_PHOTO("내 사진 삭제"),
-    SELECTED_FA_P("페이피 선정"),
-    SUSPEND_ACCOUNT("계정 정지");
+    FEED_REPORTED("사진 신고"),
+    FEED_DELETED("사진 삭제"),
+    FAP_SELECTED("페이피 선정"),
+    FAP_DELETED("페이피 사진 삭제");
 
     NotificationType(String notificationType) {
     }
