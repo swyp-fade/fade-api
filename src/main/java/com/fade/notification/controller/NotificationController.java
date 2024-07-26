@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
     private final NotificationService notificationService;
 
-    @GetMapping("/history")
+    @GetMapping("")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
