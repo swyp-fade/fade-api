@@ -11,7 +11,7 @@ public enum ErrorCode {
     //TOKEN
     TOKEN_SIGNATURE_ERROR(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰 입니다."),
     TOKEN_EXPIRED_ERROR(HttpStatus.UNAUTHORIZED, "토큰이 만료 되었습니다."),
-    TOKEN_NOT_EXIST(HttpStatus.UNAUTHORIZED, "토큰이 존재하지 않습니다."),
+    NOT_FOUND_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "찾을 수 없는 refresh token입니다."),
 
     //MEMBER
     MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),

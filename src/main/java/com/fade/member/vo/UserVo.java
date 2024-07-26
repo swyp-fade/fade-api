@@ -9,10 +9,12 @@ import java.util.Collection;
 @Getter
 public class UserVo extends User {
     private final Long id;
+    private final Collection<MemberRole> memberRoles;
 
     public UserVo(Long id, Collection<MemberRole> roles) {
         super(id + "", "", roles);
 
+        this.memberRoles = roles;
         this.id = id;
     }
 }
