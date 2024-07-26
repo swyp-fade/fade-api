@@ -1,6 +1,6 @@
 package com.fade.vote.dto;
 
-public record FindDailyPopularFeedDto(
+public record FindMostVoteItemDto(
         Long feedId,
         Long memberId
 ) {

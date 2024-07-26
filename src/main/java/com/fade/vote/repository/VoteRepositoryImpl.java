@@ -1,7 +1,7 @@
 package com.fade.vote.repository;
 
 import com.fade.vote.constant.VoteType;
-import com.fade.vote.dto.FindDailyPopularFeedDto;
+import com.fade.vote.dto.FindMostVoteItemDto;
 import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
 import com.fade.vote.entity.QVote;
 import com.fade.vote.entity.Vote;
@@ -64,7 +64,7 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
     }
 
     @Override
-    public FindDailyPopularFeedDto findDailyPopularFeed() {
+    public FindMostVoteItemDto findMostVoteItem() {
         QVote vote = QVote.vote;
 
         LocalDate yesterday = LocalDate.now().minusDays(1);
@@ -72,7 +72,7 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
         LocalDateTime endOfDay = yesterday.atTime(LocalTime.MAX);
 
         return jpaQueryFactory
-                .select(Projections.constructor(FindDailyPopularFeedDto.class,
+                .select(Projections.constructor(FindMostVoteItemDto.class,
                         vote.feed.id,
                         vote.feed.member.id))
                 .from(vote)

@@ -1,4 +1,4 @@
-package com.fade.vote.entity;
+package com.fade.faparchiving.entity;
 
 import com.fade.feed.entity.Feed;
 import com.fade.member.entity.Member;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DailyPopularFeedArchiving {
+public class FapArchiving {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -32,7 +32,7 @@ public class DailyPopularFeedArchiving {
     private Feed feed;
 
     @Builder
-    public DailyPopularFeedArchiving(Member member, Feed feed) {
+    public FapArchiving(Member member, Feed feed) {
         this.member = member;
         this.feed = feed;
     }

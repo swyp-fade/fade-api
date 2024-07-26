@@ -4,6 +4,7 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.category.dto.response.FindCategoryListResponse;
+import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.repository.FeedRepository;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
@@ -11,7 +12,6 @@ import com.fade.feed.dto.response.FindSubscribeFeedResponse;
 import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
-import com.fade.vote.repository.DailyPopularFeedArchivingRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +23,7 @@ public class SubscribeService {
     private final SubscribeRepository subscribeRepository;
     private final SubscribeCommonService subscribeCommonService;
     private final FeedRepository feedRepository;
-    private final DailyPopularFeedArchivingRepository dailyPopularFeedArchivingRepository;
+    private final FapArchivingRepository fapArchivingRepository;
     private final AttachmentService attachmentService;
 
     @Transactional
@@ -106,6 +106,6 @@ public class SubscribeService {
     }
 
     private boolean isArchiving(Long feedId) {
-        return dailyPopularFeedArchivingRepository.existsByFeedId(feedId);
+        return fapArchivingRepository.existsByFeedId(feedId);
     }
 }
