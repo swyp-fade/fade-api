@@ -1,5 +1,6 @@
 package com.fade.notification.controller;
 
+import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.notification.dto.request.FindNotificationRequest;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,4 +39,17 @@ public class NotificationController {
         return notificationService.findNotifications(userVo.getId(), findNotificationRequest.nextCursor(), findNotificationRequest.limit());
     }
 
+    @PostMapping("/read")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "알림 읽음 처리 성공"
+            )
+    )
+    public Response<String> readNotifications(@AuthenticationPrincipal UserVo userVo) {
+        notificationService.readNotifications(userVo.getId());
+        return Response.success("알림 읽음 처리 성공");
+    }
 }

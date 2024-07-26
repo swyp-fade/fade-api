@@ -1,7 +1,6 @@
 package com.fade.notification.entity;
 
 import com.fade.member.entity.Member;
-import com.fade.notification.constant.NotificationStatus;
 import com.fade.notification.constant.NotificationType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -23,9 +22,8 @@ public class Notification {
     @Enumerated(EnumType.STRING)
     private NotificationType type;
 
-    @Column(name = "status", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private NotificationStatus status;
+    @Column(name = "isRead", nullable = false)
+    private Boolean isRead;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -38,9 +36,13 @@ public class Notification {
     private Member receiver;
 
     @Builder
-    public Notification(NotificationType type, NotificationStatus status, Member receiver) {
+    public Notification(NotificationType type, Boolean isRead, Member receiver) {
         this.type = type;
-        this.status = status;
+        this.isRead = isRead;
         this.receiver = receiver;
+    }
+
+    public void readNotification() {
+        this.isRead = true;
     }
 }

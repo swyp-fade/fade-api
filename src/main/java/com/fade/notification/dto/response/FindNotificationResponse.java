@@ -13,7 +13,8 @@ public record FindNotificationResponse(
             Long id,
             Long detailId,
             NotificationType type,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            Boolean isRead
     ) {
     }
 }

@@ -47,7 +47,7 @@ public class VoteScheduler {
     private CreateNotificationDto createFapNotificationDto(Long receiverId) {
         return CreateNotificationDto.builder()
                 .receiverId(receiverId)
-                .type(NotificationType.SELECTED_FA_P)
+                .type(NotificationType.FAP_SELECTED)
                 .build();
     }
 }
