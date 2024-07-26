@@ -29,7 +29,7 @@ public class FapArchivingController {
 
     private final FapArchivingService fapArchivingService;
 
-    @GetMapping("/archiving")
+    @GetMapping("")
     @SecurityRequirement(name = "access-token")
     @ApiResponses(
             @ApiResponse(
