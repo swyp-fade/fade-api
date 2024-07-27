@@ -10,8 +10,10 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
+import com.fade.member.dto.response.MemberSearchResult;
 import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
+import com.fade.member.repository.MemberSearchRepository;
 import com.fade.member.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberCommonService memberCommonService;
     private final AttachmentService attachmentService;
+
+    private final MemberSearchRepository memberSearchRepository;
 
     @Transactional
     public Long createUser(
@@ -104,11 +108,13 @@ public class MemberService {
         return new UserVo(member.getId(), List.of(MemberRole.USER));
     }
 
-    public List<MemberSearchResponse> searchMembers(String query) {
-        return memberRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
+    public MemberSearchResult searchMembers(String query) {
+        List<MemberSearchResponse> matchedMembers = memberSearchRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
+        return new MemberSearchResult(matchedMembers);
     }
 
     private MemberSearchResponse mapToResponse(Member member) {
