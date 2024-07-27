@@ -7,10 +7,10 @@ import com.fade.report.repository.CustomReportRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
-public class CustomReportRepositoryIml extends QuerydslRepositorySupport implements CustomReportRepository {
+public class CustomReportRepositoryImpl extends QuerydslRepositorySupport implements CustomReportRepository {
     private QReport reportQ = QReport.report;
 
-    public CustomReportRepositoryIml() {
+    public CustomReportRepositoryImpl() {
         super(Report.class);
     }
 
