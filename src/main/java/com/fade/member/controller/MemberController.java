@@ -4,6 +4,7 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
+import com.fade.member.dto.response.MemberSearchResult;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -67,7 +68,7 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = MemberSearchResponse.class))
             )
     )
-    public List<MemberSearchResponse> searchMembers(
+    public MemberSearchResult searchMembers(
             @RequestParam String query
     ) {
         return this.memberService.searchMembers(query);
