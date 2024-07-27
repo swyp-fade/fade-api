@@ -9,23 +9,24 @@ public record ExtractRandomFeedResponse(
 ) {
     public record ExtractRandomFeedItemResponse(
             Long id,
-            String imageUrl,
-            List<ExtractRandomFeedStyleResponse> styles,
-            List<ExtractRandomFeedOutfitResponse> feedOutfitList,
-            Long memberId
+            String imageURL,
+            List<ExtractRandomFeedStyleResponse> styleIds,
+            List<ExtractRandomFeedOutfitResponse> outFits,
+            Long memberId,
+            Boolean isSubscribed,
+            Boolean isBookmarked
     ) {
     }
 
     public record ExtractRandomFeedStyleResponse(
-            Integer id,
-            String name
+            Integer id
     ) {
     }
 
     public record ExtractRandomFeedOutfitResponse(
             Long id,
             String brandName,
-            String productName,
+            String details,
             FindCategoryListResponse.FindCategoryItemResponse category
     ) {
     }

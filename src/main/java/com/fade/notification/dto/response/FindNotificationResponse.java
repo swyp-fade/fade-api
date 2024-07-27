@@ -11,10 +11,13 @@ public record FindNotificationResponse(
 ) {
     public record FindNotificationItemsResponse(
             Long id,
-            Long detailId,
+            Long feedId,
             NotificationType type,
             LocalDateTime createdAt,
-            Boolean isRead
+            Boolean isRead,
+            Long reportCount,
+            LocalDateTime selectedDate,
+            Integer deletedFapCount
     ) {
     }
 }
