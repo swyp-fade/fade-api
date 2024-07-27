@@ -59,7 +59,7 @@ public class VoteService {
                         feed.getFeedOutfitList().stream().map(feedOutfit -> new ExtractRandomFeedResponse.ExtractRandomFeedOutfitResponse(
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
-                                feedOutfit.getProductName(),
+                                feedOutfit.getDetail(),
                                 new FindCategoryListResponse.FindCategoryItemResponse(
                                         feedOutfit.getCategory().getId(),
                                         feedOutfit.getCategory().getName()

@@ -13,6 +13,7 @@ import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.FeedOutfit;
 import com.fade.feed.repository.FeedRepository;
 import com.fade.member.service.MemberCommonService;
+import com.fade.style.entity.Style;
 import com.fade.style.service.StyleCommonService;
 import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class FeedService {
         final var feedOutfits = createFeedRequest.outfits().stream().map(outfitItem ->
             new FeedOutfit(
                     outfitItem.brandName(),
-                    outfitItem.productName(),
+                    outfitItem.detail(),
                     this.categoryCommonService.findById(outfitItem.categoryId())
             )
         ).toList();
@@ -76,14 +77,11 @@ public class FeedService {
                                 AttachmentLinkableType.FEED,
                                 AttachmentLinkType.IMAGE
                         ),
-                        feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(
-                                style.getId(),
-                                style.getName()
-                        )).toList(),
+                        feed.getStyles().stream().map(Style::getId).toList(),
                         feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
-                                feedOutfit.getProductName(),
+                                feedOutfit.getDetail(),
                                 new FindCategoryListResponse.FindCategoryItemResponse(
                                         feedOutfit.getCategory().getId(),
                                         feedOutfit.getCategory().getName()

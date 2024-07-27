@@ -11,8 +11,8 @@ public record FindFeedResponse(
     public record FindFeedItemResponse(
             Long id,
             String imageUrl,
-            List<FindFeedStyleResponse> styles,
-            List<FindFeedOutfitResponse> feedOutfitList,
+            List<Integer> styleIds,
+            List<FindFeedOutfitResponse> outfits,
             Long memberId,
             Boolean isFAPFeed,
             Boolean isSubscribed,
@@ -21,16 +21,10 @@ public record FindFeedResponse(
     ) {
     }
 
-    public record FindFeedStyleResponse(
-            Integer id,
-            String name
-    ) {
-    }
-
     public record FindFeedOutfitResponse(
             Long id,
             String brandName,
-            String productName,
+            String detail,
             FindCategoryListResponse.FindCategoryItemResponse category
     ) {
     }

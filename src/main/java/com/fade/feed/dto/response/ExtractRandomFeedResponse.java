@@ -25,7 +25,7 @@ public record ExtractRandomFeedResponse(
     public record ExtractRandomFeedOutfitResponse(
             Long id,
             String brandName,
-            String productName,
+            String details,
             FindCategoryListResponse.FindCategoryItemResponse category
     ) {
     }
