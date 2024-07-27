@@ -56,13 +56,11 @@ public class Feed {
     @JoinColumn(name = "member_id")
     private Member member;
 
-<<<<<<< Updated upstream
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
-=======
+
     @OneToMany(mappedBy = "feed")
     private List<FapArchiving> fapArchivingList = new ArrayList<>();
->>>>>>> Stashed changes
 
     public Feed(
             Member member,
