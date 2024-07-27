@@ -25,7 +25,7 @@ public record FindVoteResponse(
             String feedImageURL,
             Boolean isFapFeed,
             List<FindVoteItemStyleResponse> stylesId,
-            List<FindVoteItemOutFitResponse> outFits,
+            List<FindVoteItemOutFitResponse> outfits,
             String username,
             String profileImageURL
     ) {
