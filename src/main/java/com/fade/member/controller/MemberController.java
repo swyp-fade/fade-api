@@ -3,6 +3,7 @@ package com.fade.member.controller;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,11 +17,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,5 +58,18 @@ public class MemberController {
             @AuthenticationPrincipal UserVo userVo
     ) {
         this.memberService.modifyMember(userVo.getId(), modifyMemberRequest);
+    }
+
+    @GetMapping("/search")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = MemberSearchResponse.class))
+            )
+    )
+    public List<MemberSearchResponse> searchMembers(
+            @RequestParam String query
+    ) {
+        return this.memberService.searchMembers(query);
     }
 }

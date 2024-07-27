@@ -9,6 +9,7 @@ import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
 import com.fade.member.vo.UserVo;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -100,5 +102,28 @@ public class MemberService {
         final var member = this.memberCommonService.findById(memberId);
 
         return new UserVo(member.getId(), List.of(MemberRole.USER));
+    }
+
+    public List<MemberSearchResponse> searchMembers(String query) {
+        return memberRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    private MemberSearchResponse mapToResponse(Member member) {
+        String profileImageUrl = null;
+        try {
+            profileImageUrl = attachmentService.getUrl(
+                    member.getId(),
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        } catch (ApplicationException e) {
+            if (!e.getErrorCode().equals(ErrorCode.NOT_FOUND_ATTACHMENT)) {
+                throw e;
+            }
+        }
+        return new MemberSearchResponse(member.getUsername(), profileImageUrl);
     }
 }
