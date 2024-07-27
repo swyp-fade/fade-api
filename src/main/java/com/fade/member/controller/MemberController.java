@@ -3,8 +3,8 @@ package com.fade.member.controller;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
-import com.fade.member.dto.response.MemberSearchResult;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -65,10 +63,10 @@ public class MemberController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = MemberSearchResponse.class))
+                    content = @Content(schema = @Schema(implementation = MemberSearchItemResponse.class))
             )
     )
-    public MemberSearchResult searchMembers(
+    public MemberSearchResponse searchMembers(
             @RequestParam String query
     ) {
         return this.memberService.searchMembers(query);
