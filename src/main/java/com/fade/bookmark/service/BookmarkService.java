@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookmarkService {
 
     private final MemberCommonService memberCommonService;
@@ -39,5 +40,9 @@ public class BookmarkService {
         Bookmark bookmark = bookMarkCommonService.findByMemberIdAndFeedId(memberId, feedId);
 
         bookmarkRepository.delete(bookmark);
+    }
+
+    public Boolean hasBookmark(Long memberId, Long feedId) {
+        return this.bookmarkRepository.existsByMemberIdAndFeedId(memberId, feedId);
     }
 }

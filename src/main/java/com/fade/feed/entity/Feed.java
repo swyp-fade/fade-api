@@ -1,5 +1,6 @@
 package com.fade.feed.entity;
 
+import com.fade.faparchiving.entity.FapArchiving;
 import com.fade.member.entity.Member;
 import com.fade.style.entity.Style;
 import jakarta.persistence.CascadeType;
@@ -50,6 +51,9 @@ public class Feed {
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToMany(mappedBy = "feed")
+    private List<FapArchiving> fapArchivingList = new ArrayList<>();
 
     public Feed(
             Member member,

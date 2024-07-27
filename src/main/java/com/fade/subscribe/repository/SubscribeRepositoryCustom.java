@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface SubscribeRepositoryCustom {
     List<Subscribe> findSubscribersUsingNoOffset(Long memberId, Long nextCursor, int limit);
+    List<Long> findByFromMemberToMemberIds(Long fromMemberId);
 }

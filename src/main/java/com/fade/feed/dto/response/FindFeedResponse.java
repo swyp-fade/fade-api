@@ -13,7 +13,11 @@ public record FindFeedResponse(
             String imageUrl,
             List<FindFeedStyleResponse> styles,
             List<FindFeedOutfitResponse> feedOutfitList,
-            Long memberId
+            Long memberId,
+            Boolean isFAPFeed,
+            Boolean isSubscribed,
+            Boolean isBookmarked,
+            Boolean isMine
     ) {
     }
 

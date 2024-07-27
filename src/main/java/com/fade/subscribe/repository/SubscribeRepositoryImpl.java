@@ -25,4 +25,14 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
                 .orderBy(subscribeQ.id.desc())
                 .fetch();
     }
+
+    @Override
+    public List<Long> findByFromMemberToMemberIds(Long fromMemberId) {
+        final var subscribeQ = QSubscribe.subscribe;
+
+        return jpaQueryFactory
+                .select(subscribeQ.toMember.id)
+                .from(subscribeQ)
+                .fetch();
+    }
 }
