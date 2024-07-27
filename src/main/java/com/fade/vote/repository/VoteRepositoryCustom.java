@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface VoteRepositoryCustom {
 
-    List<FindVoteItemResponse> findVoteUsingNoOffset(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
+    List<Vote> findVoteUsingNoOffset(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
     Optional<Vote> findOldestVoteByMember(Long memberId);
     Optional<Vote> findLatestVoteByMember(Long memberId);
     FindMostVoteItemDto findMostVoteItem();

@@ -37,7 +37,7 @@ public class SubscribeController {
         return Response.success(subscribeService.subscribe(userVo.getId(), toMemberId));
     }
 
-    @DeleteMapping("/unsubscribe/{toMemberId}")
+    @DeleteMapping("/subscribe/{toMemberId}")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(

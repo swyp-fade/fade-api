@@ -3,13 +3,16 @@ package com.fade.vote.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.bookmark.repository.BookmarkRepository;
 import com.fade.category.dto.response.FindCategoryListResponse;
+import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.response.ExtractRandomFeedResponse;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.repository.FeedRepository;
 import com.fade.feed.service.FeedCommonService;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
+import com.fade.subscribe.repository.SubscribeRepository;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
@@ -37,8 +40,12 @@ public class VoteService {
     private final FeedCommonService feedCommonService;
     private final VoteRepository voteRepository;
     private final FeedRepository feedRepository;
+    private final BookmarkRepository bookmarkRepository;
+    private final SubscribeRepository subscribeRepository;
+    private final FapArchivingRepository fapArchivingRepository;
     private final AttachmentService attachmentService;
 
+    //TODO: 카테고리 Id로만 하려면 카테고리 사용하는 곳 다 변경 필요
     @Transactional(readOnly = true)
     public ExtractRandomFeedResponse extractRandomFeeds(Long memberId) {
         final var member = memberCommonService.findById(memberId);
@@ -53,8 +60,7 @@ public class VoteService {
                                 AttachmentLinkType.IMAGE
                         ),
                         feed.getStyles().stream().map(style -> new ExtractRandomFeedResponse.ExtractRandomFeedStyleResponse(
-                                style.getId(),
-                                style.getName()
+                                style.getId()
                         )).toList(),
                         feed.getFeedOutfitList().stream().map(feedOutfit -> new ExtractRandomFeedResponse.ExtractRandomFeedOutfitResponse(
                                 feedOutfit.getId(),
@@ -64,7 +70,9 @@ public class VoteService {
                                         feedOutfit.getCategory().getId()
                                 )
                         )).toList(),
-                        feed.getMember().getId()
+                        feed.getMember().getId(),
+                        isSubscribed(member.getId(), feed.getMember().getId()),
+                        isBookmarked(feed.getId(), feed.getMember().getId())
                 )).toList()
         );
     }
@@ -122,7 +130,7 @@ public class VoteService {
             default:
                 throw new IllegalArgumentException("Invalid type value: " + scrollType);
         }
-        List<FindVoteItemResponse> voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
+        final var voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
 
 
         //TODO:: 마지막 커서 조회 = 최초 호출 시 값을 저장해 놓고 사용하는 방법 찾기
@@ -130,28 +138,56 @@ public class VoteService {
         Optional<Vote> oldestVote = voteRepository.findOldestVoteByMember(member.getId());
 
         return new FindVoteResponse(
-                voteItems,
+                voteItems.stream().map(voteItem -> new FindVoteItemResponse(
+                        voteItem.getId(),
+                        voteItem.getVotedAt(),
+                        voteItem.getVoteType(),
+                        voteItem.getFeed().getId(),
+                        this.attachmentService.getUrl(
+                                voteItem.getFeed().getId(),
+                                AttachmentLinkableType.FEED,
+                                AttachmentLinkType.IMAGE
+                        ),
+                        isFAPFeed(voteItem.getFeed().getId()),
+                        isSubscribed(member.getId(), voteItem.getFeed().getMember().getId()),
+                        isBookmarked(voteItem.getFeed().getId(), voteItem.getMember().getId()),
+                        voteItem.getFeed().getStyles().stream().map(style -> new FindVoteResponse.FindVoteItemStyleResponse(
+                                style.getId()
+                        )).toList(),
+                        voteItem.getFeed().getFeedOutfitList().stream().map(outFit -> new FindVoteResponse.FindVoteItemOutFitResponse(
+                                outFit.getId(),
+                                outFit.getBrandName(),
+                                outFit.getDetails(),
+                                null
+                        )).toList(),
+                        voteItem.getMember().getUsername(),
+                        this.attachmentService.getUrl(
+                                voteItem.getMember().getId(),
+                                AttachmentLinkableType.USER,
+                                AttachmentLinkType.PROFILE)
+                )).toList(),
                 findCursorToUpScroll(voteItems),
                 findCursorToDownScroll(voteItems),
                 direction,
                 isLastCursorToUpScroll(latestVote, nextCursor, limit),
-                isLastCursorToDownScroll(oldestVote, nextCursor, limit));
+                isLastCursorToDownScroll(oldestVote, nextCursor, limit)
+        );
     }
 
-    private LocalDate findCursorToUpScroll(List<FindVoteItemResponse> voteItems) {
+    private LocalDate findCursorToUpScroll(List<Vote> voteItems) {
         if (voteItems.isEmpty()) {
             return null;
         }
-        LocalDateTime lastVotedAt = voteItems.get(0).votedAt();
+        LocalDateTime lastVotedAt = voteItems.get(0).getVotedAt();
 
         return lastVotedAt.toLocalDate();
     }
 
-    private LocalDate findCursorToDownScroll(List<FindVoteItemResponse> voteItems) {
+    private LocalDate findCursorToDownScroll(List<Vote> voteItems) {
         if (voteItems.isEmpty()) {
             return null;
         }
-        LocalDateTime lastVotedAt = voteItems.get(voteItems.size() - 1).votedAt();
+        LocalDateTime lastVotedAt = voteItems.get(voteItems.size() - 1).getVotedAt();
         return lastVotedAt.toLocalDate();
     }
 
@@ -172,5 +208,17 @@ public class VoteService {
                 .voteType(voteType)
                 .votedAt(votedAt)
                 .build();
+    }
+
+    private boolean isSubscribed(Long fromMemberId, Long toMemberId) {
+        return subscribeRepository.existsByFromMemberIdAndToMemberId(fromMemberId, toMemberId);
+    }
+
+    private boolean isBookmarked(Long feedId, Long memberId) {
+        return bookmarkRepository.existsByFeedIdAndMemberId(feedId, memberId);
+    }
+
+    private boolean isFAPFeed(Long feedId) {
+        return fapArchivingRepository.existsByFeedId(feedId);
     }
 }

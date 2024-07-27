@@ -24,15 +24,10 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
     }
 
     @Override
-    public List<FindVoteItemResponse> findVoteUsingNoOffset(Long memberId, LocalDateTime startDate, LocalDateTime endDate) {
+    public List<Vote> findVoteUsingNoOffset(Long memberId, LocalDateTime startDate, LocalDateTime endDate) {
         QVote vote = QVote.vote;
         return jpaQueryFactory
-                .select(Projections.constructor(FindVoteItemResponse.class,
-                        vote.id,
-                        vote.feed.id,
-                        vote.votedAt,
-                        vote.voteType))
-                .from(vote)
+                .selectFrom(vote)
                 .where(vote.member.id.eq(memberId), vote.votedAt.between(startDate, endDate))
                 .orderBy(vote.id.desc())
                 .fetch();

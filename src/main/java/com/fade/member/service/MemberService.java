@@ -9,9 +9,11 @@ import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
+import com.fade.member.repository.MemberSearchRepository;
 import com.fade.member.vo.UserVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberCommonService memberCommonService;
     private final AttachmentService attachmentService;
+
+    private final MemberSearchRepository memberSearchRepository;
 
     @Transactional
     public Long createUser(
@@ -104,14 +108,16 @@ public class MemberService {
         return new UserVo(member.getId(), List.of(MemberRole.USER));
     }
 
-    public List<MemberSearchResponse> searchMembers(String query) {
-        return memberRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
+    public MemberSearchResponse searchMembers(String query) {
+        List<MemberSearchItemResponse> matchedMembers = memberSearchRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
+        return new MemberSearchResponse(matchedMembers);
     }
 
-    private MemberSearchResponse mapToResponse(Member member) {
+    private MemberSearchItemResponse mapToResponse(Member member) {
         String profileImageUrl = null;
         try {
             profileImageUrl = attachmentService.getUrl(
@@ -124,6 +130,15 @@ public class MemberService {
                 throw e;
             }
         }
-        return new MemberSearchResponse(member.getUsername(), profileImageUrl);
+        return new MemberSearchItemResponse(member.getUsername(), profileImageUrl);
+    }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        final var member = this.memberCommonService.findById(memberId);
+
+        member.withdraw();
+
+        this.memberRepository.save(member);
     }
 }

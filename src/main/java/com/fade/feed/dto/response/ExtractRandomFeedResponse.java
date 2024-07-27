@@ -10,15 +10,16 @@ public record ExtractRandomFeedResponse(
     public record ExtractRandomFeedItemResponse(
             Long id,
             String imageURL,
-            List<ExtractRandomFeedStyleResponse> styles,
-            List<ExtractRandomFeedOutfitResponse> feedOutfitList,
-            Long memberId
+            List<ExtractRandomFeedStyleResponse> styleIds,
+            List<ExtractRandomFeedOutfitResponse> outfits,
+            Long memberId,
+            Boolean isSubscribed,
+            Boolean isBookmarked
     ) {
     }
 
     public record ExtractRandomFeedStyleResponse(
-            Integer id,
-            String name
+            Integer id
     ) {
     }
 
