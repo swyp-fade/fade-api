@@ -146,7 +146,7 @@ public class VoteService {
                                 AttachmentLinkableType.FEED,
                                 AttachmentLinkType.IMAGE
                         ),
-                        isFapFeed(voteItem.getFeed().getId()),
+                        isFAPFeed(voteItem.getFeed().getId()),
                         voteItem.getFeed().getStyles().stream().map(style -> new FindVoteResponse.FindVoteItemStyleResponse(
                                 style.getId()
                         )).toList(),
@@ -214,7 +214,7 @@ public class VoteService {
         return bookmarkRepository.existsByFeedIdAndMemberId(feedId, memberId);
     }
 
-    private boolean isFapFeed(Long feedId) {
+    private boolean isFAPFeed(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
     }
 }
