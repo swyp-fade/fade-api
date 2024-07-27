@@ -24,6 +24,8 @@ public record FindVoteResponse(
             Long feedId,
             String feedImageURL,
             Boolean isFAPFeed,
+            Boolean isSubscribed,
+            Boolean isBookmarked,
             List<FindVoteItemStyleResponse> stylesId,
             List<FindVoteItemOutFitResponse> outfits,
             String username,

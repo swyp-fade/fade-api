@@ -69,7 +69,7 @@ public class VoteService {
                                 null
                         )).toList(),
                         feed.getMember().getId(),
-                        isSubscribed(member.getId(),feed.getMember().getId()),
+                        isSubscribed(member.getId(), feed.getMember().getId()),
                         isBookmarked(feed.getId(), feed.getMember().getId())
                 )).toList()
         );
@@ -147,6 +147,8 @@ public class VoteService {
                                 AttachmentLinkType.IMAGE
                         ),
                         isFAPFeed(voteItem.getFeed().getId()),
+                        isSubscribed(member.getId(), voteItem.getFeed().getMember().getId()),
+                        isBookmarked(voteItem.getFeed().getId(), voteItem.getMember().getId()),
                         voteItem.getFeed().getStyles().stream().map(style -> new FindVoteResponse.FindVoteItemStyleResponse(
                                 style.getId()
                         )).toList(),
@@ -207,7 +209,7 @@ public class VoteService {
     }
 
     private boolean isSubscribed(Long fromMemberId, Long toMemberId) {
-        return subscribeRepository.existsByFromMemberIdAndToMemberId(fromMemberId,toMemberId);
+        return subscribeRepository.existsByFromMemberIdAndToMemberId(fromMemberId, toMemberId);
     }
 
     private boolean isBookmarked(Long feedId, Long memberId) {
