@@ -5,7 +5,6 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
-import com.fade.vote.dto.response.FindMonthlyPopularFeedArchivingResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.service.VoteService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,17 +71,5 @@ public class VoteController {
     )
     public FindVoteResponse findVotes(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
         return voteService.findVotes(userVo.getId(), nextCursor, limit, scrollType);
-    }
-
-    @GetMapping("/archiving")
-    @SecurityRequirement(name = "access-token")
-    @ApiResponses(
-            @ApiResponse(
-                    responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = FindMonthlyPopularFeedArchivingResponse.class))
-            )
-    )
-    public List<FindMonthlyPopularFeedArchivingResponse> findMonthlyPopularFeedArchiving(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate selectDate) {
-        return voteService.findMonthlyPopularFeedArchiving(selectDate);
     }
 }
