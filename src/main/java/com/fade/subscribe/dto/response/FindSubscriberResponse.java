@@ -10,7 +10,7 @@ public record FindSubscriberResponse(
     public record FindSubscriberItemResponse(
         Long id,
         String username,
-        String profileImageUrl
+        String profileImageURL
     ) {
     }
 }
