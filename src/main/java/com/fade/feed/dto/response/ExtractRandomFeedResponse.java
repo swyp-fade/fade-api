@@ -11,7 +11,7 @@ public record ExtractRandomFeedResponse(
             Long id,
             String imageURL,
             List<ExtractRandomFeedStyleResponse> styleIds,
-            List<ExtractRandomFeedOutfitResponse> outFits,
+            List<ExtractRandomFeedOutfitResponse> outfits,
             Long memberId,
             Boolean isSubscribed,
             Boolean isBookmarked
