@@ -60,8 +60,12 @@ public class FeedController {
     )
     public FindFeedResponse findFeeds(
             @Valid
-            FindFeedRequest findFeedRequest
+            FindFeedRequest findFeedRequest,
+            @AuthenticationPrincipal UserVo userVo
     ) {
-        return feedService.findFeeds(findFeedRequest);
+        return feedService.findFeeds(
+                findFeedRequest,
+                userVo.getId()
+        );
     }
 }
