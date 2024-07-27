@@ -16,6 +16,8 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +30,8 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE feeds SET deleted_at=NOW() WHERE id=?")
+@SQLRestriction("deleted_at IS NULL")
 public class Feed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,6 +55,9 @@ public class Feed {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public Feed(
             Member member,
             Collection<Style> styles,
@@ -61,5 +68,9 @@ public class Feed {
         this.feedOutfitList = new ArrayList<>(feedOutfitList);
 
         feedOutfitList.forEach(f -> f.setFeed(this));
+    }
+
+    public void remove() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
