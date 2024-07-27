@@ -61,8 +61,7 @@ public class VoteService {
                                 feedOutfit.getBrandName(),
                                 feedOutfit.getDetail(),
                                 new FindCategoryListResponse.FindCategoryItemResponse(
-                                        feedOutfit.getCategory().getId(),
-                                        feedOutfit.getCategory().getName()
+                                        feedOutfit.getCategory().getId()
                                 )
                         )).toList(),
                         feed.getMember().getId()

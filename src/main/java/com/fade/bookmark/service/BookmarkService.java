@@ -1,6 +1,7 @@
 package com.fade.bookmark.service;
 
 
+import com.fade.bookmark.dto.request.BookmarkCountRequest;
 import com.fade.bookmark.entity.Bookmark;
 import com.fade.bookmark.repository.BookmarkRepository;
 import com.fade.feed.entity.Feed;
@@ -44,5 +45,9 @@ public class BookmarkService {
 
     public Boolean hasBookmark(Long memberId, Long feedId) {
         return this.bookmarkRepository.existsByMemberIdAndFeedId(memberId, feedId);
+    }
+
+    public Long getCount(BookmarkCountRequest bookmarkCountRequest) {
+        return this.bookmarkRepository.countByCondition(bookmarkCountRequest);
     }
 }

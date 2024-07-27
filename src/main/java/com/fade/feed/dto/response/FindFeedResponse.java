@@ -17,7 +17,9 @@ public record FindFeedResponse(
             Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,
-            Boolean isMine
+            Boolean isMine,
+            Long bookmarkCount,
+            String username
     ) {
     }
 
@@ -30,7 +32,7 @@ public record FindFeedResponse(
             Long id,
             String brandName,
             String detail,
-            FindCategoryListResponse.FindCategoryItemResponse category
+            FindCategoryListResponse.FindCategoryItemResponse categoryIds
     ) {
     }
 
