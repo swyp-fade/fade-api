@@ -6,6 +6,7 @@ import lombok.Builder;
 @Builder
 public record CreateNotificationDto(
         Long receiverId,
+        Long feedId,
         NotificationType type
 ) {
 }

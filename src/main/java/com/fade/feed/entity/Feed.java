@@ -2,6 +2,7 @@ package com.fade.feed.entity;
 
 import com.fade.faparchiving.entity.FapArchiving;
 import com.fade.member.entity.Member;
+import com.fade.notification.dto.CreateNotificationDto;
 import com.fade.style.entity.Style;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -19,6 +20,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -76,5 +78,9 @@ public class Feed {
 
     public void remove() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void publishEvent(ApplicationEventPublisher eventPublisher, CreateNotificationDto createNotificationDto) {
+        eventPublisher.publishEvent(createNotificationDto);
     }
 }

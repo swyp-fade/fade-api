@@ -1,11 +1,13 @@
 package com.fade.notification.service;
 
+import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.member.service.MemberCommonService;
 import com.fade.notification.constant.NotificationType;
 import com.fade.notification.dto.CreateNotificationDto;
 import com.fade.notification.dto.response.FindNotificationResponse;
 import com.fade.notification.entity.Notification;
 import com.fade.notification.repository.NotificationRepository;
+import com.fade.report.repository.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,8 @@ import java.time.LocalDateTime;
 public class NotificationService {
     private final MemberCommonService memberCommonService;
     private final NotificationRepository notificationRepository;
+    private final ReportRepository repository;
+    private final FapArchivingRepository fapArchivingRepository;
 
 
     //TODO:: 알림은 각 도메인 상관없이 한꺼번에 반환 + 필요없는값 null처리
@@ -28,13 +32,13 @@ public class NotificationService {
         return new FindNotificationResponse(
                 notifications.stream().map(notification -> new FindNotificationResponse.FindNotificationItemsResponse(
                         notification.getId(),
-                        null,
+                        notification.getFeed().getId(),
                         notification.getType(),
                         notification.getCreatedAt(),
                         notification.getIsRead(),
-                        null,
+                        getReportCount(notification.getReceiver().getId(), notification.getFeed().getId(), notification.getType()),
                         getFapSelectedAt(notification.getCreatedAt(), notification.getType()),
-                        null
+                        getDeleteFapCount(notification.getFeed().getId(), notification.getType())
                 )).toList(),
                 !notifications.isEmpty() ? notifications.get(notifications.size() - 1).getId() : null
         );
@@ -66,5 +70,23 @@ public class NotificationService {
             return notifiedAt.minusDays(1);
         }
         return null;
+    }
+
+    private Long getReportCount(Long memberId, Long feedId, NotificationType type) {
+        if (type == NotificationType.FEED_REPORTED) {
+            return repository.countByMemberIdAndFeedId(memberId, feedId);
+        }
+        return null;
+    }
+
+    private Long getDeleteFapCount(Long feedId, NotificationType type) {
+        if (type == NotificationType.FAP_DELETED) {
+            return hasFapArchiving(feedId) ? fapArchivingRepository.countDeletedFeedsInFapArchiving() : null;
+        }
+        return null;
+    }
+
+    private boolean hasFapArchiving(Long feedId) {
+        return fapArchivingRepository.existsByFeedId(feedId);
     }
 }

@@ -2,6 +2,7 @@ package com.fade.faparchiving.repository;
 
 import com.fade.faparchiving.entity.FapArchiving;
 import com.fade.faparchiving.entity.QFapArchiving;
+import com.fade.feed.entity.QFeed;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -24,5 +25,18 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
                 .selectFrom(fapArchivingQ)
                 .where(fapArchivingQ.archivedAt.between(startOfDate, endOfDate))
                 .fetch();
+    }
+
+    @Override
+    public Long countDeletedFeedsInFapArchiving() {
+        QFeed feedQ = QFeed.feed;
+        QFapArchiving fapArchivingQ = QFapArchiving.fapArchiving;
+
+        return jpaQueryFactory
+                .select(fapArchivingQ.count())
+                .from(fapArchivingQ)
+                .join(fapArchivingQ.feed, feedQ)
+                .where(feedQ.deletedAt.isNotNull())
+                .fetchOne();
     }
 }

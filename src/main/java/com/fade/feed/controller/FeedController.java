@@ -6,8 +6,10 @@ import com.fade.feed.dto.response.CreateFeedResponse;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.service.FeedService;
+import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,12 +21,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController()
 @RequestMapping("feeds")
@@ -86,5 +83,19 @@ public class FeedController {
                 feedId,
                 userVo.getId()
         );
+    }
+
+    @DeleteMapping("/{feedId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "피드 삭제"
+            )
+    )
+    public Response<Void> deleteFeed(@AuthenticationPrincipal UserVo userVo, @PathVariable Long feedId) {
+        this.feedService.deleteFeed(userVo.getId(), feedId);
+        return Response.success();
     }
 }
