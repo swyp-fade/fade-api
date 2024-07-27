@@ -11,13 +11,18 @@ public record FindFeedResponse(
     public record FindFeedItemResponse(
             Long id,
             String imageUrl,
-            List<Integer> styleIds,
+            List<FindFeedStyleResponse> styleIds,
             List<FindFeedOutfitResponse> outfits,
             Long memberId,
             Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,
             Boolean isMine
+    ) {
+    }
+
+    public record FindFeedStyleResponse(
+            Integer id
     ) {
     }
 
