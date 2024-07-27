@@ -49,7 +49,7 @@ public class FapArchivingService {
                         fapArchivingItem.getFeed().getFeedOutfitList().stream().map(outfit -> new FindFapArchivingResponse.FindFapArchivingOutfitResponse(
                                 outfit.getId(),
                                 outfit.getBrandName(),
-                                outfit.getProductName(),
+                                outfit.getDetails(),
                                 null
                         )).toList(),
                         fapArchivingItem.getMember().getId(),

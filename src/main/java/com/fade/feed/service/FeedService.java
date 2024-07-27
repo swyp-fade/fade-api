@@ -3,16 +3,22 @@ package com.fade.feed.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.bookmark.dto.request.BookmarkCountRequest;
+import com.fade.bookmark.service.BookmarkService;
 import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.category.service.CategoryCommonService;
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.FeedOutfit;
 import com.fade.feed.repository.FeedRepository;
+import com.fade.global.constant.ErrorCode;
+import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
 import com.fade.style.service.StyleCommonService;
+import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +32,8 @@ public class FeedService {
     private final CategoryCommonService categoryCommonService;
     private final StyleCommonService styleCommonService;
     private final AttachmentService attachmentService;
+    private final SubscribeService subscribeService;
+    private final BookmarkService bookmarkService;
 
     @Transactional
     public Long createFeed(
@@ -37,13 +45,11 @@ public class FeedService {
         final var feedOutfits = createFeedRequest.outfits().stream().map(outfitItem ->
             new FeedOutfit(
                     outfitItem.brandName(),
-                    outfitItem.productName(),
+                    outfitItem.details(),
                     this.categoryCommonService.findById(outfitItem.categoryId())
             )
         ).toList();
         final var styles = createFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
-
-        System.out.println("feedOutfits" + feedOutfits);
 
         final var feed = this.feedRepository.save(new Feed(
                 member,
@@ -64,6 +70,8 @@ public class FeedService {
     public FindFeedResponse findFeeds(FindFeedRequest findFeedRequest, Long memberId) {
         final var feeds = this.feedRepository.findFeeds(findFeedRequest, memberId);
 
+        final var subscribeMemberIds = this.subscribeService.findSubscribeToMemberIds(memberId);
+
         return new FindFeedResponse(
                 feeds.stream().map((feed) -> new FindFeedResponse.FindFeedItemResponse(
                         feed.getId(),
@@ -72,22 +80,54 @@ public class FeedService {
                                 AttachmentLinkableType.FEED,
                                 AttachmentLinkType.IMAGE
                         ),
-                        feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(
-                                style.getId(),
-                                style.getName()
-                        )).toList(),
+                        feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(style.getId())).toList(),
                         feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
-                                feedOutfit.getProductName(),
+                                feedOutfit.getDetails(),
                                 new FindCategoryListResponse.FindCategoryItemResponse(
-                                        feedOutfit.getCategory().getId(),
-                                        feedOutfit.getCategory().getName()
+                                        feedOutfit.getCategory().getId()
                                 )
                         )).toList(),
-                        feed.getMember().getId()
+                        feed.getMember().getId(),
+                        !feed.getFapArchivingList().isEmpty(),
+                        subscribeMemberIds.contains(feed.getMember().getId()),
+                        this.bookmarkService.hasBookmark(memberId, feed.getId()),
+                        memberId.equals(feed.getMember().getId()),
+                        this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
+                        feed.getMember().getUsername()
                 )).toList(),
                 !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
+        );
+    }
+
+    public FindFeedDetailResponse findFeed(Long feedId, Long memberId) {
+        final var feed = this.feedRepository.findById(feedId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_FEED));
+
+        return new FindFeedDetailResponse(
+                feed.getId(),
+                this.attachmentService.getUrl(
+                        feed.getId(),
+                        AttachmentLinkableType.FEED,
+                        AttachmentLinkType.IMAGE
+                ),
+                feed.getStyles().stream().map((style) -> new FindFeedResponse.FindFeedStyleResponse(style.getId())).toList(),
+                feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
+                        feedOutfit.getId(),
+                        feedOutfit.getBrandName(),
+                        feedOutfit.getDetails(),
+                        new FindCategoryListResponse.FindCategoryItemResponse(
+                                feedOutfit.getCategory().getId()
+                        )
+                )).toList(),
+                feed.getMember().getId(),
+                !feed.getFapArchivingList().isEmpty(),
+                this.subscribeService.hasSubscribe(memberId, feed.getMember().getId()),
+                this.bookmarkService.hasBookmark(memberId, feed.getId()),
+                memberId.equals(feed.getMember().getId()),
+                this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
+                feed.getMember().getUsername()
         );
     }
 }

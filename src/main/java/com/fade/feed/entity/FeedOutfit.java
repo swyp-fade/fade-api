@@ -28,7 +28,7 @@ public class FeedOutfit {
     private String brandName;
 
     @Column(nullable = false, name = "product_name")
-    private String productName;
+    private String details;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id", nullable = false)
@@ -40,11 +40,11 @@ public class FeedOutfit {
 
     public FeedOutfit(
             String brandName,
-            String productName,
+            String details,
             Category category
     ) {
         this.brandName = brandName;
-        this.productName = productName;
+        this.details = details;
         this.category = category;
     }
 }

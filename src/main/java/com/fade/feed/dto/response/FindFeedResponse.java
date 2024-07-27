@@ -10,24 +10,29 @@ public record FindFeedResponse(
 ) {
     public record FindFeedItemResponse(
             Long id,
-            String imageUrl,
-            List<FindFeedStyleResponse> styles,
-            List<FindFeedOutfitResponse> feedOutfitList,
-            Long memberId
+            String imageURL,
+            List<FindFeedStyleResponse> styleIds,
+            List<FindFeedOutfitResponse> outfits,
+            Long memberId,
+            Boolean isFAPFeed,
+            Boolean isSubscribed,
+            Boolean isBookmarked,
+            Boolean isMine,
+            Long bookmarkCount,
+            String username
     ) {
     }
 
     public record FindFeedStyleResponse(
-            Integer id,
-            String name
+            Integer id
     ) {
     }
 
     public record FindFeedOutfitResponse(
             Long id,
             String brandName,
-            String productName,
-            FindCategoryListResponse.FindCategoryItemResponse category
+            String details,
+            FindCategoryListResponse.FindCategoryItemResponse categoryIds
     ) {
     }
 

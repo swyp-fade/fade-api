@@ -1,5 +1,6 @@
 package com.fade.feed.entity;
 
+import com.fade.faparchiving.entity.FapArchiving;
 import com.fade.member.entity.Member;
 import com.fade.style.entity.Style;
 import jakarta.persistence.CascadeType;
@@ -55,8 +56,13 @@ public class Feed {
     @JoinColumn(name = "member_id")
     private Member member;
 
+<<<<<<< Updated upstream
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
+=======
+    @OneToMany(mappedBy = "feed")
+    private List<FapArchiving> fapArchivingList = new ArrayList<>();
+>>>>>>> Stashed changes
 
     public Feed(
             Member member,

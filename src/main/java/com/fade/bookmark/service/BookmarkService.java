@@ -1,6 +1,7 @@
 package com.fade.bookmark.service;
 
 
+import com.fade.bookmark.dto.request.BookmarkCountRequest;
 import com.fade.bookmark.entity.Bookmark;
 import com.fade.bookmark.repository.BookmarkRepository;
 import com.fade.feed.entity.Feed;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class BookmarkService {
 
     private final MemberCommonService memberCommonService;
@@ -39,5 +41,13 @@ public class BookmarkService {
         Bookmark bookmark = bookMarkCommonService.findByMemberIdAndFeedId(memberId, feedId);
 
         bookmarkRepository.delete(bookmark);
+    }
+
+    public Boolean hasBookmark(Long memberId, Long feedId) {
+        return this.bookmarkRepository.existsByMemberIdAndFeedId(memberId, feedId);
+    }
+
+    public Long getCount(BookmarkCountRequest bookmarkCountRequest) {
+        return this.bookmarkRepository.countByCondition(bookmarkCountRequest);
     }
 }

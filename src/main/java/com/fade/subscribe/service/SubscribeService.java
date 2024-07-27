@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class SubscribeService {
@@ -66,5 +68,13 @@ public class SubscribeService {
 
     private boolean isArchiving(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    public boolean hasSubscribe(Long fromMemberId, Long toMemberId) {
+        return this.subscribeRepository.existsByFromMemberIdAndToMemberId(fromMemberId, toMemberId);
+    }
+
+    public List<Long> findSubscribeToMemberIds(Long fromMemberId) {
+        return this.subscribeRepository.findByFromMemberToMemberIds(fromMemberId);
     }
 }

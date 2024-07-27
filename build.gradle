@@ -41,6 +41,7 @@ dependencies {
 
 	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.6.0'
 	implementation group: 'io.awspring.cloud', name: 'spring-cloud-starter-aws', version: '2.4.4'
+	implementation group: 'org.jetbrains', name: 'annotations', version: '24.0.1'
 
 	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.12.3'
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.12.3'

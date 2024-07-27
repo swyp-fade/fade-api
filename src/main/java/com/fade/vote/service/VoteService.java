@@ -65,8 +65,10 @@ public class VoteService {
                         feed.getFeedOutfitList().stream().map(feedOutfit -> new ExtractRandomFeedResponse.ExtractRandomFeedOutfitResponse(
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
-                                feedOutfit.getProductName(),
-                                null
+                                feedOutfit.getDetails(),
+                                new FindCategoryListResponse.FindCategoryItemResponse(
+                                        feedOutfit.getCategory().getId()
+                                )
                         )).toList(),
                         feed.getMember().getId(),
                         isSubscribed(member.getId(), feed.getMember().getId()),
@@ -155,7 +157,7 @@ public class VoteService {
                         voteItem.getFeed().getFeedOutfitList().stream().map(outFit -> new FindVoteResponse.FindVoteItemOutFitResponse(
                                 outFit.getId(),
                                 outFit.getBrandName(),
-                                outFit.getProductName(),
+                                outFit.getDetails(),
                                 null
                         )).toList(),
                         voteItem.getMember().getUsername(),

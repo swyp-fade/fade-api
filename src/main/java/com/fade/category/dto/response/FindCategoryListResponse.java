@@ -10,10 +10,7 @@ public record FindCategoryListResponse(
 
     public record FindCategoryItemResponse(
             @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-            Integer code,
-            @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-            String name
+            Integer id
     ) {
-
     }
 }
