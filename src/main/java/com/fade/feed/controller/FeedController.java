@@ -76,7 +76,7 @@ public class FeedController {
     @Secured(MemberRole.USER_TYPE)
     @ApiResponse(
             responseCode = "200",
-            content = @Content(schema = @Schema(implementation = FindFeedResponse.class))
+            content = @Content(schema = @Schema(implementation = FindFeedDetailResponse.class))
     )
     public FindFeedDetailResponse findFeedDetail(
             @AuthenticationPrincipal UserVo userVo,
