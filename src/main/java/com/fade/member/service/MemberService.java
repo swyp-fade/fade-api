@@ -132,4 +132,13 @@ public class MemberService {
         }
         return new MemberSearchItemResponse(member.getUsername(), profileImageUrl);
     }
+
+    @Transactional
+    public void deleteMember(Long memberId) {
+        final var member = this.memberCommonService.findById(memberId);
+
+        member.withdraw();
+
+        this.memberRepository.save(member);
+    }
 }

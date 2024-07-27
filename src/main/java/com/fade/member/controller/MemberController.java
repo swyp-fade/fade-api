@@ -1,5 +1,6 @@
 package com.fade.member.controller;
 
+import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
@@ -7,6 +8,7 @@ import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -70,5 +72,20 @@ public class MemberController {
             @RequestParam String query
     ) {
         return this.memberService.searchMembers(query);
+    }
+
+    @DeleteMapping("/me")
+    @Operation(
+            summary = "계정 탈퇴"
+    )
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204"
+            )
+    )
+    public Response<Void> deleteMember(@AuthenticationPrincipal UserVo userVo) {
+        this.memberService.deleteMember(userVo.getId());
+
+        return Response.success();
     }
 }

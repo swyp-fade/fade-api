@@ -14,7 +14,10 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,6 +25,8 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE members SET deleted_at=NOW() WHERE id=?")
+@SQLRestriction("deleted_at IS NULL")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +43,9 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private Set<SocialLogin> socialLogins = new HashSet<>();
 
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public Member(String username, GenderType genderType) {
         this.username = username;
         this.genderType = genderType;
@@ -45,5 +53,9 @@ public class Member {
 
     public void modifyUsername(String username) {
         this.username = username;
+    }
+
+    public void withdraw() {
+        this.deletedAt = LocalDateTime.now();
     }
 }
