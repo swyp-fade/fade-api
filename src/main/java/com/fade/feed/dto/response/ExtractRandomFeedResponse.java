@@ -9,7 +9,7 @@ public record ExtractRandomFeedResponse(
 ) {
     public record ExtractRandomFeedItemResponse(
             Long id,
-            String imageUrl,
+            String imageURL,
             List<ExtractRandomFeedStyleResponse> styles,
             List<ExtractRandomFeedOutfitResponse> feedOutfitList,
             Long memberId

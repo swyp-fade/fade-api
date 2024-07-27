@@ -4,7 +4,7 @@ import java.util.List;
 
 public record FindFeedDetailResponse(
         Long id,
-        String imageUrl,
+        String imageURL,
         List<FindFeedResponse.FindFeedStyleResponse> styleIds,
         List<FindFeedResponse.FindFeedOutfitResponse> outfits,
         Long memberId,
