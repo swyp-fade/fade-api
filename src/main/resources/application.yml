@@ -11,7 +11,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/fade
     username: root
-    password: "0000"
+    password: root
   jpa:
     defer-datasource-initialization: true
     hibernate:
