@@ -27,7 +27,7 @@ public record CreateFeedRequest(
                 String brandName,
                 @NotEmpty
                 @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
-                String detail
+                String details
         ) {
 
         }

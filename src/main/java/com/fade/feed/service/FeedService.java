@@ -45,7 +45,7 @@ public class FeedService {
         final var feedOutfits = createFeedRequest.outfits().stream().map(outfitItem ->
             new FeedOutfit(
                     outfitItem.brandName(),
-                    outfitItem.detail(),
+                    outfitItem.details(),
                     this.categoryCommonService.findById(outfitItem.categoryId())
             )
         ).toList();
@@ -84,7 +84,7 @@ public class FeedService {
                         feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
-                                feedOutfit.getDetail(),
+                                feedOutfit.getDetails(),
                                 new FindCategoryListResponse.FindCategoryItemResponse(
                                         feedOutfit.getCategory().getId()
                                 )
@@ -116,7 +116,7 @@ public class FeedService {
                 feed.getFeedOutfitList().stream().map((feedOutfit) -> new FindFeedResponse.FindFeedOutfitResponse(
                         feedOutfit.getId(),
                         feedOutfit.getBrandName(),
-                        feedOutfit.getDetail(),
+                        feedOutfit.getDetails(),
                         new FindCategoryListResponse.FindCategoryItemResponse(
                                 feedOutfit.getCategory().getId()
                         )

@@ -31,7 +31,7 @@ public record FindFeedResponse(
     public record FindFeedOutfitResponse(
             Long id,
             String brandName,
-            String detail,
+            String details,
             FindCategoryListResponse.FindCategoryItemResponse categoryIds
     ) {
     }
