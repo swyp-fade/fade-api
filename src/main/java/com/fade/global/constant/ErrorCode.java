@@ -42,7 +42,10 @@ public enum ErrorCode {
     NOT_FOUND_CATEGORY(HttpStatus.NOT_FOUND, "카테고리 정보를 찾을 수 없습니다."),
 
     //STYLE
-    NOT_FOUND_STYLE(HttpStatus.NOT_FOUND, "스타일 정보를 찾을 수 없습니다.")
+    NOT_FOUND_STYLE(HttpStatus.NOT_FOUND, "스타일 정보를 찾을 수 없습니다."),
+
+    //REPORT
+    ALREADY_EXISTS_REPORT(HttpStatus.CONFLICT, "이미 신고한 내역이 있습니다")
     ;
 
     private final HttpStatus httpStatus;
