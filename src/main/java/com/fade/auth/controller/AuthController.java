@@ -1,6 +1,7 @@
 package com.fade.auth.controller;
 
 import com.fade.auth.dto.response.HttpSigninInResponse;
+import com.fade.auth.dto.response.ResponseCookie;
 import com.fade.auth.service.AuthService;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.exception.ApplicationException;
@@ -106,11 +107,13 @@ public class AuthController {
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refresh_token", refreshToken);
-        cookie.setMaxAge(7*24*60*60);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
-
-        response.addCookie(cookie);
+        ResponseCookie cookie = ResponseCookie.builder()
+                .refreshToken(refreshToken)
+                .sameSite("None")
+                .maxAge(7 * 24 * 60 * 60)
+                .httpOnly(true)
+                .path("/")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
     }
 }
