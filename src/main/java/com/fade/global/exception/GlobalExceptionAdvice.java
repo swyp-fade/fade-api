@@ -33,15 +33,18 @@ public class GlobalExceptionAdvice extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ApplicationException.class)
-    public Response<?> handleApplicationException(ApplicationException e) {
-        return Response.error(
-                e.getErrorCode().getHttpStatus().value(),
-                e.getMessage(),
-                Map.of(
-                        "errorCode", e.getErrorCode().name(),
-                        "data", e.getData()
-                )
-        );
+    public ResponseEntity<Response<?>> handleApplicationException(ApplicationException e) {
+
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus())
+                .body(Response.error(
+                        e.getErrorCode().getHttpStatus().value(),
+                        e.getMessage(),
+                        Map.of(
+                                "errorCode", e.getErrorCode().name(),
+                                "data", e.getData()
+                        )
+                ));
     }
 
     @ExceptionHandler(Exception.class)
