@@ -2,6 +2,7 @@ package com.fade.subscribe.controller;
 
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
+import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.vo.UserVo;
 import com.fade.subscribe.dto.request.CountSubscriberRequest;
 import com.fade.subscribe.dto.request.FindSubscriberRequest;
@@ -9,6 +10,8 @@ import com.fade.subscribe.dto.response.CheckSubscribeResponse;
 import com.fade.subscribe.dto.response.CountSubscriberResponse;
 import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.service.SubscribeService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -34,7 +37,8 @@ public class SubscribeController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    description = "구독자 수 조회"
+                    description = "구독자 수 조회",
+                    content = @Content(schema = @Schema(implementation = CountSubscriberResponse.class))
             )
     )
     public CountSubscriberResponse countSubscriber(
