@@ -2,6 +2,8 @@ package com.fade.auth.controller;
 
 import com.fade.auth.dto.response.HttpSigninInResponse;
 import com.fade.auth.service.AuthService;
+import com.fade.global.constant.ErrorCode;
+import com.fade.global.exception.ApplicationException;
 import com.fade.sociallogin.constant.SocialType;
 import com.fade.sociallogin.dto.request.SigninByCodeRequest;
 import com.fade.sociallogin.dto.request.SignupByCodeRequest;
@@ -83,9 +85,13 @@ public class AuthController {
             ))
     })
     public HttpSigninInResponse generateAccessToken(
-            @CookieValue("refreshToken") String refreshToken,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response
     ) {
+        if (refreshToken == null) {
+            throw new ApplicationException(ErrorCode.UNAUTHORIZED);
+        }
+
         final var rt = this.authService.generateRefreshTokenOrEmpty(
                 refreshToken
         ).orElse(refreshToken);
