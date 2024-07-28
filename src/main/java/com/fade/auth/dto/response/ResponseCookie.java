@@ -8,6 +8,7 @@ public record ResponseCookie(
     int maxAge,
     boolean httpOnly,
     String path,
-    String sameSite
+    String sameSite,
+    boolean secure
 ) {
 }
