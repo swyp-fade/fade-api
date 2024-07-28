@@ -2,6 +2,7 @@ package com.fade.auth.service;
 
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.ErrorCode;
+import com.fade.global.constant.GenderType;
 import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.entity.RefreshToken;
@@ -64,6 +65,8 @@ public class AuthService {
 
         final var memberClaim = new MemberJwtClaim(
                 memberVo.getId(),
+                memberVo.getGenderType(),
+                memberVo.getMemberUsername(),
                 memberVo.getMemberRoles()
         );
 
