@@ -1,5 +1,6 @@
 package com.fade.member.controller;
 
+import com.fade.auth.service.AuthService;
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("members")
 public class MemberController {
     private final MemberService memberService;
+    private final AuthService authService;
 
     @GetMapping("/me")
     @SecurityRequirement(name = "access-token")
@@ -89,5 +91,10 @@ public class MemberController {
         this.memberService.deleteMember(userVo.getId());
 
         return Response.success();
+    }
+
+    @PostMapping("/signin")
+    public String signin(Long memberId) {
+        return authService.generateAccessToken(memberId);
     }
 }
