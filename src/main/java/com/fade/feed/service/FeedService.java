@@ -19,6 +19,8 @@ import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
 import com.fade.notification.constant.NotificationType;
 import com.fade.notification.dto.CreateNotificationDto;
+import com.fade.report.dto.request.CountReportRequest;
+import com.fade.report.service.ReportService;
 import com.fade.style.service.StyleCommonService;
 import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,7 @@ public class FeedService {
     private final BookmarkService bookmarkService;
     private final ApplicationEventPublisher eventPublisher;
     private final FapArchivingRepository fapArchivingRepository;
+    private final ReportService reportService;
 
     @Transactional
     public Long createFeed(
@@ -98,7 +101,8 @@ public class FeedService {
                         this.bookmarkService.hasBookmark(memberId, feed.getId()),
                         memberId.equals(feed.getMember().getId()),
                         this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
-                        feed.getMember().getUsername()
+                        feed.getMember().getUsername(),
+                        this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build())
                 )).toList(),
                 !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
         );
@@ -128,7 +132,8 @@ public class FeedService {
                 this.bookmarkService.hasBookmark(memberId, feed.getId()),
                 memberId.equals(feed.getMember().getId()),
                 this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
-                feed.getMember().getUsername()
+                feed.getMember().getUsername(),
+                this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build())
         );
     }
 

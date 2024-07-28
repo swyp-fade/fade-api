@@ -8,7 +8,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 public class CustomReportRepositoryImpl extends QuerydslRepositorySupport implements CustomReportRepository {
-    private QReport reportQ = QReport.report;
+    private final QReport reportQ = QReport.report;
 
     public CustomReportRepositoryImpl() {
         super(Report.class);
