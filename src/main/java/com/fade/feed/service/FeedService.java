@@ -144,6 +144,10 @@ public class FeedService {
         final var feed = this.feedRepository.findById(feedId)
                 .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_FEED));
 
+        if (!member.getId().equals(feed.getMember().getId())) {
+            throw new ApplicationException(ErrorCode.FEED_DELETE_DENIED);
+        }
+
         feed.remove();
 
         this.feedRepository.save(feed);
@@ -151,7 +155,6 @@ public class FeedService {
         if (hasFapArchiving(feed.getId())) {
             notifyFapFeedDelete(feed, createFapFeedDeleteDto(member.getId(), feed.getId()));
         }
-
     }
 
     private boolean hasFapArchiving(Long feedId) {
