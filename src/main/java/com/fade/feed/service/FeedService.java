@@ -5,7 +5,6 @@ import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.bookmark.dto.request.BookmarkCountRequest;
 import com.fade.bookmark.service.BookmarkService;
-import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.category.service.CategoryCommonService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.request.CreateFeedRequest;
@@ -20,7 +19,6 @@ import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
 import com.fade.notification.constant.NotificationType;
 import com.fade.notification.dto.CreateNotificationDto;
-import com.fade.report.entity.Report;
 import com.fade.style.service.StyleCommonService;
 import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
@@ -92,9 +90,7 @@ public class FeedService {
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
                                 feedOutfit.getDetails(),
-                                new FindCategoryListResponse.FindCategoryItemResponse(
-                                        feedOutfit.getCategory().getId()
-                                )
+                                feedOutfit.getCategory().getId()
                         )).toList(),
                         feed.getMember().getId(),
                         !feed.getFapArchivingList().isEmpty(),
@@ -124,9 +120,7 @@ public class FeedService {
                         feedOutfit.getId(),
                         feedOutfit.getBrandName(),
                         feedOutfit.getDetails(),
-                        new FindCategoryListResponse.FindCategoryItemResponse(
-                                feedOutfit.getCategory().getId()
-                        )
+                        feedOutfit.getCategory().getId()
                 )).toList(),
                 feed.getMember().getId(),
                 !feed.getFapArchivingList().isEmpty(),

@@ -4,7 +4,6 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.bookmark.repository.BookmarkRepository;
-import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.response.ExtractRandomFeedResponse;
 import com.fade.feed.entity.Feed;
@@ -66,9 +65,7 @@ public class VoteService {
                                 feedOutfit.getId(),
                                 feedOutfit.getBrandName(),
                                 feedOutfit.getDetails(),
-                                new FindCategoryListResponse.FindCategoryItemResponse(
-                                        feedOutfit.getCategory().getId()
-                                )
+                                feedOutfit.getCategory().getId()
                         )).toList(),
                         feed.getMember().getId(),
                         isSubscribed(member.getId(), feed.getMember().getId()),

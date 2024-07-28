@@ -3,7 +3,6 @@ package com.fade.faparchiving.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
-import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.faparchiving.dto.response.FindFapArchivingResponse;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.member.service.MemberCommonService;
@@ -15,8 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +47,7 @@ public class FapArchivingService {
                                 outfit.getId(),
                                 outfit.getBrandName(),
                                 outfit.getDetails(),
-                                null
+                                outfit.getCategory().getId()
                         )).toList(),
                         fapArchivingItem.getMember().getId(),
                         isSubscribed(member.getId(), fapArchivingItem.getMember().getId()),

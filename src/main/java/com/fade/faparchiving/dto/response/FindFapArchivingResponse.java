@@ -1,7 +1,5 @@
 package com.fade.faparchiving.dto.response;
 
-import com.fade.category.dto.response.FindCategoryListResponse;
-
 import java.util.List;
 
 public record FindFapArchivingResponse(
@@ -28,7 +26,7 @@ public record FindFapArchivingResponse(
         Long id,
         String brandName,
         String details,
-        FindCategoryListResponse.FindCategoryItemResponse category
+        Integer categoryId
     ) {
     }
 }

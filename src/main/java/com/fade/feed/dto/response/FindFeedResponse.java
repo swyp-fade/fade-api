@@ -1,7 +1,5 @@
 package com.fade.feed.dto.response;
 
-import com.fade.category.dto.response.FindCategoryListResponse;
-
 import java.util.List;
 
 public record FindFeedResponse(
@@ -32,7 +30,7 @@ public record FindFeedResponse(
             Long id,
             String brandName,
             String details,
-            FindCategoryListResponse.FindCategoryItemResponse categoryIds
+            Integer categoryId
     ) {
     }
 
