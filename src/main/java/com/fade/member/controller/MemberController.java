@@ -33,6 +33,21 @@ public class MemberController {
     private final MemberService memberService;
     private final AuthService authService;
 
+    @GetMapping("/{memberId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindMemberDetailResponse.class))
+            )
+    )
+    public FindMemberDetailResponse findMemberDetail(
+            @PathVariable(name = "memberId") Long memberId
+    ) {
+        return this.memberService.findMemberDetail(memberId);
+    }
+
     @GetMapping("/me")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)

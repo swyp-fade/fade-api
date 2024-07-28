@@ -6,6 +6,7 @@ import com.fade.attachment.service.AttachmentService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
+import com.fade.subscribe.dto.request.CountSubscriberRequest;
 import com.fade.subscribe.dto.response.CheckSubscribeResponse;
 import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.entity.Subscribe;
@@ -83,5 +84,10 @@ public class SubscribeService {
 
     public List<Long> findSubscribeToMemberIds(Long fromMemberId) {
         return this.subscribeRepository.findByFromMemberToMemberIds(fromMemberId);
+    }
+
+    @Transactional(readOnly = true)
+    public Long countSubscriber(CountSubscriberRequest countSubscriberRequest) {
+        return this.subscribeRepository.countByCondition(countSubscriberRequest);
     }
 }
