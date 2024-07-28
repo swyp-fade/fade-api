@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
 
-@Table(name = "styleIds")
+@Table(name = "styles")
 @Entity
 @Getter
 public class Style {
