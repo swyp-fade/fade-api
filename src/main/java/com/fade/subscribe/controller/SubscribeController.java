@@ -4,6 +4,7 @@ import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.subscribe.dto.request.FindSubscriberRequest;
+import com.fade.subscribe.dto.response.CheckSubscribeResponse;
 import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.service.SubscribeService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -62,5 +63,18 @@ public class SubscribeController {
     )
     public FindSubscriberResponse findSubscribers(@AuthenticationPrincipal UserVo userVo, FindSubscriberRequest findSubscriberRequest) {
         return subscribeService.findSubscribers(userVo.getId(), findSubscriberRequest.nextCursor(), findSubscriberRequest.limit());
+    }
+
+    @GetMapping("/subscribe/check/{toMemberId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "구독 상태 체크"
+            )
+    )
+    public CheckSubscribeResponse checkSubscribe(@AuthenticationPrincipal UserVo userVo, @PathVariable Long toMemberId) {
+        return subscribeService.checkSubscribe(userVo.getId(), toMemberId);
     }
 }
