@@ -115,6 +115,15 @@ public class AuthController {
                 .httpOnly(true)
                 .path("/")
                 .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+
+        String cookieHeader = String.format("refreshToken=%s; Max-Age=%d; HttpOnly=%b; Secure=%b; Path=%s; SameSite=%s",
+                cookie.refreshToken(),
+                cookie.maxAge(),
+                cookie.httpOnly(),
+                cookie.secure(),
+                cookie.path(),
+                cookie.sameSite());
+
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 }
