@@ -35,16 +35,17 @@ public class FapArchivingScheduler {
                 .build();
 
         fapArchivingRepository.save(fapArchiving);
-        notifyFap(fapArchiving, createFapNotificationDto(member.getId()));
+        notifyFap(fapArchiving, createFapNotificationDto(member.getId(), feed.getId()));
     }
 
     private void notifyFap(FapArchiving fapArchiving, CreateNotificationDto createNotificationDto) {
         fapArchiving.publishEvent(eventPublisher, createNotificationDto);
     }
 
-    private CreateNotificationDto createFapNotificationDto(Long receiverId) {
+    private CreateNotificationDto createFapNotificationDto(Long receiverId, Long feedId) {
         return CreateNotificationDto.builder()
                 .receiverId(receiverId)
+                .feedId(feedId)
                 .type(NotificationType.FAP_SELECTED)
                 .build();
     }

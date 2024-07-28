@@ -17,7 +17,7 @@ public record FindNotificationResponse(
             Boolean isRead,
             Long reportCount,
             LocalDateTime selectedDate,
-            Integer deletedFapCount
+            Long deletedFAPCount
     ) {
     }
 }

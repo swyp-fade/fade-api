@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Long>, CustomReportRepository {
     boolean existsByMemberIdAndFeedId(Long memberId, Long feedId);
+    Long countByMemberIdAndFeedId(Long memberId, Long feedId);
 }

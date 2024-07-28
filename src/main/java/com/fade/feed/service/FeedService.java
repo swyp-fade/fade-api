@@ -7,6 +7,7 @@ import com.fade.bookmark.dto.request.BookmarkCountRequest;
 import com.fade.bookmark.service.BookmarkService;
 import com.fade.category.dto.response.FindCategoryListResponse;
 import com.fade.category.service.CategoryCommonService;
+import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
@@ -17,9 +18,13 @@ import com.fade.feed.repository.FeedRepository;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
+import com.fade.notification.constant.NotificationType;
+import com.fade.notification.dto.CreateNotificationDto;
+import com.fade.report.entity.Report;
 import com.fade.style.service.StyleCommonService;
 import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +39,8 @@ public class FeedService {
     private final AttachmentService attachmentService;
     private final SubscribeService subscribeService;
     private final BookmarkService bookmarkService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final FapArchivingRepository fapArchivingRepository;
 
     @Transactional
     public Long createFeed(
@@ -43,11 +50,11 @@ public class FeedService {
         final var member = this.memberCommonService.findById(memberId);
 
         final var feedOutfits = createFeedRequest.outfits().stream().map(outfitItem ->
-            new FeedOutfit(
-                    outfitItem.brandName(),
-                    outfitItem.details(),
-                    this.categoryCommonService.findById(outfitItem.categoryId())
-            )
+                new FeedOutfit(
+                        outfitItem.brandName(),
+                        outfitItem.details(),
+                        this.categoryCommonService.findById(outfitItem.categoryId())
+                )
         ).toList();
         final var styles = createFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
 
@@ -129,5 +136,40 @@ public class FeedService {
                 this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
                 feed.getMember().getUsername()
         );
+    }
+
+    @Transactional
+    public void deleteFeed(Long memberId, Long feedId) {
+        final var member = memberCommonService.findById(memberId);
+        final var feed = this.feedRepository.findById(feedId)
+                .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_FEED));
+
+        if (!member.getId().equals(feed.getMember().getId())) {
+            throw new ApplicationException(ErrorCode.FEED_DELETE_DENIED);
+        }
+
+        feed.remove();
+
+        this.feedRepository.save(feed);
+
+        if (hasFapArchiving(feed.getId())) {
+            notifyFapFeedDelete(feed, createFapFeedDeleteDto(member.getId(), feed.getId()));
+        }
+    }
+
+    private boolean hasFapArchiving(Long feedId) {
+        return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    private void notifyFapFeedDelete(Feed feed, CreateNotificationDto createNotificationDto) {
+        feed.publishEvent(eventPublisher, createNotificationDto);
+    }
+
+    private CreateNotificationDto createFapFeedDeleteDto(Long receiverId, Long feedId) {
+        return CreateNotificationDto.builder()
+                .receiverId(receiverId)
+                .feedId(feedId)
+                .type(NotificationType.FAP_DELETED)
+                .build();
     }
 }

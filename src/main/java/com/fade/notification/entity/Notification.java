@@ -1,5 +1,6 @@
 package com.fade.notification.entity;
 
+import com.fade.feed.entity.Feed;
 import com.fade.member.entity.Member;
 import com.fade.notification.constant.NotificationType;
 import jakarta.persistence.*;
@@ -34,6 +35,10 @@ public class Notification {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member receiver;
+
+    @ManyToOne
+    @JoinColumn(name = "feed_id")
+    private Feed feed;
 
     @Builder
     public Notification(NotificationType type, Boolean isRead, Member receiver) {
