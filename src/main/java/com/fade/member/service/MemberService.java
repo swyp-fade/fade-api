@@ -105,7 +105,7 @@ public class MemberService {
     public UserVo findUserVo(Long memberId) {
         final var member = this.memberCommonService.findById(memberId);
 
-        return new UserVo(member.getId(), List.of(MemberRole.USER));
+        return new UserVo(member.getId(), member.getUsername(), member.getGenderType(), List.of(MemberRole.USER));
     }
 
     public MemberSearchResponse searchMembers(String query) {
