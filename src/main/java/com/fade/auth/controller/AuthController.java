@@ -89,7 +89,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         if (refreshToken == null) {
-            throw new ApplicationException(ErrorCode.UNAUTHORIZED);
+            throw new ApplicationException(ErrorCode.TOKEN_NOT_EXIST);
         }
 
         final var rt = this.authService.generateRefreshTokenOrEmpty(
