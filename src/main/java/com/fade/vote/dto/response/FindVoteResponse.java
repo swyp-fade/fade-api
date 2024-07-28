@@ -1,7 +1,5 @@
 package com.fade.vote.dto.response;
 
-import com.fade.category.dto.response.FindCategoryListResponse;
-import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.vote.constant.VoteType;
 
 import java.time.LocalDate;
@@ -26,7 +24,7 @@ public record FindVoteResponse(
             Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,
-            List<FindVoteItemStyleResponse> stylesId,
+            List<FindVoteItemStyleResponse> styleIds,
             List<FindVoteItemOutFitResponse> outfits,
             String username,
             String profileImageURL
@@ -42,7 +40,7 @@ public record FindVoteResponse(
             Long id,
             String brandName,
             String details,
-            FindCategoryListResponse.FindCategoryItemResponse category
+            Integer categoryId
     ) {
     }
 }
