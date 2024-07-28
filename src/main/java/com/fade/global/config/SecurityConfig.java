@@ -98,6 +98,7 @@ public class SecurityConfig {
                                         .requestMatchers("/actuator/**").permitAll()
                                         .requestMatchers("/members/search").permitAll()
                                         .requestMatchers("/members/signin").permitAll()
+                                        .requestMatchers("/error").permitAll()
                                         .anyRequest()
                                         .authenticated()
                 )
