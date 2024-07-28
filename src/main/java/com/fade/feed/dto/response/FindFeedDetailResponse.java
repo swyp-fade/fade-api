@@ -13,7 +13,8 @@ public record FindFeedDetailResponse(
         Boolean isBookmarked,
         Boolean isMine,
         Long bookmarkCount,
-        String username
+        String username,
+        Long reportCount
 ) {
 
 }
