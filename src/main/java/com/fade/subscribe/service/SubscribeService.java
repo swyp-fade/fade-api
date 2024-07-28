@@ -6,6 +6,7 @@ import com.fade.attachment.service.AttachmentService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
+import com.fade.subscribe.dto.response.CheckSubscribeResponse;
 import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
@@ -63,6 +64,12 @@ public class SubscribeService {
                 )).toList(),
                 !subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null,
                 subscribers.size()
+        );
+    }
+
+    public CheckSubscribeResponse checkSubscribe(Long fromMemberId, Long toMemberId) {
+        return new CheckSubscribeResponse(
+                hasSubscribe(fromMemberId, toMemberId)
         );
     }
 
