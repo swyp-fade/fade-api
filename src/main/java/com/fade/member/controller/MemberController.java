@@ -78,6 +78,8 @@ public class MemberController {
     @Operation(
             summary = "계정 탈퇴"
     )
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
     @ApiResponses(
             @ApiResponse(
                     responseCode = "204"
