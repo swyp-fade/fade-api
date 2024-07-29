@@ -2,9 +2,7 @@ package com.fade.auth.service;
 
 import com.fade.global.component.JwtTokenProvider;
 import com.fade.global.constant.ErrorCode;
-import com.fade.global.constant.GenderType;
 import com.fade.global.exception.ApplicationException;
-import com.fade.member.constant.MemberRole;
 import com.fade.member.entity.RefreshToken;
 import com.fade.member.service.MemberCommonService;
 import com.fade.member.vo.MemberJwtClaim;
@@ -21,7 +19,6 @@ import org.springframework.util.DigestUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -35,6 +32,7 @@ public class AuthService {
     private final MemberCommonService memberCommonService;
     private final SocialLoginService socialLoginService;
 
+    @Transactional
     public SigninResponse signin(Long memberId) {
         return new SigninResponse(
                 this.generateAccessToken(memberId),

@@ -1,6 +1,7 @@
 package com.fade.auth.controller;
 
 import com.fade.auth.dto.response.HttpSigninInResponse;
+import com.fade.auth.dto.response.ResponseCookie;
 import com.fade.auth.service.AuthService;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.exception.ApplicationException;
@@ -12,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -88,29 +88,74 @@ public class AuthController {
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response
     ) {
-        if (refreshToken == null) {
-            throw new ApplicationException(ErrorCode.UNAUTHORIZED);
+        try {
+            if (refreshToken == null) {
+                throw new ApplicationException(ErrorCode.TOKEN_NOT_EXIST);
+            }
+
+            final var rt = this.authService.generateRefreshTokenOrEmpty(
+                    refreshToken
+            ).orElse(refreshToken);
+
+            final var accessToken = this.authService.generateAccessToken(rt);
+
+            this.setRefreshTokenCookie(
+                    response,
+                    rt
+            );
+
+            return new HttpSigninInResponse(accessToken);
+        } catch (ApplicationException exception) {
+            if (
+                    exception.getErrorCode() == ErrorCode.TOKEN_NOT_EXIST ||
+                    exception.getErrorCode() == ErrorCode.TOKEN_EXPIRED_ERROR ||
+                    exception.getErrorCode() == ErrorCode.NOT_FOUND_REFRESH_TOKEN
+            ) {
+                this.removeRefreshTokenCookie(response);
+            }
+            throw exception;
         }
-
-        final var rt = this.authService.generateRefreshTokenOrEmpty(
-                refreshToken
-        ).orElse(refreshToken);
-        final var accessToken = this.authService.generateAccessToken(refreshToken);
-
-        this.setRefreshTokenCookie(
-                response,
-                rt
-        );
-
-        return new HttpSigninInResponse(accessToken);
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie("refresh_token", refreshToken);
-        cookie.setMaxAge(7*24*60*60);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
+        ResponseCookie cookie = ResponseCookie.builder()
+                .refreshToken(refreshToken)
+                .sameSite("None")
+                .secure(true)
+                .maxAge(7 * 24 * 60 * 60)
+                .httpOnly(true)
+                .path("/")
+                .build();
 
-        response.addCookie(cookie);
+        String cookieHeader = String.format("refreshToken=%s; Max-Age=%d; HttpOnly=%b; Secure=%b; Path=%s; SameSite=%s",
+                cookie.refreshToken(),
+                cookie.maxAge(),
+                cookie.httpOnly(),
+                cookie.secure(),
+                cookie.path(),
+                cookie.sameSite());
+
+        response.addHeader("Set-Cookie", cookieHeader);
+    }
+
+    private void removeRefreshTokenCookie(HttpServletResponse response) {
+        ResponseCookie cookie = ResponseCookie.builder()
+                .refreshToken(null)
+                .sameSite("None")
+                .secure(true)
+                .maxAge(0)
+                .httpOnly(true)
+                .path("/")
+                .build();
+
+        String cookieHeader = String.format("refreshToken=%s; Max-Age=%d; HttpOnly=%b; Secure=%b; Path=%s; SameSite=%s",
+                cookie.refreshToken(),
+                cookie.maxAge(),
+                cookie.httpOnly(),
+                cookie.secure(),
+                cookie.path(),
+                cookie.sameSite());
+
+        response.addHeader("Set-Cookie", cookieHeader);
     }
 }
