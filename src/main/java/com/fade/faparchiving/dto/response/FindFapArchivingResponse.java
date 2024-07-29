@@ -1,5 +1,6 @@
 package com.fade.faparchiving.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record FindFapArchivingResponse(
@@ -12,8 +13,11 @@ public record FindFapArchivingResponse(
             List<FindFapArchivingStyleResponse> styles,
             List<FindFapArchivingOutfitResponse> outfits,
             Long memberId,
+            Long fadeInCount,
             Boolean isSubscribed,
-            Boolean isMine
+            Boolean isBookmarked,
+            Boolean isMine,
+            LocalDateTime createdAt
     ) {
     }
 

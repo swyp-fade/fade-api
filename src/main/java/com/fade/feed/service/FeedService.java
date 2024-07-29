@@ -103,6 +103,7 @@ public class FeedService {
                         this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
                         feed.getMember().getUsername(),
                         this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
+                        countFapArchiving(feed.getId()),
                         feed.getCreatedAt()
                 )).toList(),
                 !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
@@ -133,6 +134,7 @@ public class FeedService {
                 this.bookmarkService.hasBookmark(memberId, feed.getId()),
                 memberId.equals(feed.getMember().getId()),
                 this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
+                countFapArchiving(feed.getId()),
                 feed.getMember().getUsername(),
                 this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
                 feed.getCreatedAt()
@@ -160,6 +162,10 @@ public class FeedService {
 
     private boolean hasFapArchiving(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    private Long countFapArchiving(Long feedId) {
+        return fapArchivingRepository.countByCondition(feedId);
     }
 
     private void notifyFapFeedDelete(Feed feed, CreateNotificationDto createNotificationDto) {

@@ -20,6 +20,7 @@ public record FindFeedResponse(
             Long bookmarkCount,
             String username,
             Long reportCount,
+            Long fadeInCount,
             LocalDateTime createdAt
     ) {
     }
