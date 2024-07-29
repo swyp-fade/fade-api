@@ -69,7 +69,8 @@ public class VoteService {
                         )).toList(),
                         feed.getMember().getId(),
                         isSubscribed(member.getId(), feed.getMember().getId()),
-                        isBookmarked(feed.getId(), feed.getMember().getId())
+                        isBookmarked(feed.getId(), feed.getMember().getId()),
+                        feed.getCreatedAt()
                 )).toList()
         );
     }

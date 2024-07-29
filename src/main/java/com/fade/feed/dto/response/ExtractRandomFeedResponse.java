@@ -1,5 +1,6 @@
 package com.fade.feed.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record ExtractRandomFeedResponse(
@@ -12,7 +13,8 @@ public record ExtractRandomFeedResponse(
             List<ExtractRandomFeedOutfitResponse> outfits,
             Long memberId,
             Boolean isSubscribed,
-            Boolean isBookmarked
+            Boolean isBookmarked,
+            LocalDateTime createdAt
     ) {
     }
 

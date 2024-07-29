@@ -1,5 +1,6 @@
 package com.fade.feed.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record FindFeedResponse(
@@ -18,7 +19,8 @@ public record FindFeedResponse(
             Boolean isMine,
             Long bookmarkCount,
             String username,
-            Long reportCount
+            Long reportCount,
+            LocalDateTime createdAt
     ) {
     }
 
