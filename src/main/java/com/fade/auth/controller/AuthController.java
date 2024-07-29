@@ -120,6 +120,11 @@ public class AuthController {
     }
 
     @PostMapping("/signout")
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "204"
+            )
+    )
     @Operation(summary = "로그아웃 API", description = "refresh token 제거")
     public Response<Void> logout(
             HttpServletResponse response,
