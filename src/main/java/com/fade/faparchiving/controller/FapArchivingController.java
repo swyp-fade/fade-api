@@ -1,5 +1,6 @@
 package com.fade.faparchiving.controller;
 
+import com.fade.faparchiving.constant.DateTimeRegexp;
 import com.fade.faparchiving.dto.response.FindFapArchivingResponse;
 import com.fade.faparchiving.service.FapArchivingService;
 import com.fade.member.constant.MemberRole;
@@ -11,8 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -43,7 +43,10 @@ public class FapArchivingController {
                     description = "월별 페이피 아카이빙 조회 성공"
             )
     )
-    public FindFapArchivingResponse findFapArchivingItems(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM") LocalDate selectDate) {
-        return fapArchivingService.findFapArchivingItems(userVo.getId(), selectDate);
+    public FindFapArchivingResponse findFapArchivingItems(
+            @AuthenticationPrincipal UserVo userVo,
+            @RequestParam @Pattern(regexp = DateTimeRegexp.SELECTED_DATE_REGEXP) String selectedDate) {
+
+        return fapArchivingService.findFapArchivingItems(userVo.getId(), LocalDate.parse(selectedDate + "-01"));
     }
 }
