@@ -13,6 +13,7 @@ public record FindFeedDetailResponse(
         Boolean isSubscribed,
         Boolean isBookmarked,
         Boolean isMine,
+        Long fadeInCount,
         Long bookmarkCount,
         String username,
         Long reportCount,

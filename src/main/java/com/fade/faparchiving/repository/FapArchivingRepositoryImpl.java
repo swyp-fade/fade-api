@@ -39,4 +39,14 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
                 .where(feedQ.deletedAt.isNotNull())
                 .fetchOne();
     }
+
+    @Override
+    public Long countByCondition(Long feedId) {
+        QFapArchiving fapArchivingQ = QFapArchiving.fapArchiving;
+        return jpaQueryFactory
+                .select(fapArchivingQ.count())
+                .from(fapArchivingQ)
+                .where(fapArchivingQ.feed.id.eq(feedId))
+                .fetchOne();
+    }
 }
