@@ -4,11 +4,13 @@ import com.fade.auth.dto.response.HttpSigninInResponse;
 import com.fade.auth.dto.response.ResponseCookie;
 import com.fade.auth.service.AuthService;
 import com.fade.global.constant.ErrorCode;
+import com.fade.global.dto.response.Response;
 import com.fade.global.exception.ApplicationException;
 import com.fade.sociallogin.constant.SocialType;
 import com.fade.sociallogin.dto.request.SigninByCodeRequest;
 import com.fade.sociallogin.dto.request.SignupByCodeRequest;
 import com.fade.sociallogin.service.SocialLoginService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -115,6 +117,21 @@ public class AuthController {
             }
             throw exception;
         }
+    }
+
+    @PostMapping("/signout")
+    @Operation(summary = "로그아웃 API", description = "refresh token 제거")
+    public Response<Void> logout(
+            HttpServletResponse response,
+            @CookieValue(value = "refreshToken", required = false) String refreshToken
+    ) {
+        if (refreshToken != null) {
+            this.authService.removeRefreshToken(refreshToken);
+        }
+
+        this.removeRefreshTokenCookie(response);
+
+        return Response.success();
     }
 
     private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
