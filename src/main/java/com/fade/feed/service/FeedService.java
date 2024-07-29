@@ -102,7 +102,8 @@ public class FeedService {
                         memberId.equals(feed.getMember().getId()),
                         this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
                         feed.getMember().getUsername(),
-                        this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build())
+                        this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
+                        feed.getCreatedAt()
                 )).toList(),
                 !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
         );
@@ -133,7 +134,8 @@ public class FeedService {
                 memberId.equals(feed.getMember().getId()),
                 this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
                 feed.getMember().getUsername(),
-                this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build())
+                this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
+                feed.getCreatedAt()
         );
     }
 
