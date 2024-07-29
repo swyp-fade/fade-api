@@ -43,8 +43,8 @@ public class Feed {
     @ManyToMany()
     @JoinTable(
             name = "feed_styles",
-            joinColumns = @JoinColumn(name = "style_id"),
-            inverseJoinColumns = @JoinColumn(name = "feed_id")
+            joinColumns = @JoinColumn(name = "feed_id"),
+            inverseJoinColumns = @JoinColumn(name = "style_id")
     )
     private Set<Style> styles = new HashSet<>();
 
