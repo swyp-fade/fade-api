@@ -1,45 +1,22 @@
-env: develop
-logging:
-  level:
-    com.fade: debug
-    org.springframework.web.servlet: debug
-    org.hibernate.type.descriptor.sql.BasicBinder: trace
-
 spring:
-  application:
-    name: fade
-  datasource:
-    url: jdbc:mysql://localhost:3306/fade
-    username: root
-    password: root
-  jpa:
-    defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate.format_sql: true
-      hibernate.default_batch_fetch_size: 100
-  h2.console.enabled: false
-  sql.init.mode: always
+  profiles:
+    group:
+      active: local
+      local:
+        - common
+        - local
+      prod:
+        - common
+        - prod
 
-kakao:
-  oauth:
-    client-id: ${KAKAO_API_KEY}
-    client-secret: ${KAKAO_SECRET_KEY}
-    token-url: https://kauth.kakao.com/oauth/token
-    profile-url: https://kapi.kakao.com/v2/user/me
-    scope: profile
+---
+spring:
+  config:
+    activate:
+      on-profile: local
 
-aws:
-  accessKey: ${AWS_ACCESS_KEY}
-  secretKey: ${AWS_SECRET_KEY}
-  region: ${AWS_REGION}
-  s3:
-    bucketName: ${AWS_S3_BUCKET_NAME}
-
-jwt:
-  secretKey: ${JWT_SECRET_KEY}
-
-cors:
-  allow-origin-hosts: https://fade-frontend-for-deploy.vercel.app, https://api.fadeapp.site, https://localhost:5173, https://fade.swygbro.com, http://localhost:5173
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
