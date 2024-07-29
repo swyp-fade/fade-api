@@ -89,7 +89,7 @@ public class AuthService {
             return Optional.empty();
         }
 
-        this.refreshTokenRepository.delete(rt);
+        this.removeRefreshToken(rt.getToken());
 
         return Optional.of(
                 this.generateRefreshToken(rt.getMember().getId())
@@ -121,5 +121,10 @@ public class AuthService {
         if (LocalDateTime.now().isAfter(rt.getExpiredAt())) {
             throw new ApplicationException(ErrorCode.TOKEN_EXPIRED_ERROR);
         }
+    }
+
+    @Transactional
+    public void removeRefreshToken(String refreshToken) {
+        this.refreshTokenRepository.deleteByToken(refreshToken);
     }
 }
