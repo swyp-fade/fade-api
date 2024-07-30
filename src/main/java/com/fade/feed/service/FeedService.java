@@ -108,7 +108,7 @@ public class FeedService {
                         countFapArchiving(feed.getId()),
                         feed.getCreatedAt()
                 )).toList(),
-                findNextCursor(feeds.get(feeds.size() - 1).getId())
+                findNextCursor(!feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null)
         );
     }
 
@@ -183,6 +183,9 @@ public class FeedService {
     }
 
     private Long findNextCursor(Long lastCursor) {
+        if (lastCursor == null) {
+            return null;
+        }
         Feed nextCursorFeed = feedRepository.findNextCursor(lastCursor);
         if (nextCursorFeed == null) {
             return null;
