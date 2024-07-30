@@ -5,6 +5,7 @@ import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
+import com.fade.member.dto.response.FindMyMemberDetailResponse;
 import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.service.MemberService;
@@ -43,9 +44,10 @@ public class MemberController {
             )
     )
     public FindMemberDetailResponse findMemberDetail(
-            @PathVariable(name = "memberId") Long memberId
+            @PathVariable(name = "memberId") Long memberId,
+            @AuthenticationPrincipal UserVo userVo
     ) {
-        return this.memberService.findMemberDetail(memberId);
+        return this.memberService.findMemberDetail(memberId, userVo.getId());
     }
 
     @GetMapping("/me")
@@ -54,13 +56,13 @@ public class MemberController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = FindMemberDetailResponse.class))
+                    content = @Content(schema = @Schema(implementation = FindMyMemberDetailResponse.class))
             )
     )
-    public FindMemberDetailResponse findMyMemberDetail(
+    public FindMyMemberDetailResponse findMyMemberDetail(
             @AuthenticationPrincipal UserVo userVo
     ) {
-        return this.memberService.findMemberDetail(userVo.getId());
+        return this.memberService.findMemberDetail(userVo.getId(), userVo.getId());
     }
 
     @PutMapping("/me")

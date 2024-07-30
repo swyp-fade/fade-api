@@ -46,6 +46,9 @@ public class Member {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @Column(name = "introduce_content", length = 500)
+    private String introduceContent;
+
     public Member(String username, GenderType genderType) {
         this.username = username;
         this.genderType = genderType;
@@ -57,5 +60,9 @@ public class Member {
 
     public void withdraw() {
         this.deletedAt = LocalDateTime.now();
+    }
+
+    public void modifyIntroduceContent(String introduceContent) {
+        this.introduceContent = introduceContent;
     }
 }

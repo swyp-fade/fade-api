@@ -16,6 +16,8 @@ import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
 import com.fade.member.repository.MemberSearchRepository;
 import com.fade.member.vo.UserVo;
+import com.fade.subscribe.dto.request.CountSubscriberRequest;
+import com.fade.subscribe.service.SubscribeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,8 @@ public class MemberService {
     private final MemberSearchRepository memberSearchRepository;
     private final FapArchivingRepository fapArchivingRepository;
 
+    private final SubscribeService subscribeService;
+
     @Transactional
     public Long createUser(
             String username,
@@ -46,29 +50,37 @@ public class MemberService {
         return member.getId();
     }
 
-    public FindMemberDetailResponse findMemberDetail(Long memberId) {
+    public FindMemberDetailResponse findMemberDetail(Long memberId, Long loginMemberId) {
         final var member = this.memberCommonService.findById(memberId);
 
         String profileImageUrl = null;
-        try {
+        if (this.attachmentService.existsLinkable(member.getId(),
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)
+        ) {
             profileImageUrl = this.attachmentService.getUrl(
                     member.getId(),
                     AttachmentLinkableType.USER,
                     AttachmentLinkType.PROFILE
             );
-        } catch (ApplicationException e) {
-            if (!e.getErrorCode().equals(ErrorCode.NOT_FOUND_ATTACHMENT)) {
-                throw e;
-            }
         }
 
-        return new FindMemberDetailResponse(
-                member.getId(),
-                member.getGenderType(),
-                member.getUsername(),
-                profileImageUrl,
-                countFapArchivingByMemberId(member.getId())
-        );
+        return FindMemberDetailResponse
+                .builder()
+                .id(member.getId())
+                .genderType(member.getGenderType())
+                .username(member.getUsername())
+                .profileImageURL(profileImageUrl)
+                .fapSelectedCount(countFapArchivingByMemberId(member.getId()))
+                .introduceContent(member.getIntroduceContent())
+                .isSubscribed(subscribeService.hasSubscribe(loginMemberId, member.getId()))
+                .subscribedCount(subscribeService.countSubscriber(
+                        CountSubscriberRequest
+                                .builder()
+                                .toMemberId(member.getId())
+                                .build()
+                ))
+                .build();
     }
 
     @Transactional
