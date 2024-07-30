@@ -49,4 +49,14 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
                 .where(fapArchivingQ.feed.id.eq(feedId))
                 .fetchOne();
     }
+
+    @Override
+    public Long countByMemberId(Long memberId) {
+        QFapArchiving fapArchivingQ = QFapArchiving.fapArchiving;
+        return jpaQueryFactory
+                .select(fapArchivingQ.count())
+                .from(fapArchivingQ)
+                .where(fapArchivingQ.member.id.eq(memberId))
+                .fetchOne();
+    }
 }
