@@ -28,6 +28,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -105,7 +107,7 @@ public class FeedService {
                         this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
                         feed.getCreatedAt()
                 )).toList(),
-                !feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null
+                feedRepository.findNextCursor(feeds.get(feeds.size() - 1).getId()).getId()
         );
     }
 
