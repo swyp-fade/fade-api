@@ -17,7 +17,10 @@ public record ModifyMemberRequest(
         String username,
         @Nullable
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        Long profileImageAttachmentId
+        Long profileImageAttachmentId,
+        @Nullable
+        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        String introduceContent
 ) {
 
 }
