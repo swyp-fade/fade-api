@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Repository
@@ -79,6 +80,21 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
         }
 
         return query.fetch();
+    }
+
+    @Override
+    public Feed findNextCursor(Long lastCursor) {
+        Long lastId = super.from(feedQ)
+                .select(feedQ.id.min())
+                .fetchOne();
+
+        if (lastCursor.equals(lastId)) {
+            return null;
+        }
+        return super.from(feedQ)
+                .where(nextCursorLt(lastCursor))
+                .orderBy(feedQ.id.desc())
+                .fetchFirst();
     }
 
     private BooleanExpression nextCursorLt(Long nextCursor) {

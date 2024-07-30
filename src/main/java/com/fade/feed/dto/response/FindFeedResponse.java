@@ -2,6 +2,7 @@ package com.fade.feed.dto.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public record FindFeedResponse(
         List<FindFeedItemResponse> feeds,
