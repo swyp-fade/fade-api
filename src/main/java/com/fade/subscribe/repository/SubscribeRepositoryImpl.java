@@ -20,13 +20,30 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
 
     @Override
     public List<Subscribe> findSubscribersUsingNoOffset(Long memberId, Long nextCursor, int limit) {
-        final var subscribeQ = QSubscribe.subscribe;
         return jpaQueryFactory
                 .selectFrom(subscribeQ)
-                .where(subscribeQ.id.lt(nextCursor), subscribeQ.fromMember.id.eq(memberId))
+                .where(this.nextCursorLoe(nextCursor), this.fromMemberIdEq(memberId))
                 .limit(limit)
                 .orderBy(subscribeQ.id.desc())
                 .fetch();
+    }
+
+    @Override
+    public Subscribe findNextCursor(Long lastCursor) {
+        Long lastId = jpaQueryFactory
+                .select(subscribeQ.id.min())
+                .from(subscribeQ)
+                .fetchOne();
+
+        if (lastCursor.equals(lastId)) {
+            return null;
+        }
+
+        return jpaQueryFactory
+                .selectFrom(subscribeQ)
+                .where(nextCursorLt(lastCursor))
+                .orderBy(subscribeQ.id.desc())
+                .fetchFirst();
     }
 
     @Override
@@ -49,6 +66,14 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
                         this.fromMemberIdEq(countSubscriberRequest.fromMemberId())
                 )
                 .fetchOne();
+    }
+
+    private BooleanExpression nextCursorLoe(Long nextCursor) {
+        return nextCursor != null ? subscribeQ.id.loe(nextCursor) : null;
+    }
+
+    private BooleanExpression nextCursorLt(Long nextCursor) {
+        return nextCursor != null ? subscribeQ.id.lt(nextCursor) : null;
     }
 
     private BooleanExpression toMemberIdEq(Long toMemberId) {
