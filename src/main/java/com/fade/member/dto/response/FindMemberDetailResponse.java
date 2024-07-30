@@ -17,6 +17,9 @@ public record FindMemberDetailResponse (
         String username,
         @Nullable
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        String profileImageURL
+        String profileImageURL,
+        @Nullable
+        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        Long fapSelectedCount
 ) {
 }

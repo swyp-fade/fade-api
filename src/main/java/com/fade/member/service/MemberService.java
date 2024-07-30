@@ -3,6 +3,7 @@ package com.fade.member.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.constant.GenderType;
 import com.fade.global.exception.ApplicationException;
@@ -31,6 +32,7 @@ public class MemberService {
     private final AttachmentService attachmentService;
 
     private final MemberSearchRepository memberSearchRepository;
+    private final FapArchivingRepository fapArchivingRepository;
 
     @Transactional
     public Long createUser(
@@ -64,7 +66,8 @@ public class MemberService {
                 member.getId(),
                 member.getGenderType(),
                 member.getUsername(),
-                profileImageUrl
+                profileImageUrl,
+                countFapArchivingByMemberId(member.getId())
         );
     }
 
@@ -140,5 +143,9 @@ public class MemberService {
         member.withdraw();
 
         this.memberRepository.save(member);
+    }
+
+    private Long countFapArchivingByMemberId(Long memberId) {
+        return fapArchivingRepository.countByMemberId(memberId);
     }
 }
