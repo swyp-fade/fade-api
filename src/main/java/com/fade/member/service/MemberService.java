@@ -112,6 +112,10 @@ public class MemberService {
             );
         }
 
+        if (modifyMemberRequest.introduceContent() != null) {
+            member.modifyIntroduceContent(modifyMemberRequest.introduceContent());
+        }
+
         this.memberRepository.save(member);
 
         return member.getId();
