@@ -52,10 +52,18 @@ public class FapArchivingService {
                                 outfit.getCategory().getId()
                         )).toList(),
                         fapArchivingItem.getMember().getId(),
+                        fapArchivingItem.getMember().getUsername(),
+                        this.attachmentService.getUrl(
+                                fapArchivingItem.getMember().getId(),
+                                AttachmentLinkableType.USER,
+                                AttachmentLinkType.PROFILE
+                        ),
                         countFapArchiving(fapArchivingItem.getFeed().getId()),
+                        true,
                         isSubscribed(member.getId(), fapArchivingItem.getMember().getId()),
                         isBookmarked(fapArchivingItem.getFeed().getId(), member.getId()),
                         isMine(member.getId(), fapArchivingItem.getMember().getId()),
+                        fapArchivingItem.getFeed().getCreatedAt(),
                         fapArchivingItem.getArchivedAt()
                 )).toList()
         );

@@ -8,16 +8,20 @@ public record FindFapArchivingResponse(
 ) {
 
     public record FindFapArchivingItemResponse(
-            Long feedId,
-            String feedImageUrl,
+            Long id,
+            String imageURL,
             List<FindFapArchivingStyleResponse> styles,
             List<FindFapArchivingOutfitResponse> outfits,
             Long memberId,
+            String username,
+            String profileImageURL,
             Long fadeInCount,
+            Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,
             Boolean isMine,
-            LocalDateTime createdAt
+            LocalDateTime createdAt,
+            LocalDateTime fapSelectedAt
     ) {
     }
 
