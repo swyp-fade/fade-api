@@ -48,7 +48,7 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 this.memberIdsEq(findFeedRequest.memberIds()),
                 this.styleIdsEq(findFeedRequest.styleIds()),
                 this.genderTypeEq(findFeedRequest.genderType()),
-                this.nextCursorLt(findFeedRequest.nextCursor())
+                this.nextCursorLoe(findFeedRequest.nextCursor())
         );
 
         findFeedRequest.fetchTypes().forEach((ft) -> {
@@ -95,6 +95,10 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
                 .where(nextCursorLt(lastCursor))
                 .orderBy(feedQ.id.desc())
                 .fetchFirst();
+    }
+
+    private BooleanExpression nextCursorLoe(Long nextCursor) {
+        return nextCursor != null ? feedQ.id.loe(nextCursor) : null;
     }
 
     private BooleanExpression nextCursorLt(Long nextCursor) {
