@@ -134,16 +134,15 @@ public class MemberService {
 
     private MemberSearchItemResponse mapToResponse(Member member) {
         String profileImageUrl = null;
-        try {
+        if (this.attachmentService.existsLinkable(member.getId(),
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)
+        ) {
             profileImageUrl = attachmentService.getUrl(
                     member.getId(),
                     AttachmentLinkableType.USER,
                     AttachmentLinkType.PROFILE
             );
-        } catch (ApplicationException e) {
-            if (!e.getErrorCode().equals(ErrorCode.NOT_FOUND_ATTACHMENT)) {
-                throw e;
-            }
         }
         return new MemberSearchItemResponse(member.getUsername(), profileImageUrl);
     }
