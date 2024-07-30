@@ -108,7 +108,7 @@ public class FeedService {
                         countFapArchiving(feed.getId()),
                         feed.getCreatedAt()
                 )).toList(),
-                feedRepository.findNextCursor(feeds.get(feeds.size() - 1).getId()).getId()
+                findNextCursor(feeds.get(feeds.size() - 1).getId())
         );
     }
 
@@ -180,5 +180,13 @@ public class FeedService {
                 .feedId(feedId)
                 .type(NotificationType.FAP_DELETED)
                 .build();
+    }
+
+    private Long findNextCursor(Long lastCursor) {
+        Feed nextCursorFeed = feedRepository.findNextCursor(lastCursor);
+        if (nextCursorFeed == null) {
+            return null;
+        }
+        return nextCursorFeed.getId();
     }
 }
