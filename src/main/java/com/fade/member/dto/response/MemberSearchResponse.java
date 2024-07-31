@@ -15,7 +15,7 @@ public record MemberSearchResponse(
             @Schema(description = "Member username")
             String username,
             @Schema(description = "Profile image URL")
-            String profileImageUrl
+            String profileImageURL
     ) {
     }
 }
