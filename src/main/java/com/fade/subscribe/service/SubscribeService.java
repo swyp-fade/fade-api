@@ -63,7 +63,7 @@ public class SubscribeService {
                                 AttachmentLinkType.PROFILE
                         )
                 )).toList(),
-                !subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null,
+                findNextCursor(!subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null),
                 subscribers.size()
         );
     }
@@ -89,5 +89,16 @@ public class SubscribeService {
     @Transactional(readOnly = true)
     public Long countSubscriber(CountSubscriberRequest countSubscriberRequest) {
         return this.subscribeRepository.countByCondition(countSubscriberRequest);
+    }
+
+    private Long findNextCursor(Long lastCursor) {
+        if (lastCursor == null) {
+            return null;
+        }
+        Subscribe nextCursorSubscriber = subscribeRepository.findNextCursor(lastCursor);
+        if (nextCursorSubscriber == null) {
+            return null;
+        }
+        return nextCursorSubscriber.getId();
     }
 }
