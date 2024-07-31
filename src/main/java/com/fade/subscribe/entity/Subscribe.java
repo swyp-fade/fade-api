@@ -26,7 +26,7 @@ public class Subscribe {
     private Long id;
 
     @Column(name = "subscribed_at")
-    private LocalDateTime subScribedAt = LocalDateTime.now();
+    private LocalDateTime subScribedAt;
 
     @ManyToOne
     @JoinColumn(name = "from_member_id")
@@ -37,9 +37,9 @@ public class Subscribe {
     private Member toMember;
 
     @Builder
-    public Subscribe(Member fromMember, Member toMember, LocalDateTime subScribedAt) {
+    public Subscribe(Member fromMember, Member toMember) {
         this.fromMember = fromMember;
         this.toMember = toMember;
-        this.subScribedAt = subScribedAt;
+        this.subScribedAt = LocalDateTime.now();
     }
 }
