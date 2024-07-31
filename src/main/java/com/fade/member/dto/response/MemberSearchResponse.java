@@ -9,4 +9,13 @@ public record MemberSearchResponse(
         @Schema(description = "Matched members")
         List<MemberSearchItemResponse> matchedMembers
 ) {
+    public record MemberSearchItemResponse(
+            @Schema(description = "Member Id")
+            Long memberId,
+            @Schema(description = "Member username")
+            String username,
+            @Schema(description = "Profile image URL")
+            String profileImageURL
+    ) {
+    }
 }

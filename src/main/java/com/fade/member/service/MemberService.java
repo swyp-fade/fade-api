@@ -4,14 +4,12 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
-import com.fade.global.constant.ErrorCode;
 import com.fade.global.constant.GenderType;
-import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
-import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
+import com.fade.member.dto.response.MemberSearchResponse.MemberSearchItemResponse;
 import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
 import com.fade.member.repository.MemberSearchRepository;
@@ -148,7 +146,7 @@ public class MemberService {
                     AttachmentLinkType.PROFILE
             );
         }
-        return new MemberSearchItemResponse(member.getUsername(), profileImageUrl);
+        return new MemberSearchItemResponse(member.getId(), member.getUsername(), profileImageUrl);
     }
 
     @Transactional

@@ -6,7 +6,6 @@ import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
 import com.fade.member.dto.response.FindMyMemberDetailResponse;
-import com.fade.member.dto.response.MemberSearchItemResponse;
 import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
@@ -84,7 +83,7 @@ public class MemberController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = MemberSearchItemResponse.class))
+                    content = @Content(schema = @Schema(implementation = MemberSearchResponse.class))
             )
     )
     public MemberSearchResponse searchMembers(
