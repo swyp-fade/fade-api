@@ -4,6 +4,7 @@ import com.fade.feed.dto.response.ExtractRandomFeedResponse;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import com.fade.vote.dto.request.CreateVoteRequest;
+import com.fade.vote.dto.request.FindVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.service.VoteService;
@@ -69,7 +70,7 @@ public class VoteController {
                     content = @Content(schema = @Schema(implementation = FindVoteResponse.class))
             )
     )
-    public FindVoteResponse findVotes(@AuthenticationPrincipal UserVo userVo, @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate nextCursor, @RequestParam int limit, @RequestParam String scrollType) {
-        return voteService.findVotes(userVo.getId(), nextCursor, limit, scrollType);
+    public FindVoteResponse findVotes(@AuthenticationPrincipal UserVo userVo, FindVoteRequest findVoteRequest) {
+        return voteService.findVotes(userVo.getId(), findVoteRequest);
     }
 }
