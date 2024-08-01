@@ -8,6 +8,7 @@ import com.fade.notification.dto.response.FindNotificationResponse;
 import com.fade.notification.entity.Notification;
 import com.fade.notification.repository.NotificationRepository;
 import com.fade.report.repository.ReportRepository;
+import com.fade.subscribe.entity.Subscribe;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,8 +23,6 @@ public class NotificationService {
     private final ReportRepository repository;
     private final FapArchivingRepository fapArchivingRepository;
 
-
-    //TODO:: 알림은 각 도메인 상관없이 한꺼번에 반환 + 필요없는값 null처리
     @Transactional(readOnly = true)
     public FindNotificationResponse findNotifications(Long memberId, Long cursor, int limit) {
         final var member = memberCommonService.findById(memberId);
@@ -40,7 +39,7 @@ public class NotificationService {
                         getFapSelectedAt(notification.getCreatedAt(), notification.getType()),
                         getDeleteFapCount(notification.getFeed().getId(), notification.getType())
                 )).toList(),
-                !notifications.isEmpty() ? notifications.get(notifications.size() - 1).getId() : null
+                findNextCursor(member.getId(), !notifications.isEmpty() ? notifications.get(notifications.size() - 1).getId() : null)
         );
     }
 
@@ -88,5 +87,16 @@ public class NotificationService {
 
     private boolean hasFapArchiving(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    private Long findNextCursor(Long memberId, Long lastCursor) {
+        if (lastCursor == null) {
+            return null;
+        }
+        Notification nextCursorNotification = notificationRepository.findNextCursor(memberId, lastCursor);
+        if (nextCursorNotification == null) {
+            return null;
+        }
+        return nextCursorNotification.getId();
     }
 }
