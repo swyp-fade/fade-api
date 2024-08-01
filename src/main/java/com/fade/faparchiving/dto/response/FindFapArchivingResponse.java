@@ -10,7 +10,7 @@ public record FindFapArchivingResponse(
     public record FindFapArchivingItemResponse(
             Long id,
             String imageURL,
-            List<FindFapArchivingStyleResponse> styles,
+            List<FindFapArchivingStyleResponse> styleIds,
             List<FindFapArchivingOutfitResponse> outfits,
             Long memberId,
             String username,
