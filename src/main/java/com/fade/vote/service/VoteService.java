@@ -156,13 +156,10 @@ public class VoteService {
                                 outFit.getId(),
                                 outFit.getBrandName(),
                                 outFit.getDetails(),
-                                null
+                                outFit.getCategory().getId()
                         )).toList(),
                         voteItem.getMember().getUsername(),
-                        this.attachmentService.getUrl(
-                                voteItem.getMember().getId(),
-                                AttachmentLinkableType.USER,
-                                AttachmentLinkType.PROFILE)
+                        getProfileImageURL(voteItem.getFeed().getMember().getId())
                 )).toList(),
                 findCursorToUpScroll(voteItems),
                 findCursorToDownScroll(voteItems),
@@ -218,5 +215,21 @@ public class VoteService {
 
     private boolean isFAPFeed(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    private String getProfileImageURL(Long memberId) {
+        String profileImageURL = null;
+
+        if (this.attachmentService.existsLinkable(
+                memberId,
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)) {
+            profileImageURL = this.attachmentService.getUrl(
+                    memberId,
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        }
+        return profileImageURL;
     }
 }

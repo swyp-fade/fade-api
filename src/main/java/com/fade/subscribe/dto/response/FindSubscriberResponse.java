@@ -5,7 +5,7 @@ import java.util.List;
 public record FindSubscriberResponse(
         List<FindSubscriberItemResponse> subscribers,
         Long nextCursor,
-        Integer totalSubscribers
+        Long totalSubscribers
 ) {
     public record FindSubscriberItemResponse(
         Long id,
