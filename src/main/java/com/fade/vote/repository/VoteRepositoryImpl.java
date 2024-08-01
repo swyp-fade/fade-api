@@ -34,28 +34,24 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
     }
 
     @Override
-    public Optional<Vote> findOldestVoteByMember(Long memberId) {
+    public Vote findOldestVoteByMember(Long memberId) {
         QVote vote = QVote.vote;
-        Vote result = jpaQueryFactory
+        return jpaQueryFactory
                 .selectFrom(vote)
                 .where(vote.member.id.eq(memberId))
                 .orderBy(vote.votedAt.asc())
                 .fetchFirst();
-
-        return Optional.ofNullable(result);
     }
 
     @Override
-    public Optional<Vote> findLatestVoteByMember(Long memberId) {
+    public Vote findLatestVoteByMember(Long memberId) {
         QVote vote = QVote.vote;
 
-        Vote result = jpaQueryFactory
+        return jpaQueryFactory
                 .selectFrom(vote)
                 .where(vote.member.id.eq(memberId))
                 .orderBy(vote.votedAt.desc())
                 .fetchFirst();
-
-        return Optional.ofNullable(result);
     }
 
     @Override
@@ -77,5 +73,25 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
                 .orderBy(vote.count().desc())
                 .limit(1)
                 .fetchOne();
+    }
+
+    @Override
+    public Vote findNextUpCursor(LocalDateTime lastUpCursor) {
+        QVote vote = QVote.vote;
+
+        return jpaQueryFactory.selectFrom(vote)
+                .where(vote.votedAt.gt(lastUpCursor))
+                .orderBy(vote.votedAt.desc())
+                .fetchFirst();
+    }
+
+    @Override
+    public Vote findNextDownCursor(LocalDateTime lastDownCursor) {
+        QVote vote = QVote.vote;
+
+        return jpaQueryFactory.selectFrom(vote)
+                .where(vote.votedAt.lt(lastDownCursor))
+                .orderBy(vote.votedAt.desc())
+                .fetchFirst();
     }
 }
