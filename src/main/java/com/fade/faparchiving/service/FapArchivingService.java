@@ -53,11 +53,7 @@ public class FapArchivingService {
                         )).toList(),
                         fapArchivingItem.getMember().getId(),
                         fapArchivingItem.getMember().getUsername(),
-                        this.attachmentService.getUrl(
-                                fapArchivingItem.getMember().getId(),
-                                AttachmentLinkableType.USER,
-                                AttachmentLinkType.PROFILE
-                        ),
+                        getProfileImageURL(fapArchivingItem.getMember().getId()),
                         countFapArchiving(fapArchivingItem.getFeed().getId()),
                         true,
                         isSubscribed(member.getId(), fapArchivingItem.getMember().getId()),
@@ -85,4 +81,19 @@ public class FapArchivingService {
         return fapArchivingRepository.countByCondition(feedId);
     }
 
+    private String getProfileImageURL(Long memberId) {
+        String profileImageURL = null;
+
+        if (this.attachmentService.existsLinkable(
+                memberId,
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)) {
+            profileImageURL = this.attachmentService.getUrl(
+                    memberId,
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        }
+        return profileImageURL;
+    }
 }

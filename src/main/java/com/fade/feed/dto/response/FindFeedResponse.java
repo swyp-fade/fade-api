@@ -14,6 +14,7 @@ public record FindFeedResponse(
             List<FindFeedStyleResponse> styleIds,
             List<FindFeedOutfitResponse> outfits,
             Long memberId,
+            String profileImageURL,
             Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,

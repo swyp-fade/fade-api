@@ -29,10 +29,11 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
     }
 
     @Override
-    public Subscribe findNextCursor(Long lastCursor) {
+    public Subscribe findNextCursor(Long memberId, Long lastCursor) {
         Long lastId = jpaQueryFactory
                 .select(subscribeQ.id.min())
                 .from(subscribeQ)
+                .where(this.fromMemberIdEq(memberId))
                 .fetchOne();
 
         if (lastCursor.equals(lastId)) {
@@ -41,7 +42,7 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
 
         return jpaQueryFactory
                 .selectFrom(subscribeQ)
-                .where(nextCursorLt(lastCursor))
+                .where(nextCursorLt(lastCursor), this.fromMemberIdEq(memberId))
                 .orderBy(subscribeQ.id.desc())
                 .fetchFirst();
     }
