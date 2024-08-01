@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface NotificationRepositoryCustom {
     List<Notification> findNotificationsUsingNoOffset(Long memberId, Long nextCursor, int limit);
+    Notification findNextCursor(Long memberId, Long lastCursor);
 }
