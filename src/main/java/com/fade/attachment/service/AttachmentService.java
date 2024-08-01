@@ -33,6 +33,10 @@ public class AttachmentService {
     @Value("${aws.s3.bucketName}")
     private String bucket;
 
+    @Transactional Long uploadFile(Long uploaderMemberId) {
+
+    }
+
     @Transactional
     public GeneratePresignURLResponse generatePresignUrl(
             Long uploaderMemberId,

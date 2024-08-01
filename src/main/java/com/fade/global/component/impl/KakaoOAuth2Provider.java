@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -20,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -82,10 +84,21 @@ public class KakaoOAuth2Provider implements OAuth2Provider {
                     Map.class
             );
 
+            final var body = response.getBody();
+
+            final var profileImage =
+                    Optional.ofNullable((Map) body.get("kakao_account"))
+                            .map((a) -> (Map) a.get("profile"))
+                            .map((a) -> (String) a.get("profile_image_url"))
+                            .map((imageUrl) ->  this.restTemplate.exchange(imageUrl, HttpMethod.GET, null, byte[].class).getBody())
+                            .map(ByteArrayResource::new)
+                    ;
+
             return new OAuthProfile(
-                    Objects.requireNonNull(response.getBody()).get("id") + "",
-                    response.getBody(),
-                    SocialType.KAKAO
+                    Objects.requireNonNull(body).get("id") + "",
+                    body,
+                    SocialType.KAKAO,
+                    profileImage.orElse(null)
             );
         } catch (HttpClientErrorException exception) {
             throw this.kakaoExceptionConverter(exception);

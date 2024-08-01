@@ -1,9 +1,11 @@
 package com.fade.sociallogin.service;
 
+import com.fade.attachment.service.AttachmentService;
 import com.fade.global.component.impl.KakaoOAuth2Provider;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.dto.OAuthProfile;
 import com.fade.global.exception.ApplicationException;
+import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.service.MemberCommonService;
 import com.fade.member.service.MemberService;
 import com.fade.member.vo.UserVo;
@@ -24,6 +26,7 @@ public class SocialLoginService {
     private final KakaoOAuth2Provider kakaoOAuth2Provider;
     private final MemberService memberService;
     private final MemberCommonService memberCommonService;
+    private final AttachmentService attachmentService;
 
     @Transactional
     public UserVo findUserVoByCode(
@@ -88,6 +91,16 @@ public class SocialLoginService {
                         memberId
                 )
         );
+
+        if (profile.getProfileImage() != null) {
+            this.attachmentService.upload(profile.getProfileImage().)
+
+            this.memberService.modifyMember(
+                    memberId,
+                    ModifyMemberRequest.builder().profileImageAttachmentId().build()
+            );
+
+        }
 
         this.socialLoginRepository.save(socialLogin);
 
