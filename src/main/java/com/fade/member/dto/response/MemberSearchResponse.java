@@ -11,7 +11,7 @@ public record MemberSearchResponse(
 ) {
     public record MemberSearchItemResponse(
             @Schema(description = "Member Id")
-            Long memberId,
+            Long id,
             @Schema(description = "Member username")
             String username,
             @Schema(description = "Profile image URL")
