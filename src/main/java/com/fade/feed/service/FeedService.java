@@ -9,6 +9,7 @@ import com.fade.category.service.CategoryCommonService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.request.FindNextFeedCursorRequest;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.entity.Feed;
@@ -116,7 +117,12 @@ public class FeedService {
                         ),
                         feed.getCreatedAt()
                 )).toList(),
-                findNextCursor(!feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null)
+                findNextCursor(
+                        !feeds.isEmpty() ? FindNextFeedCursorRequest.builder()
+                                .lastCursor(feeds.get(feeds.size() - 1).getId())
+                                .fetchTypes(findFeedRequest.fetchTypes())
+                                .targetMemberId(memberId)
+                                .build() : null)
         );
     }
 
@@ -192,11 +198,12 @@ public class FeedService {
                 .build();
     }
 
-    private Long findNextCursor(Long lastCursor) {
-        if (lastCursor == null) {
+    private Long findNextCursor(FindNextFeedCursorRequest findNextFeedCursorRequest) {
+        if (findNextFeedCursorRequest == null) {
             return null;
         }
-        Feed nextCursorFeed = feedRepository.findNextCursor(lastCursor);
+
+        Feed nextCursorFeed = feedRepository.findNextCursor(findNextFeedCursorRequest);
         if (nextCursorFeed == null) {
             return null;
         }
