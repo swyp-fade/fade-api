@@ -2,10 +2,11 @@ package com.fade.vote.repository;
 
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.FindMostVoteItemDto;
-import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
+import com.fade.vote.dto.request.CountVoteRequest;
 import com.fade.vote.entity.QVote;
 import com.fade.vote.entity.Vote;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 
@@ -13,11 +14,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 public class VoteRepositoryImpl implements VoteRepositoryCustom {
 
     JPAQueryFactory jpaQueryFactory;
+    private final QVote voteQ = QVote.vote;
 
     public VoteRepositoryImpl(EntityManager em) {
         this.jpaQueryFactory = new JPAQueryFactory(em);
@@ -93,5 +94,24 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
                 .where(vote.votedAt.lt(lastDownCursor))
                 .orderBy(vote.votedAt.desc())
                 .fetchFirst();
+    }
+
+    @Override
+    public Long countByCondition(CountVoteRequest countVoteRequest) {
+        return jpaQueryFactory
+                .select(voteQ.count())
+                .from(voteQ)
+                .where(
+                        this.feedIdEq(countVoteRequest.getFeedId()),
+                        this.voteTypeEq(countVoteRequest.getVoteType()))
+                .fetchOne();
+    }
+
+    private BooleanExpression feedIdEq(Long feedId) {
+        return feedId != null ? voteQ.feed.id.eq(feedId) : null;
+    }
+
+    private BooleanExpression voteTypeEq(VoteType voteType) {
+        return voteType != null ? voteQ.voteType.eq(voteType) : null;
     }
 }

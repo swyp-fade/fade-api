@@ -1,6 +1,7 @@
 package com.fade.vote.repository;
 
 import com.fade.vote.dto.FindMostVoteItemDto;
+import com.fade.vote.dto.request.CountVoteRequest;
 import com.fade.vote.entity.Vote;
 
 import java.time.LocalDateTime;
@@ -14,4 +15,5 @@ public interface VoteRepositoryCustom {
     Vote findNextUpCursor(LocalDateTime lastUpCursor);
     Vote findNextDownCursor(LocalDateTime lastDownCursor);
     FindMostVoteItemDto findMostVoteItem();
+    Long countByCondition(CountVoteRequest countVoteRequest);
 }

@@ -9,7 +9,6 @@ import com.fade.feed.service.FeedService;
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

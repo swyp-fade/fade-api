@@ -13,6 +13,7 @@ import com.fade.member.entity.Member;
 import com.fade.member.service.MemberCommonService;
 import com.fade.subscribe.repository.SubscribeRepository;
 import com.fade.vote.constant.VoteType;
+import com.fade.vote.dto.request.CountVoteRequest;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
 import com.fade.vote.dto.request.FindVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
@@ -29,7 +30,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,8 +122,8 @@ public class VoteService {
                 direction = "up";
                 break;
             case "2":
-                startDate = findVoteRequest.nextCursor().minusDays(findVoteRequest.limit()/2).atStartOfDay();
-                endDate = findVoteRequest.nextCursor().plusDays(findVoteRequest.limit()/2).atTime(LocalTime.MAX);
+                startDate = findVoteRequest.nextCursor().minusDays(findVoteRequest.limit() / 2).atStartOfDay();
+                endDate = findVoteRequest.nextCursor().plusDays(findVoteRequest.limit() / 2).atTime(LocalTime.MAX);
                 direction = "bothSide";
                 break;
             default:
@@ -231,5 +231,9 @@ public class VoteService {
             );
         }
         return profileImageURL;
+    }
+
+    public Long getCount(CountVoteRequest countVoteRequest) {
+        return voteRepository.countByCondition(countVoteRequest);
     }
 }
