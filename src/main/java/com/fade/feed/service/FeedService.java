@@ -9,6 +9,7 @@ import com.fade.category.service.CategoryCommonService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.request.FindNextFeedCursorRequest;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.entity.Feed;
@@ -23,12 +24,13 @@ import com.fade.report.dto.request.CountReportRequest;
 import com.fade.report.service.ReportService;
 import com.fade.style.service.StyleCommonService;
 import com.fade.subscribe.service.SubscribeService;
+import com.fade.vote.constant.VoteType;
+import com.fade.vote.dto.request.CountVoteRequest;
+import com.fade.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.swing.text.html.Option;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +46,7 @@ public class FeedService {
     private final ApplicationEventPublisher eventPublisher;
     private final FapArchivingRepository fapArchivingRepository;
     private final ReportService reportService;
+    private final VoteService voteService;
 
     @Transactional
     public Long createFeed(
@@ -106,10 +109,20 @@ public class FeedService {
                         this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
                         feed.getMember().getUsername(),
                         this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
-                        countFapArchiving(feed.getId()),
+                        this.voteService.getCount(
+                                CountVoteRequest.builder().
+                                        feedId(feed.getId()).
+                                        voteType(VoteType.FADE_IN).
+                                        build()
+                        ),
                         feed.getCreatedAt()
                 )).toList(),
-                findNextCursor(!feeds.isEmpty() ? feeds.get(feeds.size() - 1).getId() : null)
+                findNextCursor(
+                        !feeds.isEmpty() ? FindNextFeedCursorRequest.builder()
+                                .lastCursor(feeds.get(feeds.size() - 1).getId())
+                                .fetchTypes(findFeedRequest.fetchTypes())
+                                .targetMemberId(memberId)
+                                .build() : null)
         );
     }
 
@@ -138,7 +151,12 @@ public class FeedService {
                 this.bookmarkService.hasBookmark(memberId, feed.getId()),
                 memberId.equals(feed.getMember().getId()),
                 this.bookmarkService.getCount(BookmarkCountRequest.builder().feedId(feed.getId()).build()),
-                countFapArchiving(feed.getId()),
+                this.voteService.getCount(
+                        CountVoteRequest.builder().
+                                feedId(feed.getId()).
+                                voteType(VoteType.FADE_IN).
+                                build()
+                ),
                 feed.getMember().getUsername(),
                 this.reportService.count(CountReportRequest.builder().feedId(feed.getId()).build()),
                 feed.getCreatedAt()
@@ -168,10 +186,6 @@ public class FeedService {
         return fapArchivingRepository.existsByFeedId(feedId);
     }
 
-    private Long countFapArchiving(Long feedId) {
-        return fapArchivingRepository.countByCondition(feedId);
-    }
-
     private void notifyFapFeedDelete(Feed feed, CreateNotificationDto createNotificationDto) {
         feed.publishEvent(eventPublisher, createNotificationDto);
     }
@@ -184,11 +198,12 @@ public class FeedService {
                 .build();
     }
 
-    private Long findNextCursor(Long lastCursor) {
-        if (lastCursor == null) {
+    private Long findNextCursor(FindNextFeedCursorRequest findNextFeedCursorRequest) {
+        if (findNextFeedCursorRequest == null) {
             return null;
         }
-        Feed nextCursorFeed = feedRepository.findNextCursor(lastCursor);
+
+        Feed nextCursorFeed = feedRepository.findNextCursor(findNextFeedCursorRequest);
         if (nextCursorFeed == null) {
             return null;
         }

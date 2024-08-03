@@ -8,6 +8,10 @@ import com.fade.faparchiving.dto.response.FindFapArchivingResponse;
 import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.member.service.MemberCommonService;
 import com.fade.subscribe.repository.SubscribeRepository;
+import com.fade.vote.constant.VoteType;
+import com.fade.vote.dto.request.CountVoteRequest;
+import com.fade.vote.repository.VoteRepository;
+import com.fade.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,8 @@ public class FapArchivingService {
     private final AttachmentService attachmentService;
     private final SubscribeRepository subscribeRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final VoteRepository voteRepository;
+    private final VoteService voteService;
 
     @Transactional(readOnly = true)
     public FindFapArchivingResponse findFapArchivingItems(Long memberId, LocalDate selectedDate) {
@@ -54,7 +60,11 @@ public class FapArchivingService {
                         fapArchivingItem.getMember().getId(),
                         fapArchivingItem.getMember().getUsername(),
                         getProfileImageURL(fapArchivingItem.getMember().getId()),
-                        countFapArchiving(fapArchivingItem.getFeed().getId()),
+                        this.voteService.getCount(
+                                CountVoteRequest.builder().
+                                        feedId(fapArchivingItem.getFeed().getId()).
+                                        voteType(VoteType.FADE_IN)
+                                        .build()),
                         true,
                         isSubscribed(member.getId(), fapArchivingItem.getMember().getId()),
                         isBookmarked(fapArchivingItem.getFeed().getId(), member.getId()),
@@ -75,10 +85,6 @@ public class FapArchivingService {
 
     private boolean isBookmarked(Long feedId, Long memberId) {
         return bookmarkRepository.existsByFeedIdAndMemberId(feedId, memberId);
-    }
-
-    private Long countFapArchiving(Long feedId) {
-        return fapArchivingRepository.countByCondition(feedId);
     }
 
     private String getProfileImageURL(Long memberId) {
