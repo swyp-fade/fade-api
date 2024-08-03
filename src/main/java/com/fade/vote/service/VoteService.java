@@ -14,6 +14,7 @@ import com.fade.member.service.MemberCommonService;
 import com.fade.subscribe.repository.SubscribeRepository;
 import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CreateVoteRequest.CreateVoteItemRequest;
+import com.fade.vote.dto.request.FindVoteRequest;
 import com.fade.vote.dto.response.CreateVoteResponse.CreateVoteItemResponse;
 import com.fade.vote.dto.response.FindVoteResponse;
 import com.fade.vote.dto.response.FindVoteResponse.FindVoteItemResponse;
@@ -102,38 +103,37 @@ public class VoteService {
     }
 
     @Transactional(readOnly = true)
-    public FindVoteResponse findVotes(Long memberId, LocalDate nextCursor, int limit, String scrollType) {
+    public FindVoteResponse findVotes(Long memberId, FindVoteRequest findVoteRequest) {
         Member member = memberCommonService.findById(memberId);
 
         LocalDateTime startDate;
         LocalDateTime endDate;
         String direction;
 
-        switch (scrollType) {
+        switch (findVoteRequest.scrollType()) {
             case "0":
-                startDate = nextCursor.minusDays(limit).atStartOfDay();
-                endDate = nextCursor.atTime(LocalTime.MAX);
+                startDate = findVoteRequest.nextCursor().minusDays(findVoteRequest.limit()).atStartOfDay();
+                endDate = findVoteRequest.nextCursor().atTime(LocalTime.MAX);
                 direction = "down";
                 break;
             case "1":
-                startDate = nextCursor.atStartOfDay();
-                endDate = nextCursor.plusDays(limit).atTime(LocalTime.MAX);
+                startDate = findVoteRequest.nextCursor().atStartOfDay();
+                endDate = findVoteRequest.nextCursor().plusDays(findVoteRequest.limit()).atTime(LocalTime.MAX);
                 direction = "up";
                 break;
             case "2":
-                startDate = nextCursor.minusDays(limit).atStartOfDay();
-                endDate = nextCursor.plusDays(limit).atTime(LocalTime.MAX);
+                startDate = findVoteRequest.nextCursor().minusDays(findVoteRequest.limit()/2).atStartOfDay();
+                endDate = findVoteRequest.nextCursor().plusDays(findVoteRequest.limit()/2).atTime(LocalTime.MAX);
                 direction = "bothSide";
                 break;
             default:
-                throw new IllegalArgumentException("Invalid type value: " + scrollType);
+                throw new IllegalArgumentException("Invalid type value: " + findVoteRequest.scrollType());
         }
         final var voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
 
 
-        //TODO:: 마지막 커서 조회 = 최초 호출 시 값을 저장해 놓고 사용하는 방법 찾기
-        Optional<Vote> latestVote = voteRepository.findLatestVoteByMember(member.getId());
-        Optional<Vote> oldestVote = voteRepository.findOldestVoteByMember(member.getId());
+        Vote latestVote = voteRepository.findLatestVoteByMember(member.getId());
+        Vote oldestVote = voteRepository.findOldestVoteByMember(member.getId());
 
         return new FindVoteResponse(
                 voteItems.stream().map(voteItem -> new FindVoteItemResponse(
@@ -156,19 +156,14 @@ public class VoteService {
                                 outFit.getId(),
                                 outFit.getBrandName(),
                                 outFit.getDetails(),
-                                null
+                                outFit.getCategory().getId()
                         )).toList(),
                         voteItem.getMember().getUsername(),
-                        this.attachmentService.getUrl(
-                                voteItem.getMember().getId(),
-                                AttachmentLinkableType.USER,
-                                AttachmentLinkType.PROFILE)
+                        getProfileImageURL(voteItem.getFeed().getMember().getId())
                 )).toList(),
                 findCursorToUpScroll(voteItems),
                 findCursorToDownScroll(voteItems),
-                direction,
-                isLastCursorToUpScroll(latestVote, nextCursor, limit),
-                isLastCursorToDownScroll(oldestVote, nextCursor, limit)
+                direction
         );
     }
 
@@ -176,27 +171,29 @@ public class VoteService {
         if (voteItems.isEmpty()) {
             return null;
         }
-        LocalDateTime lastVotedAt = voteItems.get(0).getVotedAt();
+        LocalDateTime latestVotedAt = voteItems.get(0).getVotedAt();
 
-        return lastVotedAt.toLocalDate();
+        Vote nextVoteCursorToUpScroll = voteRepository.findNextUpCursor(latestVotedAt.toLocalDate().atTime(LocalTime.MAX));
+
+        if (nextVoteCursorToUpScroll == null) {
+            return null;
+        }
+
+        return nextVoteCursorToUpScroll.getVotedAt().toLocalDate();
     }
 
     private LocalDate findCursorToDownScroll(List<Vote> voteItems) {
         if (voteItems.isEmpty()) {
             return null;
         }
-        LocalDateTime lastVotedAt = voteItems.get(voteItems.size() - 1).getVotedAt();
-        return lastVotedAt.toLocalDate();
-    }
+        LocalDateTime oldestVotedAt = voteItems.get(voteItems.size() - 1).getVotedAt();
 
-    private boolean isLastCursorToUpScroll(Optional<Vote> latestVote, LocalDate nextCursor, int limit) {
-        return latestVote.map(
-                vote -> vote.getVotedAt().toLocalDate().isBefore(nextCursor.plusDays(limit))).orElse(true);
-    }
+        Vote nextVoteCursorToDownScroll = voteRepository.findNextDownCursor(oldestVotedAt.toLocalDate().atStartOfDay());
 
-    private boolean isLastCursorToDownScroll(Optional<Vote> oldestVote, LocalDate nextCursor, int limit) {
-        return oldestVote.map(
-                vote -> vote.getVotedAt().toLocalDate().isAfter(nextCursor.minusDays(limit))).orElse(true);
+        if (nextVoteCursorToDownScroll == null) {
+            return null;
+        }
+        return nextVoteCursorToDownScroll.getVotedAt().toLocalDate();
     }
 
     private Vote createVote(Member member, Feed feed, VoteType voteType, LocalDateTime votedAt) {
@@ -218,5 +215,21 @@ public class VoteService {
 
     private boolean isFAPFeed(Long feedId) {
         return fapArchivingRepository.existsByFeedId(feedId);
+    }
+
+    private String getProfileImageURL(Long memberId) {
+        String profileImageURL = null;
+
+        if (this.attachmentService.existsLinkable(
+                memberId,
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)) {
+            profileImageURL = this.attachmentService.getUrl(
+                    memberId,
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        }
+        return profileImageURL;
     }
 }

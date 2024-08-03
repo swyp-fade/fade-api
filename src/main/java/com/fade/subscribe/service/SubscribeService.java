@@ -57,14 +57,16 @@ public class SubscribeService {
                 subscribers.stream().map(subscriber -> new FindSubscriberResponse.FindSubscriberItemResponse(
                         subscriber.getToMember().getId(),
                         subscriber.getToMember().getUsername(),
-                        this.attachmentService.getUrl(
-                                subscriber.getToMember().getId(),
-                                AttachmentLinkableType.USER,
-                                AttachmentLinkType.PROFILE
-                        )
+                        getProfileImageURL(subscriber.getToMember().getId())
                 )).toList(),
-                findNextCursor(!subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null),
-                subscribers.size()
+                findNextCursor(member.getId(), !subscribers.isEmpty() ? subscribers.get(subscribers.size() - 1).getId() : null),
+                countSubscriber(
+                        CountSubscriberRequest
+                                .builder()
+                                .fromMemberId(member.getId())
+                                .build()
+
+                )
         );
     }
 
@@ -91,14 +93,30 @@ public class SubscribeService {
         return this.subscribeRepository.countByCondition(countSubscriberRequest);
     }
 
-    private Long findNextCursor(Long lastCursor) {
+    private Long findNextCursor(Long memberId, Long lastCursor) {
         if (lastCursor == null) {
             return null;
         }
-        Subscribe nextCursorSubscriber = subscribeRepository.findNextCursor(lastCursor);
+        Subscribe nextCursorSubscriber = subscribeRepository.findNextCursor(memberId, lastCursor);
         if (nextCursorSubscriber == null) {
             return null;
         }
         return nextCursorSubscriber.getId();
+    }
+
+    private String getProfileImageURL(Long memberId) {
+        String profileImageURL = null;
+
+        if (this.attachmentService.existsLinkable(
+                memberId,
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)) {
+            profileImageURL = this.attachmentService.getUrl(
+                    memberId,
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        }
+        return profileImageURL;
     }
 }

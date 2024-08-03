@@ -10,9 +10,7 @@ public record FindVoteResponse(
         List<FindVoteItemResponse> feeds,
         LocalDate nextCursorToUpScroll,
         LocalDate nextCursorToDownScroll,
-        String direction,
-        boolean isLastCursorToUpScroll,
-        boolean isLastCursorToDownScroll
+        String direction
 ) {
 
     public record FindVoteItemResponse(

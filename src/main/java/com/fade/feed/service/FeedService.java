@@ -98,6 +98,7 @@ public class FeedService {
                                 feedOutfit.getCategory().getId()
                         )).toList(),
                         feed.getMember().getId(),
+                        getProfileImageURL(feed.getMember().getId()),
                         !feed.getFapArchivingList().isEmpty(),
                         subscribeMemberIds.contains(feed.getMember().getId()),
                         this.bookmarkService.hasBookmark(memberId, feed.getId()),
@@ -131,6 +132,7 @@ public class FeedService {
                         feedOutfit.getCategory().getId()
                 )).toList(),
                 feed.getMember().getId(),
+                getProfileImageURL(feed.getMember().getId()),
                 !feed.getFapArchivingList().isEmpty(),
                 this.subscribeService.hasSubscribe(memberId, feed.getMember().getId()),
                 this.bookmarkService.hasBookmark(memberId, feed.getId()),
@@ -191,5 +193,21 @@ public class FeedService {
             return null;
         }
         return nextCursorFeed.getId();
+    }
+
+    private String getProfileImageURL(Long memberId) {
+        String profileImageURL = null;
+
+        if (this.attachmentService.existsLinkable(
+                memberId,
+                AttachmentLinkableType.USER,
+                AttachmentLinkType.PROFILE)) {
+            profileImageURL = this.attachmentService.getUrl(
+                    memberId,
+                    AttachmentLinkableType.USER,
+                    AttachmentLinkType.PROFILE
+            );
+        }
+        return profileImageURL;
     }
 }
