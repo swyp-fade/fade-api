@@ -4,7 +4,9 @@ import com.fade.member.constant.MemberRegexp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
+@Builder
 public record ModifyMemberRequest(
         @Nullable
         @Schema(

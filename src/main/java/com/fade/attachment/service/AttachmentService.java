@@ -9,6 +9,7 @@ import com.fade.attachment.entity.Attachment;
 import com.fade.attachment.entity.AttachmentLink;
 import com.fade.attachment.repository.AttachmentLinkRepository;
 import com.fade.attachment.repository.AttachmentRepository;
+import com.fade.global.component.FileUploader;
 import com.fade.global.component.FileUtils;
 import com.fade.global.component.PresignUrlGenerator;
 import com.fade.global.constant.ErrorCode;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,11 +29,35 @@ public class AttachmentService {
     private final AttachmentCommonService attachmentCommonService;
     private final FileUtils fileUtils;
     private final PresignUrlGenerator presignUrlGenerator;
+    private final FileUploader fileUploader;
 
     @Value("${aws.region}")
     private String region;
     @Value("${aws.s3.bucketName}")
     private String bucket;
+
+    @Transactional
+    public Long uploadFile(Long uploaderMemberId, MultipartFile file) {
+        final var filename = this.fileUtils.getRandomFilename();
+        final var path = this.fileUtils.generateFilepath();
+
+        fileUploader.upload(
+                file, path + "/" + filename
+        );
+
+        final var attachment = new Attachment(
+                path,
+                filename,
+                null,
+                uploaderMemberId,
+                AttachmentStatus.SUCCESS,
+                AttachmentType.IMAGE
+        );
+
+        this.attachmentRepository.save(attachment);
+
+        return attachment.getId();
+    }
 
     @Transactional
     public GeneratePresignURLResponse generatePresignUrl(
