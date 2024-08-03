@@ -28,7 +28,7 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
     }
 
     @Override
-    public Long countDeletedFeedsInFapArchiving() {
+    public Long countDeletedFapArchivingByMemberId(Long memberId) {
         QFeed feedQ = QFeed.feed;
         QFapArchiving fapArchivingQ = QFapArchiving.fapArchiving;
 
@@ -36,7 +36,8 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
                 .select(fapArchivingQ.count())
                 .from(fapArchivingQ)
                 .join(fapArchivingQ.feed, feedQ)
-                .where(feedQ.deletedAt.isNotNull())
+                .where(fapArchivingQ.member.id.eq(memberId)
+                        .and(feedQ.deletedAt.isNotNull()))
                 .fetchOne();
     }
 

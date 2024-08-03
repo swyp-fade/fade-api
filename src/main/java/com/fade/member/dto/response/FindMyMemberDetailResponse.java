@@ -24,7 +24,10 @@ public class FindMyMemberDetailResponse {
         private String profileImageURL;
         @Nullable
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        private Long fapSelectedCount;
+        private Long selectedFAPCount;
+        @Nullable
+        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        private Long deletedFAPCount;
         @NotNull
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
         private Long subscribedCount;
