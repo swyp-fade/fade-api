@@ -27,11 +27,13 @@ public class S3FileUploader implements FileUploader {
         metadata.setContentLength(file.getSize());
         metadata.setContentType(file.getContentType());
 
-        Mu
-
         try {
-            PutObjectRequest putObjectRequest = new PutObjectRequest(this.bucket, path, file.getInputStream(), metadata)
-                    .withCannedAcl(CannedAccessControlList.PublicRead);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(
+                    this.bucket,
+                    "attachments" + "/" + path,
+                    file.getInputStream(),
+                    metadata
+            ).withCannedAcl(CannedAccessControlList.PublicRead);
 
             amazonS3.putObject(putObjectRequest);
         } catch (IOException e) {

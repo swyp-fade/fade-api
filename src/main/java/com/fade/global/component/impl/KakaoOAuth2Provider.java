@@ -1,5 +1,6 @@
 package com.fade.global.component.impl;
 
+import com.fade.global.CustomMultipartFile;
 import com.fade.global.component.OAuth2Provider;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.dto.OAuthProfile;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -90,8 +92,20 @@ public class KakaoOAuth2Provider implements OAuth2Provider {
                     Optional.ofNullable((Map) body.get("kakao_account"))
                             .map((a) -> (Map) a.get("profile"))
                             .map((a) -> (String) a.get("profile_image_url"))
-                            .map((imageUrl) ->  this.restTemplate.exchange(imageUrl, HttpMethod.GET, null, byte[].class).getBody())
-                            .map(ByteArrayResource::new)
+                            .map((imageUrl) -> this.restTemplate.exchange(imageUrl, HttpMethod.GET, null, byte[].class))
+                            .map((res) -> {
+                                final var mf = new CustomMultipartFile(res.getBody());
+                                final var contentType =
+                                        Optional.ofNullable(res.getHeaders().get("Content-type"))
+                                                .map((contentTypes) -> contentTypes.isEmpty() ? "" : contentTypes.get(0))
+                                                .orElse("");
+
+                                mf.setContentType(contentType);
+                                mf.setOriginalFilename("");
+                                mf.setName("");
+
+                                return mf;
+                            })
                     ;
 
             return new OAuthProfile(

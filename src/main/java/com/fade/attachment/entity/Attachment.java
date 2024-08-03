@@ -74,6 +74,17 @@ public class Attachment {
         this.checksum = checksum;
     }
 
+    public Attachment(
+        String path,
+        String filename,
+        String originalFilename,
+        Long uploaderMemberId,
+        AttachmentStatus status,
+        AttachmentType type
+    ) {
+        this(path, filename, originalFilename, uploaderMemberId, status, type, null);
+    }
+
     public void successUpload() {
         this.status = AttachmentStatus.SUCCESS;
     }

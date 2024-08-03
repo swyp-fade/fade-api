@@ -93,13 +93,13 @@ public class SocialLoginService {
         );
 
         if (profile.getProfileImage() != null) {
-            this.attachmentService.upload(profile.getProfileImage().)
+            final var attachmentId =
+                    this.attachmentService.uploadFile(memberId, profile.getProfileImage());
 
             this.memberService.modifyMember(
                     memberId,
-                    ModifyMemberRequest.builder().profileImageAttachmentId().build()
+                    ModifyMemberRequest.builder().profileImageAttachmentId(attachmentId).build()
             );
-
         }
 
         this.socialLoginRepository.save(socialLogin);
