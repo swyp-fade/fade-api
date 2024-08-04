@@ -91,6 +91,9 @@ public class FeedService {
         final var feed = this.feedCommonService.findById(feedId);
         final var feedOutfits = this.feedOutfitRepository.findByFeedId(feed.getId());
 
+        if (member.getId() != feed.getId()) {
+            throw new ApplicationException(ErrorCode.FEED_UPDATE_DENIED);
+        }
 
         if (modifyFeedRequest.styleIds() != null) {
             final var styles = modifyFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
