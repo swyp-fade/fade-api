@@ -28,6 +28,7 @@ import com.fade.vote.constant.VoteType;
 import com.fade.vote.dto.request.CountVoteRequest;
 import com.fade.vote.service.VoteService;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -80,7 +81,7 @@ public class FeedService {
         return feed.getId();
     }
 
-    public FindFeedResponse findFeeds(FindFeedRequest findFeedRequest, Long memberId) {
+    public FindFeedResponse findFeeds(@NotNull FindFeedRequest findFeedRequest, @NotNull Long memberId) {
         final var feeds = this.feedRepository.findFeeds(findFeedRequest, memberId);
 
         final var subscribeMemberIds = this.subscribeService.findSubscribeToMemberIds(memberId);
