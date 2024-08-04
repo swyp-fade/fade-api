@@ -6,6 +6,7 @@ import com.fade.subscribe.entity.Subscribe;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -48,12 +49,13 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
     }
 
     @Override
-    public List<Long> findByFromMemberToMemberIds(Long fromMemberId) {
+    public List<Long> findByFromMemberToMemberIds(@NotNull Long fromMemberId) {
         final var subscribeQ = QSubscribe.subscribe;
 
         return jpaQueryFactory
                 .select(subscribeQ.toMember.id)
                 .from(subscribeQ)
+                .where(fromMemberIdEq(fromMemberId))
                 .fetch();
     }
 

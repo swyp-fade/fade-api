@@ -12,6 +12,7 @@ import com.fade.subscribe.dto.response.FindSubscriberResponse;
 import com.fade.subscribe.entity.Subscribe;
 import com.fade.subscribe.repository.SubscribeRepository;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,7 +85,7 @@ public class SubscribeService {
         return this.subscribeRepository.existsByFromMemberIdAndToMemberId(fromMemberId, toMemberId);
     }
 
-    public List<Long> findSubscribeToMemberIds(Long fromMemberId) {
+    public List<Long> findSubscribeToMemberIds(@NotNull Long fromMemberId) {
         return this.subscribeRepository.findByFromMemberToMemberIds(fromMemberId);
     }
 
