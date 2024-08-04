@@ -80,6 +80,14 @@ public class Feed {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void modifyStyles(Collection<Style> styles) {
+        this.styles = new HashSet<>(styles);
+    }
+
+    public void modifyOutfits(Collection<FeedOutfit> feedOutfitList) {
+        this.feedOutfitList = new ArrayList<>(feedOutfitList);
+    }
+
     public void publishEvent(ApplicationEventPublisher eventPublisher, CreateNotificationDto createNotificationDto) {
         eventPublisher.publishEvent(createNotificationDto);
     }
