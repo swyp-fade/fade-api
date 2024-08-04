@@ -1,5 +1,6 @@
 package com.fade.auth.controller;
 
+import com.fade.auth.dto.request.TokenRenewRequest;
 import com.fade.auth.dto.response.HttpSigninInResponse;
 import com.fade.auth.dto.response.ResponseCookie;
 import com.fade.auth.service.AuthService;
@@ -55,7 +56,7 @@ public class AuthController {
 
         this.setRefreshTokenCookie(response, token.refreshToken());
 
-        return new HttpSigninInResponse(token.accessToken());
+        return new HttpSigninInResponse(token.accessToken(), token.refreshToken());
     }
 
     @PostMapping("/social-login/{socialType}/signup")
@@ -77,7 +78,7 @@ public class AuthController {
         );
         this.setRefreshTokenCookie(response, token.refreshToken());
 
-        return new HttpSigninInResponse(token.accessToken());
+        return new HttpSigninInResponse(token.accessToken(), token.refreshToken());
     }
 
     @PostMapping("/token")
@@ -88,9 +89,14 @@ public class AuthController {
     })
     public HttpSigninInResponse generateAccessToken(
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
-            HttpServletResponse response
+            HttpServletResponse response,
+            @Valid @RequestBody() TokenRenewRequest tokenRenewRequest
     ) {
         try {
+            if (refreshToken == null) {
+                refreshToken = tokenRenewRequest.refreshToken();
+            }
+
             if (refreshToken == null) {
                 throw new ApplicationException(ErrorCode.TOKEN_NOT_EXIST);
             }
@@ -106,7 +112,7 @@ public class AuthController {
                     rt
             );
 
-            return new HttpSigninInResponse(accessToken);
+            return new HttpSigninInResponse(accessToken, rt);
         } catch (ApplicationException exception) {
             if (
                     exception.getErrorCode() == ErrorCode.TOKEN_NOT_EXIST ||
