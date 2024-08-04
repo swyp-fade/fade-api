@@ -137,7 +137,7 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
         final var voteQ = QVote.vote;
 
         List<Feed> feeds = from(feedQ)
-                .where(feedQ.id.notIn(
+                .where(feedQ.member.id.ne(memberId), feedQ.id.notIn(
                         from(voteQ)
                                 .select(voteQ.feed.id)
                                 .where(voteQ.member.id.eq(memberId))
