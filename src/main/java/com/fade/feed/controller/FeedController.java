@@ -100,7 +100,6 @@ public class FeedController {
         this.feedService.modifyFeed(modifyFeedRequest, userVo.getId(), feedId);
     }
 
-
     @DeleteMapping("/{feedId}")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
