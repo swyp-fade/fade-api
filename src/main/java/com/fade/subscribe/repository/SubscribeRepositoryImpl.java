@@ -50,6 +50,8 @@ public class SubscribeRepositoryImpl implements SubscribeRepositoryCustom {
 
     @Override
     public List<Long> findByFromMemberToMemberIds(@NotNull Long fromMemberId) {
+        assert fromMemberId != null;
+
         final var subscribeQ = QSubscribe.subscribe;
 
         return jpaQueryFactory
