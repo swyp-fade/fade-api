@@ -3,8 +3,11 @@ package com.fade.report.entity;
 import com.fade.feed.entity.Feed;
 import com.fade.member.entity.Member;
 import com.fade.notification.dto.CreateNotificationDto;
+import com.fade.report.constant.ReportType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,6 +17,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.ApplicationEventPublisher;
 
 @Table(name = "reports")
@@ -25,7 +29,8 @@ public class Report {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 2000)
+    @Column(length = 2000)
+    @Nullable
     private String cause;
 
     @ManyToOne(optional = false)
@@ -36,10 +41,15 @@ public class Report {
     @JoinColumn(name = "feed_id", nullable = false)
     private Feed feed;
 
-    public Report(Member member, Feed feed, String cause) {
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ReportType reportType;
+
+    public Report(Member member, Feed feed, ReportType reportType, @Nullable String cause) {
         this.member = member;
         this.feed = feed;
         this.cause = cause;
+        this.reportType = reportType;
     }
 
     public void publishEvent(ApplicationEventPublisher eventPublisher, CreateNotificationDto createNotificationDto) {
