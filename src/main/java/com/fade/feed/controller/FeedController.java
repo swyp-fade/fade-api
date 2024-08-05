@@ -2,6 +2,7 @@ package com.fade.feed.controller;
 
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.request.ModifyFeedRequest;
 import com.fade.feed.dto.response.CreateFeedResponse;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
@@ -82,6 +83,21 @@ public class FeedController {
                 feedId,
                 userVo.getId()
         );
+    }
+
+    @PatchMapping("/{feedId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "피드 수정"
+            )
+    )
+    public void modifyFeed(@RequestBody ModifyFeedRequest modifyFeedRequest,
+                           @AuthenticationPrincipal UserVo userVo,
+                           @PathVariable Long feedId) {
+        this.feedService.modifyFeed(modifyFeedRequest, userVo.getId(), feedId);
     }
 
     @DeleteMapping("/{feedId}")

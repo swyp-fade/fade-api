@@ -64,7 +64,7 @@ public class MemberController {
         return this.memberService.findMemberDetail(userVo.getId(), userVo.getId());
     }
 
-    @PutMapping("/me")
+    @PatchMapping("/me")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
     @ApiResponses(

@@ -10,10 +10,12 @@ import com.fade.faparchiving.repository.FapArchivingRepository;
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
 import com.fade.feed.dto.request.FindNextFeedCursorRequest;
+import com.fade.feed.dto.request.ModifyFeedRequest;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.feed.entity.Feed;
 import com.fade.feed.entity.FeedOutfit;
+import com.fade.feed.repository.FeedOutfitRepository;
 import com.fade.feed.repository.FeedRepository;
 import com.fade.global.constant.ErrorCode;
 import com.fade.global.exception.ApplicationException;
@@ -38,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class FeedService {
     private final FeedRepository feedRepository;
+    private final FeedCommonService feedCommonService;
+    private final FeedOutfitRepository feedOutfitRepository;
     private final MemberCommonService memberCommonService;
     private final CategoryCommonService categoryCommonService;
     private final StyleCommonService styleCommonService;
@@ -79,6 +83,47 @@ public class FeedService {
         );
 
         return feed.getId();
+    }
+
+    @Transactional
+    public void modifyFeed(ModifyFeedRequest modifyFeedRequest, Long memberId, Long feedId) {
+        final var member = this.memberCommonService.findById(memberId);
+        final var feed = this.feedCommonService.findById(feedId);
+        final var feedOutfits = this.feedOutfitRepository.findByFeedId(feed.getId());
+
+        if (member.getId() != feed.getId()) {
+            throw new ApplicationException(ErrorCode.FEED_UPDATE_DENIED);
+        }
+
+        if (modifyFeedRequest.styleIds() != null) {
+            final var styles = modifyFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
+            feed.modifyStyles(styles);
+        }
+
+        if (modifyFeedRequest.outfits() != null) {
+            if (feedOutfits.isPresent()) {
+                modifyFeedRequest.outfits().forEach(
+                        outfitItem -> {
+                            feedOutfits.get().modifyOutfits(
+                                    outfitItem.brandName(),
+                                    outfitItem.details(),
+                                    this.categoryCommonService.findById(outfitItem.categoryId())
+                            );
+                        }
+                );
+            } else {
+                modifyFeedRequest.outfits().forEach(outfitItem -> {
+                            FeedOutfit feedOutfit = new FeedOutfit(
+                                    outfitItem.brandName(),
+                                    outfitItem.details(),
+                                    this.categoryCommonService.findById(outfitItem.categoryId()));
+                            feedOutfit.setFeed(feed);
+                            this.feedOutfitRepository.save(feedOutfit);
+                        }
+                );
+            }
+        }
+        this.feedRepository.save(feed);
     }
 
     public FindFeedResponse findFeeds(@NotNull FindFeedRequest findFeedRequest, @NotNull Long memberId) {
