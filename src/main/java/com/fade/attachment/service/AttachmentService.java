@@ -35,6 +35,8 @@ public class AttachmentService {
     private String region;
     @Value("${aws.s3.bucketName}")
     private String bucket;
+    @Value("${aws.cloud-front.url}")
+    private String cloudFrontUrl;
 
     @Transactional
     public Long uploadFile(Long uploaderMemberId, MultipartFile file) {
@@ -160,6 +162,6 @@ public class AttachmentService {
     }
 
     private String getRootUrl() {
-        return "https://" + this.bucket + ".s3." + this.region + ".amazonaws.com/attachments";
+        return this.cloudFrontUrl + "/attachments";
     }
 }

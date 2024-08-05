@@ -36,6 +36,8 @@ aws:
   region: ${AWS_REGION}
   s3:
     bucketName: ${AWS_S3_BUCKET_NAME}
+  cloud-front:
+    url: ${AWS_IMAGE_CLOUD_FRONT_URL}
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}
