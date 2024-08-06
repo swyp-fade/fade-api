@@ -89,7 +89,7 @@ public class MemberService {
             member.modifyUsername(modifyMemberRequest.username());
         }
 
-        if (modifyMemberRequest.profileImageAttachmentId() != null) {
+        if (modifyMemberRequest.profileImageId() != null) {
             if (this.attachmentService.existsLinkable(
                     member.getId(),
                     AttachmentLinkableType.USER,
@@ -103,7 +103,7 @@ public class MemberService {
             }
 
             this.attachmentService.linkAttachment(
-                    modifyMemberRequest.profileImageAttachmentId(),
+                    modifyMemberRequest.profileImageId(),
                     AttachmentLinkableType.USER,
                     AttachmentLinkType.PROFILE,
                     member.getId()
