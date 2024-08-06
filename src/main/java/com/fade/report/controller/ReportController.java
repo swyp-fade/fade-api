@@ -1,8 +1,8 @@
 package com.fade.report.controller;
 
-import com.fade.feed.dto.response.FindFeedResponse;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
+import com.fade.report.constant.ReportType;
 import com.fade.report.dto.request.CreateReportRequest;
 import com.fade.report.dto.response.CreateReportResponse;
 import com.fade.report.service.ReportService;
@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.validation.Valid;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,7 +41,16 @@ public class ReportController {
             @Valid CreateReportRequest createReportRequest,
             @AuthenticationPrincipal UserVo userVo
     ) {
-        final var id = this.reportService.createReport(userVo.getId(), createReportRequest.feedId(), createReportRequest.cause());
+        if (createReportRequest.type().equals(ReportType.OTHER)) {
+            if (!(createReportRequest.details() != null &&
+                    createReportRequest.details().length() > 1 &&
+                    createReportRequest.details().length() <= 500)
+            ) {
+                throw new ValidationException("must be less than or equal to 500");
+            }
+        }
+
+        final var id = this.reportService.createReport(userVo.getId(), createReportRequest.feedId(), createReportRequest.type(), createReportRequest.details());
 
         return new CreateReportResponse(id);
     }
