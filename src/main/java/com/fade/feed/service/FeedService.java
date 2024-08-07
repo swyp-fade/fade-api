@@ -91,7 +91,7 @@ public class FeedService {
         final var feed = this.feedCommonService.findById(feedId);
         final var feedOutfits = this.feedOutfitRepository.findByFeedId(feed.getId());
 
-        if (member.getId().equals(feed.getMember().getId())) {
+        if (!member.getId().equals(feed.getMember().getId())) {
             throw new ApplicationException(ErrorCode.FEED_UPDATE_DENIED);
         }
 
