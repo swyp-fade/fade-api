@@ -39,6 +39,7 @@ public class AuthController {
                     schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
+    @Operation(summary = "social auth 서버에서 발급된 code로 로그인을 합니다.")
     public HttpSigninInResponse signin(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
@@ -65,6 +66,7 @@ public class AuthController {
                     schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
+    @Operation(summary = "social auth 서버에서 발급한 accessToken으로 회원가입을 합니다.")
     public HttpSigninInResponse signup(
             @PathVariable("socialType") SocialType socialType,
             @RequestBody
@@ -87,6 +89,10 @@ public class AuthController {
                     schema = @Schema(implementation = HttpSigninInResponse.class)
             ))
     })
+    @Operation(
+            summary = "refreshToken으로 accessToken을 재발급합니다.",
+            description = "만약, refreshToken 만료 3일전이라면 refreshToken도 재발급됩니다."
+    )
     public HttpSigninInResponse generateAccessToken(
             @CookieValue(value = "refreshToken", required = false) String refreshToken,
             HttpServletResponse response,

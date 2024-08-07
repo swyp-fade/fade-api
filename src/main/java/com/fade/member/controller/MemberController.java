@@ -42,6 +42,7 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = FindMemberDetailResponse.class))
             )
     )
+    @Operation(summary = "특정 사용자의 정보를 불러옵니다.")
     public FindMemberDetailResponse findMemberDetail(
             @PathVariable(name = "memberId") Long memberId,
             @AuthenticationPrincipal UserVo userVo
@@ -58,6 +59,7 @@ public class MemberController {
                     content = @Content(schema = @Schema(implementation = FindMyMemberDetailResponse.class))
             )
     )
+    @Operation(summary = "나의 사용자의 정보를 불러옵니다.")
     public FindMyMemberDetailResponse findMyMemberDetail(
             @AuthenticationPrincipal UserVo userVo
     ) {
@@ -72,6 +74,7 @@ public class MemberController {
                     responseCode = "204"
             )
     )
+    @Operation(summary = "나의 사용자 정보를 수정합니다.")
     public void modifyUser(
             @RequestBody @Valid ModifyMemberRequest modifyMemberRequest,
             @AuthenticationPrincipal UserVo userVo
