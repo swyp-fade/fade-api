@@ -19,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +41,7 @@ public class ReportController {
     )
     @Operation(summary = "피드를 신고합니다.")
     public CreateReportResponse createReport(
-            @Valid CreateReportRequest createReportRequest,
+            @Valid @RequestBody CreateReportRequest createReportRequest,
             @AuthenticationPrincipal UserVo userVo
     ) {
         if (createReportRequest.type().equals(ReportType.OTHER)) {
