@@ -7,6 +7,7 @@ import com.fade.attachment.dto.response.GeneratePresignURLResponse;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,6 +45,7 @@ public class AttachmentController {
                     content = @Content(schema = @Schema(implementation = GeneratePresignURLResponse.class))
             )
     })
+    @Operation(summary = "AWS S3 presignURL을 발급합니다")
     public GeneratePresignURLResponse generatePresignURL(
             @RequestBody() @Valid GeneratePresignURLRequest generatePresignURLRequest,
             @AuthenticationPrincipal UserVo userVo
@@ -65,6 +67,7 @@ public class AttachmentController {
                     content = @Content(schema = @Schema(implementation = ExistsAttachmentResponse.class))
             )
     })
+    @Operation(summary = "checksum으로 현재 존재하는 파일이 있는지 확인합니다.")
     public ExistsAttachmentResponse existsAttachment(
             @Valid
             ExistsAttachmentRequest existsAttachmentRequest

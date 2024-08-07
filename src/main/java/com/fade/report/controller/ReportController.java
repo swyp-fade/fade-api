@@ -6,6 +6,7 @@ import com.fade.report.constant.ReportType;
 import com.fade.report.dto.request.CreateReportRequest;
 import com.fade.report.dto.response.CreateReportResponse;
 import com.fade.report.service.ReportService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,6 +38,7 @@ public class ReportController {
             responseCode = "200",
             content = @Content(schema = @Schema(implementation = CreateReportResponse.class))
     )
+    @Operation(summary = "피드를 신고합니다.")
     public CreateReportResponse createReport(
             @Valid CreateReportRequest createReportRequest,
             @AuthenticationPrincipal UserVo userVo
