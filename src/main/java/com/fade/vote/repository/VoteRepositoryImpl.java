@@ -29,30 +29,9 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
         QVote vote = QVote.vote;
         return jpaQueryFactory
                 .selectFrom(vote)
-                .where(vote.member.id.eq(memberId), vote.votedAt.between(startDate, endDate))
+                .where(vote.member.id.eq(memberId), vote.votedAt.between(startDate, endDate), vote.feed.deletedAt.isNull())
                 .orderBy(vote.id.desc())
                 .fetch();
-    }
-
-    @Override
-    public Vote findOldestVoteByMember(Long memberId) {
-        QVote vote = QVote.vote;
-        return jpaQueryFactory
-                .selectFrom(vote)
-                .where(vote.member.id.eq(memberId))
-                .orderBy(vote.votedAt.asc())
-                .fetchFirst();
-    }
-
-    @Override
-    public Vote findLatestVoteByMember(Long memberId) {
-        QVote vote = QVote.vote;
-
-        return jpaQueryFactory
-                .selectFrom(vote)
-                .where(vote.member.id.eq(memberId))
-                .orderBy(vote.votedAt.desc())
-                .fetchFirst();
     }
 
     @Override
@@ -77,21 +56,21 @@ public class VoteRepositoryImpl implements VoteRepositoryCustom {
     }
 
     @Override
-    public Vote findNextUpCursor(LocalDateTime lastUpCursor) {
+    public Vote findNextUpCursor(LocalDateTime lastUpCursor, Long memberId) {
         QVote vote = QVote.vote;
 
         return jpaQueryFactory.selectFrom(vote)
-                .where(vote.votedAt.gt(lastUpCursor))
+                .where(vote.votedAt.gt(lastUpCursor), vote.member.id.eq(memberId))
                 .orderBy(vote.votedAt.desc())
                 .fetchFirst();
     }
 
     @Override
-    public Vote findNextDownCursor(LocalDateTime lastDownCursor) {
+    public Vote findNextDownCursor(LocalDateTime lastDownCursor, Long memberId) {
         QVote vote = QVote.vote;
 
         return jpaQueryFactory.selectFrom(vote)
-                .where(vote.votedAt.lt(lastDownCursor))
+                .where(vote.votedAt.lt(lastDownCursor), vote.member.id.eq(memberId))
                 .orderBy(vote.votedAt.desc())
                 .fetchFirst();
     }
