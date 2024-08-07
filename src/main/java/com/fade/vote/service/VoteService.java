@@ -154,6 +154,7 @@ public class VoteService {
                                 outFit.getDetails(),
                                 outFit.getCategory().getId()
                         )).toList(),
+                        voteItem.getFeed().getMember().getId(),
                         voteItem.getFeed().getMember().getUsername(),
                         getProfileImageURL(voteItem.getFeed().getMember().getId())
                 )).toList(),

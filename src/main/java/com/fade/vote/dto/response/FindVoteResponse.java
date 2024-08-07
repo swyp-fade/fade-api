@@ -24,6 +24,7 @@ public record FindVoteResponse(
             Boolean isBookmarked,
             List<FindVoteItemStyleResponse> styleIds,
             List<FindVoteItemOutFitResponse> outfits,
+            Long memberId,
             String username,
             String profileImageURL
     ) {
