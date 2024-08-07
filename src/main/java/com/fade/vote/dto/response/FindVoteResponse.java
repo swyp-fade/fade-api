@@ -17,13 +17,14 @@ public record FindVoteResponse(
             Long voteItemId,
             LocalDateTime votedAt,
             VoteType voteType,
-            Long feedId,
-            String feedImageURL,
+            Long id,
+            String imageURL,
             Boolean isFAPFeed,
             Boolean isSubscribed,
             Boolean isBookmarked,
             List<FindVoteItemStyleResponse> styleIds,
             List<FindVoteItemOutFitResponse> outfits,
+            Long memberId,
             String username,
             String profileImageURL
     ) {

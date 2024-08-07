@@ -6,6 +6,7 @@ import com.fade.member.vo.UserVo;
 import com.fade.notification.dto.request.FindNotificationRequest;
 import com.fade.notification.dto.response.FindNotificationResponse;
 import com.fade.notification.service.NotificationService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,6 +36,7 @@ public class NotificationController {
                     description = "알림 내역 조회 성공"
             )
     )
+    @Operation(summary = "알림 내역 조회")
     public FindNotificationResponse findNotifications(@AuthenticationPrincipal UserVo userVo, FindNotificationRequest findNotificationRequest) {
         return notificationService.findNotifications(userVo.getId(), findNotificationRequest.nextCursor(), findNotificationRequest.limit());
     }
@@ -42,6 +44,7 @@ public class NotificationController {
     @PostMapping("/read")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
+    @Operation(summary = "알림 읽음처리")
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",

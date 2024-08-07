@@ -2,6 +2,7 @@ package com.fade.feed.controller;
 
 import com.fade.feed.dto.request.CreateFeedRequest;
 import com.fade.feed.dto.request.FindFeedRequest;
+import com.fade.feed.dto.request.ModifyFeedRequest;
 import com.fade.feed.dto.response.CreateFeedResponse;
 import com.fade.feed.dto.response.FindFeedDetailResponse;
 import com.fade.feed.dto.response.FindFeedResponse;
@@ -9,6 +10,7 @@ import com.fade.feed.service.FeedService;
 import com.fade.global.dto.response.Response;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -40,6 +42,7 @@ public class FeedController {
                 content = @Content(schema = @Schema(implementation = CreateFeedResponse.class))
             )
     )
+    @Operation(summary = "새로운 피드를 생성합니다.")
     public CreateFeedResponse createFeed(
             @RequestBody @Valid CreateFeedRequest createFeedRequest,
             @AuthenticationPrincipal UserVo userVo
@@ -56,6 +59,7 @@ public class FeedController {
             responseCode = "200",
             content = @Content(schema = @Schema(implementation = FindFeedResponse.class))
     )
+    @Operation(summary = "피드 리스트를 불러옵니다.")
     public FindFeedResponse findFeeds(
             @Valid
             FindFeedRequest findFeedRequest,
@@ -74,6 +78,7 @@ public class FeedController {
             responseCode = "200",
             content = @Content(schema = @Schema(implementation = FindFeedDetailResponse.class))
     )
+    @Operation(summary = "피드의 상세 정보를 불러옵니다.")
     public FindFeedDetailResponse findFeedDetail(
             @AuthenticationPrincipal UserVo userVo,
             @PathVariable(name = "feedId") Long feedId
@@ -82,6 +87,22 @@ public class FeedController {
                 feedId,
                 userVo.getId()
         );
+    }
+
+    @PatchMapping("/{feedId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "피드 수정"
+            )
+    )
+    @Operation(summary = "피드를 수정합니다.")
+    public void modifyFeed(@RequestBody ModifyFeedRequest modifyFeedRequest,
+                           @AuthenticationPrincipal UserVo userVo,
+                           @PathVariable Long feedId) {
+        this.feedService.modifyFeed(modifyFeedRequest, userVo.getId(), feedId);
     }
 
     @DeleteMapping("/{feedId}")
@@ -93,6 +114,7 @@ public class FeedController {
                     description = "피드 삭제"
             )
     )
+    @Operation(summary = "피드를 삭제합니다.")
     public Response<Void> deleteFeed(@AuthenticationPrincipal UserVo userVo, @PathVariable Long feedId) {
         this.feedService.deleteFeed(userVo.getId(), feedId);
         return Response.success();

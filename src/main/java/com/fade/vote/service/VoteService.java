@@ -45,7 +45,6 @@ public class VoteService {
     private final FapArchivingRepository fapArchivingRepository;
     private final AttachmentService attachmentService;
 
-    //TODO: 카테고리 Id로만 하려면 카테고리 사용하는 곳 다 변경 필요
     @Transactional(readOnly = true)
     public ExtractRandomFeedResponse extractRandomFeeds(Long memberId) {
         final var member = memberCommonService.findById(memberId);
@@ -129,11 +128,8 @@ public class VoteService {
             default:
                 throw new IllegalArgumentException("Invalid type value: " + findVoteRequest.scrollType());
         }
+
         final var voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
-
-
-        Vote latestVote = voteRepository.findLatestVoteByMember(member.getId());
-        Vote oldestVote = voteRepository.findOldestVoteByMember(member.getId());
 
         return new FindVoteResponse(
                 voteItems.stream().map(voteItem -> new FindVoteItemResponse(
@@ -158,22 +154,23 @@ public class VoteService {
                                 outFit.getDetails(),
                                 outFit.getCategory().getId()
                         )).toList(),
-                        voteItem.getMember().getUsername(),
+                        voteItem.getFeed().getMember().getId(),
+                        voteItem.getFeed().getMember().getUsername(),
                         getProfileImageURL(voteItem.getFeed().getMember().getId())
                 )).toList(),
-                findCursorToUpScroll(voteItems),
-                findCursorToDownScroll(voteItems),
+                findCursorToUpScroll(voteItems, member.getId()),
+                findCursorToDownScroll(voteItems, member.getId()),
                 direction
         );
     }
 
-    private LocalDate findCursorToUpScroll(List<Vote> voteItems) {
+    private LocalDate findCursorToUpScroll(List<Vote> voteItems, Long memberId) {
         if (voteItems.isEmpty()) {
             return null;
         }
         LocalDateTime latestVotedAt = voteItems.get(0).getVotedAt();
 
-        Vote nextVoteCursorToUpScroll = voteRepository.findNextUpCursor(latestVotedAt.toLocalDate().atTime(LocalTime.MAX));
+        Vote nextVoteCursorToUpScroll = voteRepository.findNextUpCursor(latestVotedAt.toLocalDate().atTime(LocalTime.MAX), memberId);
 
         if (nextVoteCursorToUpScroll == null) {
             return null;
@@ -182,13 +179,13 @@ public class VoteService {
         return nextVoteCursorToUpScroll.getVotedAt().toLocalDate();
     }
 
-    private LocalDate findCursorToDownScroll(List<Vote> voteItems) {
+    private LocalDate findCursorToDownScroll(List<Vote> voteItems, Long memberId) {
         if (voteItems.isEmpty()) {
             return null;
         }
         LocalDateTime oldestVotedAt = voteItems.get(voteItems.size() - 1).getVotedAt();
 
-        Vote nextVoteCursorToDownScroll = voteRepository.findNextDownCursor(oldestVotedAt.toLocalDate().atStartOfDay());
+        Vote nextVoteCursorToDownScroll = voteRepository.findNextDownCursor(oldestVotedAt.toLocalDate().atStartOfDay(), memberId);
 
         if (nextVoteCursorToDownScroll == null) {
             return null;

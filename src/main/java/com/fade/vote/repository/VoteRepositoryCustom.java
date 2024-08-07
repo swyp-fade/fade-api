@@ -10,10 +10,8 @@ import java.util.List;
 public interface VoteRepositoryCustom {
 
     List<Vote> findVoteUsingNoOffset(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
-    Vote findOldestVoteByMember(Long memberId);
-    Vote findLatestVoteByMember(Long memberId);
-    Vote findNextUpCursor(LocalDateTime lastUpCursor);
-    Vote findNextDownCursor(LocalDateTime lastDownCursor);
+    Vote findNextUpCursor(LocalDateTime lastUpCursor, Long memberId);
+    Vote findNextDownCursor(LocalDateTime lastDownCursor, Long memberId);
     FindMostVoteItemDto findMostVoteItem();
     Long countByCondition(CountVoteRequest countVoteRequest);
 }

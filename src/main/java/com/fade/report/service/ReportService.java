@@ -6,6 +6,7 @@ import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
 import com.fade.notification.constant.NotificationType;
 import com.fade.notification.dto.CreateNotificationDto;
+import com.fade.report.constant.ReportType;
 import com.fade.report.dto.request.CountReportRequest;
 import com.fade.report.entity.Report;
 import com.fade.report.repository.ReportRepository;
@@ -29,6 +30,7 @@ public class ReportService {
     public Long createReport(
             Long memberId,
             Long feedId,
+            ReportType reportType,
             String cause
     ) {
         if (this.reportRepository.existsByMemberIdAndFeedId(memberId, feedId)) {
@@ -38,6 +40,7 @@ public class ReportService {
         final var report = new Report(
                 this.memberCommonService.findById(memberId),
                 this.feedCommonService.findById(feedId),
+                reportType,
                 cause
         );
 

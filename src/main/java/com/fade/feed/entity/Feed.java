@@ -80,6 +80,10 @@ public class Feed {
         this.deletedAt = LocalDateTime.now();
     }
 
+    public void modifyStyles(Collection<Style> styles) {
+        this.styles = new HashSet<>(styles);
+    }
+
     public void publishEvent(ApplicationEventPublisher eventPublisher, CreateNotificationDto createNotificationDto) {
         eventPublisher.publishEvent(createNotificationDto);
     }

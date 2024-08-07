@@ -47,4 +47,10 @@ public class FeedOutfit {
         this.details = details;
         this.category = category;
     }
+
+    public void modifyOutfits(String brandName, String details, Category category) {
+        this.brandName = brandName;
+        this.details = details;
+        this.category = category;
+    }
 }

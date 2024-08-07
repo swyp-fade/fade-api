@@ -98,7 +98,7 @@ public class SocialLoginService {
 
             this.memberService.modifyMember(
                     memberId,
-                    ModifyMemberRequest.builder().profileImageAttachmentId(attachmentId).build()
+                    ModifyMemberRequest.builder().profileImageId(attachmentId).build()
             );
         }
 
