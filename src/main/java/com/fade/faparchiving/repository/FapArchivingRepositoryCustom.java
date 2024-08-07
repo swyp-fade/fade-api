@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface FapArchivingRepositoryCustom {
     List<FapArchiving> findFapArchivingItems(LocalDateTime startOfDate, LocalDateTime endOfDate);
-    Long countDeletedFapArchivingByMemberId(Long memberId);
     Long countByCondition(Long feedId);
     Long countByMemberId(Long memberId);
 }
