@@ -128,9 +128,9 @@ public class VoteService {
             default:
                 throw new IllegalArgumentException("Invalid type value: " + findVoteRequest.scrollType());
         }
-        System.out.println("스크롤 시작 !");
+
         final var voteItems = voteRepository.findVoteUsingNoOffset(member.getId(), startDate, endDate);
-        System.out.println("스크롤 끝 !");
+
         return new FindVoteResponse(
                 voteItems.stream().map(voteItem -> new FindVoteItemResponse(
                         voteItem.getId(),
