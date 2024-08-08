@@ -67,6 +67,7 @@ public class FeedService {
                         this.categoryCommonService.findById(outfitItem.categoryId())
                 )
         ).toList();
+
         final var styles = createFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
 
         final var feed = this.feedRepository.save(new Feed(
