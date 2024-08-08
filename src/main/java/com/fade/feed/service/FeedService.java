@@ -35,6 +35,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -67,7 +70,12 @@ public class FeedService {
                         this.categoryCommonService.findById(outfitItem.categoryId())
                 )
         ).toList();
-        final var styles = createFeedRequest.styleIds().stream().map(this.styleCommonService::findById).toList();
+
+        final var styles = Optional.ofNullable(createFeedRequest.styleIds())
+                .orElse(Collections.emptyList())
+                .stream()
+                .map(this.styleCommonService::findById)
+                .toList();
 
         final var feed = this.feedRepository.save(new Feed(
                 member,
