@@ -98,7 +98,7 @@ public class AttachmentService {
     }
 
     public boolean existsAttachmentByChecksum(String checksum) {
-        return this.attachmentRepository.existsByChecksum(checksum);
+        return this.attachmentRepository.existsByChecksumAndStatus(checksum, AttachmentStatus.SUCCESS);
     }
 
     @Transactional
