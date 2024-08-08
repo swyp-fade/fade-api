@@ -1,5 +1,6 @@
 package com.fade.member.dto.request;
 
+import com.fade.global.constant.GenderType;
 import com.fade.member.constant.MemberRegexp;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
@@ -22,7 +23,10 @@ public record ModifyMemberRequest(
         Long profileImageId,
         @Nullable
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        String introduceContent
+        String introduceContent,
+        @Nullable
+        @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+        GenderType genderType
 ) {
 
 }

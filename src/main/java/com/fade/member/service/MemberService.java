@@ -114,6 +114,10 @@ public class MemberService {
             member.modifyIntroduceContent(modifyMemberRequest.introduceContent());
         }
 
+        if (modifyMemberRequest.genderType() != null) {
+            member.modifyGender(modifyMemberRequest.genderType());
+        }
+
         this.memberRepository.save(member);
 
         return member.getId();

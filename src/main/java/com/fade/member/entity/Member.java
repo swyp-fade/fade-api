@@ -65,4 +65,8 @@ public class Member {
     public void modifyIntroduceContent(String introduceContent) {
         this.introduceContent = introduceContent;
     }
+
+    public void modifyGender(GenderType genderType) {
+        this.genderType = genderType;
+    }
 }
