@@ -69,7 +69,8 @@ public class MemberService {
                 .genderType(member.getGenderType())
                 .username(member.getUsername())
                 .profileImageURL(profileImageUrl)
-                .fapSelectedCount(countFapArchivingByMemberId(member.getId()))
+                .selectedFAPCount(countFapArchivingByMemberId(member.getId()))
+                .deletedFAPCount(countDeletedFapArchivingByMemberId(member.getId()))
                 .introduceContent(member.getIntroduceContent())
                 .isSubscribed(subscribeService.hasSubscribe(loginMemberId, member.getId()))
                 .subscribedCount(subscribeService.countSubscriber(
@@ -164,5 +165,9 @@ public class MemberService {
 
     private Long countFapArchivingByMemberId(Long memberId) {
         return fapArchivingRepository.countByMemberId(memberId);
+    }
+
+    private Long countDeletedFapArchivingByMemberId(Long memberId) {
+        return fapArchivingRepository.countDeletedFapArchivingByMemberId(memberId);
     }
 }

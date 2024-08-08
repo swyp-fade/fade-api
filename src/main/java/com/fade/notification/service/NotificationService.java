@@ -37,7 +37,7 @@ public class NotificationService {
                         notification.getIsRead(),
                         getReportCount(notification.getReceiver().getId(), notification.getFeed().getId(), notification.getType()),
                         getFapSelectedAt(notification.getCreatedAt(), notification.getType()),
-                        getDeleteFapCount(notification.getFeed().getId(), notification.getType())
+                        getDeleteFapCount(member.getId(), notification.getType())
                 )).toList(),
                 findNextCursor(member.getId(), !notifications.isEmpty() ? notifications.get(notifications.size() - 1).getId() : null)
         );
@@ -78,15 +78,11 @@ public class NotificationService {
         return null;
     }
 
-    private Long getDeleteFapCount(Long feedId, NotificationType type) {
+    private Long getDeleteFapCount(Long memberId, NotificationType type) {
         if (type == NotificationType.FAP_DELETED) {
-            return hasFapArchiving(feedId) ? fapArchivingRepository.countDeletedFeedsInFapArchiving() : null;
+            return fapArchivingRepository.countDeletedFapArchivingByMemberId(memberId);
         }
         return null;
-    }
-
-    private boolean hasFapArchiving(Long feedId) {
-        return fapArchivingRepository.existsByFeedId(feedId);
     }
 
     private Long findNextCursor(Long memberId, Long lastCursor) {
