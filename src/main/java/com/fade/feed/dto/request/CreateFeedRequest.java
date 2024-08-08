@@ -14,7 +14,6 @@ public record CreateFeedRequest(
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
         List<OutfitItem> outfits,
         @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-        @Nullable
         List<Integer> styleIds
 ) {
         public record OutfitItem(
