@@ -4,7 +4,9 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
+import com.fade.global.constant.ErrorCode;
 import com.fade.global.constant.GenderType;
+import com.fade.global.exception.ApplicationException;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.dto.request.ModifyMemberRequest;
 import com.fade.member.dto.response.FindMemberDetailResponse;
@@ -41,11 +43,25 @@ public class MemberService {
             String username,
             GenderType gender
     ) {
+        if (this.existsByUsername(username)) {
+            throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_USERNAME);
+        }
+
         final var member = new Member(username, gender);
 
         this.memberRepository.save(member);
 
         return member.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username) {
+        return this.memberRepository.existsByUsername(username);
+    }
+
+    @Transactional(readOnly = true)
+    public boolean existsByUsername(String username, Long ignoreMemberId) {
+        return this.memberRepository.existsByUsernameAndIdNot(username, ignoreMemberId);
     }
 
     public FindMemberDetailResponse findMemberDetail(Long memberId, Long loginMemberId) {
@@ -87,6 +103,10 @@ public class MemberService {
         final var member = this.memberCommonService.findById(memberId);
 
         if (modifyMemberRequest.username() != null) {
+            if (this.existsByUsername(modifyMemberRequest.username(), memberId)) {
+                throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_USERNAME);
+            }
+
             member.modifyUsername(modifyMemberRequest.username());
         }
 
