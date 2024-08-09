@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
@@ -23,9 +24,15 @@ public class FapArchivingScheduler {
     private final FapArchivingRepository fapArchivingRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    @Transactional
     @Scheduled(cron = "0 0 0 * * ?")
     public void createFapArchiving() {
         FindMostVoteItemDto mostVoteItemDto = voteRepository.findMostVoteItem();
+
+        if (mostVoteItemDto == null) {
+            return;
+        }
+
         final var feed = feedCommonService.findById(mostVoteItemDto.feedId());
         final var member = memberCommonService.findById(mostVoteItemDto.memberId());
 
@@ -33,7 +40,6 @@ public class FapArchivingScheduler {
                 .feed(feed)
                 .member(member)
                 .build();
-
         fapArchivingRepository.save(fapArchiving);
         notifyFap(fapArchiving, createFapNotificationDto(member.getId(), feed.getId()));
     }

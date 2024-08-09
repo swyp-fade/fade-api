@@ -14,7 +14,7 @@ public class NotificationListener {
     private final NotificationService notificationService;
 
     @TransactionalEventListener
-    @Async
+    @Async("notificationAsyncExecutor")
     public void handleNotificationTrigger(CreateNotificationDto createNotificationDto) {
         notificationService.createNotification(createNotificationDto);
     }
