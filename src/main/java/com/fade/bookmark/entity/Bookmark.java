@@ -24,7 +24,7 @@ public class Bookmark {
     private Long id;
 
     @Column(name = "bookmarked_at")
-    private LocalDateTime bookMarkedAt = LocalDateTime.now();
+    private LocalDateTime bookmarkedAt = LocalDateTime.now();
 
     @ManyToOne
     @JoinColumn(name = "member_id")

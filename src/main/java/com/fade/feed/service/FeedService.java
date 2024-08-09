@@ -4,8 +4,6 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.bookmark.dto.request.BookmarkCountRequest;
-import com.fade.bookmark.repository.BookmarkRepository;
-import com.fade.bookmark.service.BookmarkCommonService;
 import com.fade.bookmark.service.BookmarkService;
 import com.fade.category.service.CategoryCommonService;
 import com.fade.faparchiving.repository.FapArchivingRepository;
@@ -37,8 +35,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Comparator;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +45,6 @@ public class FeedService {
     private final FeedCommonService feedCommonService;
     private final FeedOutfitRepository feedOutfitRepository;
     private final MemberCommonService memberCommonService;
-    private final BookmarkCommonService bookmarkCommonService;
     private final CategoryCommonService categoryCommonService;
     private final StyleCommonService styleCommonService;
     private final AttachmentService attachmentService;
@@ -168,11 +164,19 @@ public class FeedService {
                                         voteType(VoteType.FADE_IN).
                                         build()
                         ),
-                        getCreatedAtByFetchType(memberId, feed, findFeedRequest.fetchTypes())
+                        feed.getCreatedAt()
+
                 )).toList(),
                 findNextCursor(
                         !feeds.isEmpty() ? FindNextFeedCursorRequest.builder()
-                                .lastCursor(feeds.get(feeds.size() - 1).getId())
+                                .lastCursor(
+                                        findFeedRequest.fetchTypes() != null
+                                                ? feeds.stream()
+                                                .min(Comparator.comparing(Feed::getCreatedAt))
+                                                .map(Feed::getId)
+                                                .orElse(null)
+                                                : feeds.get(feeds.size() - 1).getId()
+                                )
                                 .fetchTypes(findFeedRequest.fetchTypes())
                                 .targetMemberId(memberId)
                                 .build() : null)
@@ -277,19 +281,5 @@ public class FeedService {
             );
         }
         return profileImageURL;
-    }
-
-    private LocalDateTime getCreatedAtByFetchType(Long memberId, Feed feed, List<FindFeedRequest.FetchType> fetchTypes) {
-        LocalDateTime createdAt = feed.getCreatedAt();
-
-        for (FindFeedRequest.FetchType fetchType : fetchTypes) {
-            switch (fetchType) {
-                case BOOKMARK:
-                    final var bookmark = bookmarkCommonService.findByMemberIdAndFeedId(memberId, feed.getId());
-                    createdAt = bookmark.getBookMarkedAt();
-                    break;
-            }
-        }
-        return createdAt;
     }
 }
