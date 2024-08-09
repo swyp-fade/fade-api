@@ -45,11 +45,11 @@ public class ReportService {
         );
 
         this.reportRepository.save(report);
-        notifyFeedReport(report, createFeedReportNotificationDto(memberId, feedId));
+        notifyFeedReport(report, createFeedReportNotificationDto(report.getFeed().getMember().getId(), feedId));
 
         if (this.count(CountReportRequest.builder().feedId(feedId).build()) >= MAX_FEED_DELETE_COUNT) {
             report.getFeed().remove();
-            notifyFeedDelete(report, createFeedDeleteNotificationDto(memberId, feedId));
+            notifyFeedDelete(report, createFeedDeleteNotificationDto(report.getFeed().getMember().getId(), feedId));
         }
 
         return report.getId();
