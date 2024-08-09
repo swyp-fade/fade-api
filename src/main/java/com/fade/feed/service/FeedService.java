@@ -58,7 +58,6 @@ public class FeedService {
     private final FapArchivingRepository fapArchivingRepository;
     private final ReportService reportService;
     private final VoteService voteService;
-    private final BookmarkRepository bookmarkRepository;
 
     @Transactional
     public Long createFeed(
@@ -169,7 +168,7 @@ public class FeedService {
                                         voteType(VoteType.FADE_IN).
                                         build()
                         ),
-                        getCreatedAtByFetchType(feed, findFeedRequest.fetchTypes())
+                        getCreatedAtByFetchType(memberId, feed, findFeedRequest.fetchTypes())
                 )).toList(),
                 findNextCursor(
                         !feeds.isEmpty() ? FindNextFeedCursorRequest.builder()
@@ -280,13 +279,13 @@ public class FeedService {
         return profileImageURL;
     }
 
-    private LocalDateTime getCreatedAtByFetchType(Feed feed, List<FindFeedRequest.FetchType> fetchTypes) {
+    private LocalDateTime getCreatedAtByFetchType(Long memberId, Feed feed, List<FindFeedRequest.FetchType> fetchTypes) {
         LocalDateTime createdAt = feed.getCreatedAt();
 
         for (FindFeedRequest.FetchType fetchType : fetchTypes) {
             switch (fetchType) {
                 case BOOKMARK:
-                    final var bookmark = bookmarkRepository.findByFeedId(feed.getId());
+                    final var bookmark = bookmarkCommonService.findByMemberIdAndFeedId(memberId, feed.getId());
                     createdAt = bookmark.getBookMarkedAt();
                     break;
             }
