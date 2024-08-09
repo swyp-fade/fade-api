@@ -57,7 +57,6 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
                             bookmarkQ.feed.id.eq(feedQ.id),
                             bookmarkQ.member.id.eq(targetMemberId)
                     );
-                    query.orderBy(bookmarkQ.bookmarkedAt.desc());
                     break;
                 case SUBSCRIBE:
                     query.join(subscribeQ).on(
