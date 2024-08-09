@@ -16,6 +16,19 @@ public class NotificationListener {
     @TransactionalEventListener
     @Async("notificationAsyncExecutor")
     public void handleNotificationTrigger(CreateNotificationDto createNotificationDto) {
-        notificationService.createNotification(createNotificationDto);
+        switch (createNotificationDto.type()) {
+            case FEED_REPORTED:
+                notificationService.createFeedReportedNotification(createNotificationDto);
+                break;
+            case FEED_DELETED:
+                notificationService.createdFeedDeletedNotification(createNotificationDto);
+                break;
+            case FAP_SELECTED:
+                notificationService.createFapSelectedNotification(createNotificationDto);
+                break;
+            case FAP_DELETED:
+                notificationService.createdFapDeletedNotification(createNotificationDto);
+                break;
+        }
     }
 }

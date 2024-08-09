@@ -41,10 +41,11 @@ public class Notification {
     private Feed feed;
 
     @Builder
-    public Notification(NotificationType type, Boolean isRead, Member receiver) {
+    public Notification(NotificationType type, Boolean isRead, Member receiver, Feed feed) {
         this.type = type;
         this.isRead = isRead;
         this.receiver = receiver;
+        this.feed = feed;
     }
 
     public void readNotification() {
