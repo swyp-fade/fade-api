@@ -45,8 +45,8 @@ public class FeedRepositoryImpl extends QuerydslRepositorySupport implements Cus
         query.where(
                 this.memberIdEq(findFeedRequest.memberId()),
                 this.memberIdsEq(findFeedRequest.memberIds()),
-                this.styleIdsEq(findFeedRequest.styleIds()),
-                this.genderTypeEq(findFeedRequest.genderType()),
+                this.styleIdsEq(findFeedRequest.selectedStyles()),
+                this.genderTypeEq(findFeedRequest.gender()),
                 this.nextCursorLoe(findFeedRequest.nextCursor())
         );
 
