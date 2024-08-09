@@ -44,7 +44,7 @@ public class MemberService {
             GenderType gender
     ) {
         if (this.existsByUsername(username)) {
-            throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_USERNAME);
+            throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_ID);
         }
 
         final var member = new Member(username, gender);
@@ -104,7 +104,7 @@ public class MemberService {
 
         if (modifyMemberRequest.username() != null) {
             if (this.existsByUsername(modifyMemberRequest.username(), memberId)) {
-                throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_USERNAME);
+                throw new ApplicationException(ErrorCode.ALREADY_EXIST_MEMBER_ID);
             }
 
             member.modifyUsername(modifyMemberRequest.username());
