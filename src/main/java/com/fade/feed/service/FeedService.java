@@ -169,14 +169,7 @@ public class FeedService {
                 )).toList(),
                 findNextCursor(
                         !feeds.isEmpty() ? FindNextFeedCursorRequest.builder()
-                                .lastCursor(
-                                        findFeedRequest.fetchTypes() != null
-                                                ? feeds.stream()
-                                                .min(Comparator.comparing(Feed::getCreatedAt))
-                                                .map(Feed::getId)
-                                                .orElse(null)
-                                                : feeds.get(feeds.size() - 1).getId()
-                                )
+                                .lastCursor(feeds.get(feeds.size() - 1).getId())
                                 .fetchTypes(findFeedRequest.fetchTypes())
                                 .targetMemberId(memberId)
                                 .build() : null)
