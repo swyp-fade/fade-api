@@ -29,9 +29,9 @@ public record FindFeedRequest(
             )
             SortType sortType,
             @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-            List<Integer> styleIds,
+            List<Integer> selectedStyles,
             @Schema(requiredMode = Schema.RequiredMode.NOT_REQUIRED)
-            GenderType genderType
+            GenderType gender
 ) {
     public enum FetchType {
         SUBSCRIBE,
@@ -55,8 +55,8 @@ public record FindFeedRequest(
             fetchTypes = Collections.emptyList();
         }
 
-        if (styleIds == null) {
-            styleIds = Collections.emptyList();
+        if (selectedStyles == null) {
+            selectedStyles = Collections.emptyList();
         }
     }
 }
