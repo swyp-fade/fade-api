@@ -21,6 +21,7 @@ public enum ErrorCode {
     ALREADY_EXIST_MEMBER_ID(HttpStatus.CONFLICT, "이미 사용중인 아이디입니다."),
     ALREADY_EXIST_MEMBER(HttpStatus.CONFLICT, "이미 존재하는 사용자입니다."),
     INVALID_MEMBER_ID_AND_PASSWORD(HttpStatus.BAD_REQUEST, "아이디 혹은 비밀번호를 확인해주세요."),
+    SIGN_IN_WITH_RESIGNED_MEMBER(HttpStatus.FORBIDDEN, "탈퇴한 계정입니다."),
 
     //FEED
     NOT_FOUND_FEED(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."),
