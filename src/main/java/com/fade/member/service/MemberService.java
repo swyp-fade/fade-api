@@ -14,7 +14,6 @@ import com.fade.member.dto.response.MemberSearchResponse;
 import com.fade.member.dto.response.MemberSearchResponse.MemberSearchItemResponse;
 import com.fade.member.entity.Member;
 import com.fade.member.repository.MemberRepository;
-import com.fade.member.repository.MemberSearchRepository;
 import com.fade.member.vo.UserVo;
 import com.fade.subscribe.dto.request.CountSubscriberRequest;
 import com.fade.subscribe.service.SubscribeService;
@@ -32,8 +31,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final MemberCommonService memberCommonService;
     private final AttachmentService attachmentService;
-
-    private final MemberSearchRepository memberSearchRepository;
     private final FapArchivingRepository fapArchivingRepository;
 
     private final SubscribeService subscribeService;
@@ -145,13 +142,19 @@ public class MemberService {
     }
 
     public UserVo findUserVo(Long memberId) {
+        final var isDeleted = memberRepository.isDeletedMember(memberId);
+
+        if (isDeleted != null && isDeleted.equals(1)) {
+            throw new ApplicationException(ErrorCode.SIGN_IN_WITH_RESIGNED_MEMBER);
+        }
+
         final var member = this.memberCommonService.findById(memberId);
 
         return new UserVo(member.getId(), member.getUsername(), member.getGenderType(), List.of(MemberRole.USER));
     }
 
     public MemberSearchResponse searchMembers(String query) {
-        List<MemberSearchItemResponse> matchedMembers = memberSearchRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
+        List<MemberSearchItemResponse> matchedMembers = memberRepository.findTop5ByUsernameStartingWithOrderByUsernameAsc(query)
                 .stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
