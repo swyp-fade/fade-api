@@ -29,7 +29,6 @@ public class FapArchivingService {
     private final AttachmentService attachmentService;
     private final SubscribeRepository subscribeRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final VoteRepository voteRepository;
     private final VoteService voteService;
 
     @Transactional(readOnly = true)

@@ -20,10 +20,15 @@ public class FapArchivingRepositoryImpl implements FapArchivingRepositoryCustom 
     @Override
     public List<FapArchiving> findFapArchivingItems(LocalDateTime startOfDate, LocalDateTime endOfDate) {
         QFapArchiving fapArchivingQ = QFapArchiving.fapArchiving;
+        QFeed feedQ = QFeed.feed;
 
         return jpaQueryFactory
                 .selectFrom(fapArchivingQ)
-                .where(fapArchivingQ.archivedAt.between(startOfDate, endOfDate))
+                .join(fapArchivingQ.feed, feedQ)
+                .where(
+                        fapArchivingQ.archivedAt.between(startOfDate, endOfDate)
+                                .and(feedQ.deletedAt.isNull())
+                )
                 .fetch();
     }
 
