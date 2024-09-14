@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "bon_vote")
+@Table(name = "bon_votes")
 @Entity
 @Getter
 @NoArgsConstructor
@@ -21,7 +21,7 @@ public class BonVote {
     private Member member;
 
     @ManyToOne
-    @JoinColumn(name = "bon_id")
+    @JoinColumn(name = "bon_id", nullable = false)
     private Bon bon;
 
     @Enumerated(EnumType.STRING)

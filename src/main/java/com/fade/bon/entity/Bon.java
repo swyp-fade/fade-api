@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "bon")
+@Table(name = "bons")
 @Entity
 @Getter
 @NoArgsConstructor

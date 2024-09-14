@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "bon_comment")
+@Table(name = "bon_comments")
 @Entity
 @Getter
 @NoArgsConstructor
@@ -26,14 +26,10 @@ public class BonComment {
     @JoinColumn(name = "bon_id", nullable = false)
     private Bon bon;
 
-    @Column(name = "is_mine", nullable = false)
-    private Boolean isMine;
-
     @Builder
-    public BonComment(Member member, String content, Bon bon, Boolean isMine) {
+    public BonComment(Member member, String content, Bon bon) {
         this.member = member;
         this.content = content;
         this.bon = bon;
-        this.isMine = isMine;
     }
 }

@@ -1,17 +1,16 @@
-package com.fade.like.entity;
+package com.fade.bon.entity;
 
-import com.fade.like.constant.LikeType;
 import com.fade.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "like")
+@Table(name = "bon_comment_likes")
 @Entity
 @Getter
 @NoArgsConstructor
-public class Like {
+public class BonCommentLike {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,9 +19,6 @@ public class Like {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @Enumerated(EnumType.STRING)
-    private LikeType likeType;
-
     // 현재는 CommentId만 존재
     private Long targetId;
 
@@ -30,9 +26,8 @@ public class Like {
     private Boolean liked;
 
     @Builder
-    public Like(Member member, LikeType likeType, Long targetId, Boolean liked) {
+    public BonCommentLike(Member member, Long targetId, Boolean liked) {
         this.member = member;
-        this.likeType = likeType;
         this.targetId = targetId;
         this.liked = liked;
     }
