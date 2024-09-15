@@ -81,4 +81,15 @@ public class BonService {
 
         this.bonCommentRepository.delete(bonComment);
     }
+
+    @Transactional
+    public void deleteBon(Long memberId, Long bonId) {
+        final var bon = this.bonCommonService.findById(bonId);
+
+        if (!bon.getMember().getId().equals(memberId)) {
+            throw new ApplicationException(ErrorCode.REMOVE_BON_FORBIDDEN);
+        }
+
+        this.bonRepository.delete(bon);
+    }
 }

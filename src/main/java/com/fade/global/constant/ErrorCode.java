@@ -51,6 +51,7 @@ public enum ErrorCode {
 
     // BON
     NOT_FOUND_BON(HttpStatus.NOT_FOUND, "찾을 수 없는 BoN입니다."),
+    REMOVE_BON_FORBIDDEN(HttpStatus.FORBIDDEN, "BoN을 삭제할 수 있는 권한이 없습니다."),
 
     // BON COMMENT
     EXISTS_BON_COMMENT_BY_USER(HttpStatus.CONFLICT, "이미 댓글을 작성한 이력이 있습니다."),
