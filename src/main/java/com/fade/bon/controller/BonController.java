@@ -16,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -63,5 +64,23 @@ public class BonController {
         final var bonCommentId = this.bonService.createBonComment(userVo.getId(), bonId, createBonCommentReq);
 
         return new CreateBonCommentRes(bonCommentId);
+    }
+
+    @DeleteMapping("{bonId}/comment/{commentId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CreateBonCommentRes.class))
+            )
+    )
+    public CreateBonCommentRes deleteBonComment(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("commentId") Long commentId
+    ) {
+        this.bonService.deleteBonComment(userVo.getId(), commentId);
+
+        return new CreateBonCommentRes(commentId);
     }
 }

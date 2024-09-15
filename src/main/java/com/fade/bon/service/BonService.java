@@ -70,4 +70,15 @@ public class BonService {
     public boolean existsBonCommentByUser(Long memberId, Long bonId) {
         return this.bonCommentRepository.existsByIdAndMemberId(bonId, memberId);
     }
+
+    @Transactional
+    public void deleteBonComment(Long memberId, Long commentId) {
+        final var bonComment = this.bonCommonService.bonCommentFindById(commentId);
+
+        if (!bonComment.getMember().getId().equals(memberId)) {
+            throw new ApplicationException(ErrorCode.REMOVE_BON_COMMENT_FORBIDDEN);
+        }
+
+        this.bonCommentRepository.delete(bonComment);
+    }
 }
