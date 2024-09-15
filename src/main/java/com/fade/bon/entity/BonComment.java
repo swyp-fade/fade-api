@@ -6,7 +6,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Table(name = "bon_comments")
+@Table(
+        name = "bon_comments",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "id,member_id")
+        }
+)
 @Entity
 @Getter
 @NoArgsConstructor

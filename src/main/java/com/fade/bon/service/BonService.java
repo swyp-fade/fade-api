@@ -3,9 +3,14 @@ package com.fade.bon.service;
 import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
+import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReqDto;
 import com.fade.bon.entity.Bon;
+import com.fade.bon.entity.BonComment;
+import com.fade.bon.repository.BonCommentRepository;
 import com.fade.bon.repository.BonRepository;
+import com.fade.global.constant.ErrorCode;
+import com.fade.global.exception.ApplicationException;
 import com.fade.member.service.MemberCommonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,13 +23,15 @@ public class BonService {
     private final BonRepository bonRepository;
     private final AttachmentService attachmentService;
     private final MemberCommonService memberCommonService;
+    private final BonCommentRepository bonCommentRepository;
+    private final BonCommonService bonCommonService;
 
     @Transactional
     public Long createBon(
-            Long userId,
+            Long memberId,
             CreateBonReqDto createBonReqDto
     ) {
-        final var member = this.memberCommonService.findById(userId);
+        final var member = this.memberCommonService.findById(memberId);
 
         final var bon = this.bonRepository.save(new Bon(
                 member,
@@ -40,5 +47,27 @@ public class BonService {
         );
 
         return bon.getId();
+    }
+
+    @Transactional
+    public Long createBonComment(Long memberId, Long bonId, CreateBonCommentReq createBonCommentReq) {
+        final var member = this.memberCommonService.findById(memberId);
+        final var bon = this.bonCommonService.findById(bonId);
+
+        if (this.existsBonCommentByUser(memberId, bonId)) {
+            throw new ApplicationException(ErrorCode.EXISTS_BON_COMMENT_BY_USER);
+        }
+
+        final var bonComment = this.bonCommentRepository.save(new BonComment(
+                member,
+                createBonCommentReq.content(),
+                bon
+        ));
+
+        return bonComment.getId();
+    }
+
+    public boolean existsBonCommentByUser(Long memberId, Long bonId) {
+        return this.bonCommentRepository.existsByIdAndMemberId(bonId, memberId);
     }
 }

@@ -1,6 +1,8 @@
 package com.fade.bon.controller;
 
+import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReqDto;
+import com.fade.bon.dto.response.CreateBonCommentRes;
 import com.fade.bon.dto.response.CreateBonResDto;
 import com.fade.bon.service.BonService;
 import com.fade.member.constant.MemberRole;
@@ -14,6 +16,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,5 +44,24 @@ public class BonController {
         final var bonId = this.bonService.createBon(userVo.getId(), createBonReqDto);
 
         return new CreateBonResDto(bonId);
+    }
+
+    @PostMapping("{bonId}/comment")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CreateBonCommentRes.class))
+            )
+    )
+    public CreateBonCommentRes createBonComment(
+            @Valid @RequestBody CreateBonCommentReq createBonCommentReq,
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("bonId") Long bonId
+    ) {
+        final var bonCommentId = this.bonService.createBonComment(userVo.getId(), bonId, createBonCommentReq);
+
+        return new CreateBonCommentRes(bonCommentId);
     }
 }
