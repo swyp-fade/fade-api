@@ -57,6 +57,9 @@ public enum ErrorCode {
     EXISTS_BON_COMMENT_BY_USER(HttpStatus.CONFLICT, "이미 댓글을 작성한 이력이 있습니다."),
     NOT_FOUND_BON_COMMENT(HttpStatus.NOT_FOUND, "찾을 수 없는 댓글입니다."),
     REMOVE_BON_COMMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "댓글을 삭제할 수 있는 권한이 없습니다."),
+
+    // BON COMMENT LIKE
+    EXISTS_BON_COMMENT_LIKE(HttpStatus.CONFLICT, "이미 좋아요를 누른 댓글입니다."),
     ;
 
     private final HttpStatus httpStatus;

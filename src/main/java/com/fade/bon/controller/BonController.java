@@ -2,6 +2,7 @@ package com.fade.bon.controller;
 
 import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReqDto;
+import com.fade.bon.dto.response.CreateBonCommentLikeRes;
 import com.fade.bon.dto.response.CreateBonCommentRes;
 import com.fade.bon.dto.response.CreateBonResDto;
 import com.fade.bon.dto.response.DeleteBonCommentRes;
@@ -102,5 +103,23 @@ public class BonController {
         this.bonService.deleteBon(userVo.getId(), bonId);
 
         return new DeleteBonRes(bonId);
+    }
+
+    @PostMapping("{bonId}/comment/{commentId}/like")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CreateBonCommentLikeRes.class))
+            )
+    )
+    public CreateBonCommentLikeRes createBonCommentLike(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("commentId") Long commentId
+    ) {
+        this.bonService.createBonCommentLike(userVo.getId(), commentId);
+
+        return new CreateBonCommentLikeRes(commentId);
     }
 }

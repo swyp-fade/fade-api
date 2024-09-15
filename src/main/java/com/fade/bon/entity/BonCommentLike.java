@@ -19,16 +19,13 @@ public class BonCommentLike {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    // 현재는 CommentId만 존재
-    private Long targetId;
-
-    // 좋아요, 좋아요 취소
-    private Boolean liked;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "bon_comment_id")
+    private BonComment bonComment;
 
     @Builder
-    public BonCommentLike(Member member, Long targetId, Boolean liked) {
+    public BonCommentLike(Member member, BonComment bonComment) {
         this.member = member;
-        this.targetId = targetId;
-        this.liked = liked;
+        this.bonComment = bonComment;
     }
 }

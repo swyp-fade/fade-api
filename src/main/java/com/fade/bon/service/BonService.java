@@ -7,6 +7,8 @@ import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReqDto;
 import com.fade.bon.entity.Bon;
 import com.fade.bon.entity.BonComment;
+import com.fade.bon.entity.BonCommentLike;
+import com.fade.bon.repository.BonCommentLikeRepository;
 import com.fade.bon.repository.BonCommentRepository;
 import com.fade.bon.repository.BonRepository;
 import com.fade.global.constant.ErrorCode;
@@ -25,6 +27,7 @@ public class BonService {
     private final MemberCommonService memberCommonService;
     private final BonCommentRepository bonCommentRepository;
     private final BonCommonService bonCommonService;
+    private final BonCommentLikeRepository bonCommentLikeRepository;
 
     @Transactional
     public Long createBon(
@@ -91,5 +94,28 @@ public class BonService {
         }
 
         this.bonRepository.delete(bon);
+    }
+
+    @Transactional
+    public Long createBonCommentLike(Long memberId, Long bonCommentId) {
+        if (this.existsBonCommentLike(memberId, bonCommentId)) {
+            throw new ApplicationException(ErrorCode.EXISTS_BON_COMMENT_LIKE);
+        }
+
+        final var member = this.memberCommonService.findById(memberId);
+        final var bonComment = this.bonCommonService.bonCommentFindById(bonCommentId);
+
+        final var bonCommentLike = this.bonCommentLikeRepository.save(
+            new BonCommentLike(
+                member,
+                bonComment
+            )
+        );
+
+        return bonCommentLike.getId();
+    }
+
+    public boolean existsBonCommentLike(Long memberId, Long bonCommentId) {
+        return this.bonCommentLikeRepository.existsByBonCommentIdAndMemberId(bonCommentId, memberId);
     }
 }
