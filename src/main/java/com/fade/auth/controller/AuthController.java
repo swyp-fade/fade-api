@@ -156,7 +156,7 @@ public class AuthController {
                 .refreshToken(refreshToken)
                 .sameSite("None")
                 .secure(true)
-                .maxAge(7 * 24 * 60 * 60)
+                .maxAge(14 * 24 * 60 * 60)
                 .httpOnly(true)
                 .path("/")
                 .build();
