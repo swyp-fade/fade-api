@@ -5,6 +5,10 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
 
 @Table(
         name = "bon_comments",
@@ -15,6 +19,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+@SQLDelete(sql = "UPDATE bon_comments SET deleted_at=NOW() WHERE id=?")
+@SQLRestriction("deleted_at IS NULL")
 public class BonComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +36,9 @@ public class BonComment {
     @ManyToOne(optional = false)
     @JoinColumn(name = "bon_id", nullable = false)
     private Bon bon;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Builder
     public BonComment(Member member, String content, Bon bon) {

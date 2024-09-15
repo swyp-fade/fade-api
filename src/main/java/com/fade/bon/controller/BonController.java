@@ -80,7 +80,8 @@ public class BonController {
     )
     public DeleteBonCommentRes deleteBonComment(
             @AuthenticationPrincipal UserVo userVo,
-            @PathVariable("commentId") Long commentId
+            @PathVariable("commentId") Long commentId,
+            @PathVariable("bonId") Long bonId
     ) {
         this.bonService.deleteBonComment(userVo.getId(), commentId);
 
@@ -116,7 +117,8 @@ public class BonController {
     )
     public CreateBonCommentLikeRes createBonCommentLike(
             @AuthenticationPrincipal UserVo userVo,
-            @PathVariable("commentId") Long commentId
+            @PathVariable("commentId") Long commentId,
+            @PathVariable("bonId") Long bonId
     ) {
         this.bonService.createBonCommentLike(userVo.getId(), commentId);
 
