@@ -1,0 +1,45 @@
+package com.fade.bon.controller;
+
+import com.fade.bon.dto.request.CreateBonReqDto;
+import com.fade.bon.dto.response.CreateBonResDto;
+import com.fade.bon.service.BonService;
+import com.fade.member.constant.MemberRole;
+import com.fade.member.vo.UserVo;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RequestMapping("bon")
+@RestController()
+@RequiredArgsConstructor
+public class BonController {
+    private final BonService bonService;
+
+    @PostMapping("")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = CreateBonResDto.class))
+            )
+    )
+    public CreateBonResDto createBon(
+            @Valid @RequestBody CreateBonReqDto createBonReqDto,
+            @AuthenticationPrincipal UserVo userVo
+    ) {
+        final var bonId = this.bonService.createBon(userVo.getId(), createBonReqDto);
+
+        return new CreateBonResDto(bonId);
+    }
+}
