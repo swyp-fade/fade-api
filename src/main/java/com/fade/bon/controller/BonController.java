@@ -1,10 +1,10 @@
 package com.fade.bon.controller;
 
 import com.fade.bon.dto.request.CreateBonCommentReq;
-import com.fade.bon.dto.request.CreateBonReqDto;
+import com.fade.bon.dto.request.CreateBonReq;
 import com.fade.bon.dto.response.CreateBonCommentLikeRes;
 import com.fade.bon.dto.response.CreateBonCommentRes;
-import com.fade.bon.dto.response.CreateBonResDto;
+import com.fade.bon.dto.response.CreateBonRes;
 import com.fade.bon.dto.response.DeleteBonCommentRes;
 import com.fade.bon.dto.response.DeleteBonRes;
 import com.fade.bon.service.BonService;
@@ -38,16 +38,16 @@ public class BonController {
     @ApiResponses(
             @ApiResponse(
                     responseCode = "200",
-                    content = @Content(schema = @Schema(implementation = CreateBonResDto.class))
+                    content = @Content(schema = @Schema(implementation = CreateBonRes.class))
             )
     )
-    public CreateBonResDto createBon(
-            @Valid @RequestBody CreateBonReqDto createBonReqDto,
+    public CreateBonRes createBon(
+            @Valid @RequestBody CreateBonReq createBonReq,
             @AuthenticationPrincipal UserVo userVo
     ) {
-        final var bonId = this.bonService.createBon(userVo.getId(), createBonReqDto);
+        final var bonId = this.bonService.createBon(userVo.getId(), createBonReq);
 
-        return new CreateBonResDto(bonId);
+        return new CreateBonRes(bonId);
     }
 
     @PostMapping("{bonId}/comment")

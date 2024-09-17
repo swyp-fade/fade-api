@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import org.hibernate.validator.constraints.Length;
 
-public record CreateBonReqDto (
+public record CreateBonReq(
         @Schema(minLength = 1, maxLength = 30)
         @Length(min = 1, max = 30)
         @NotEmpty

@@ -4,7 +4,7 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.bon.dto.request.CreateBonCommentReq;
-import com.fade.bon.dto.request.CreateBonReqDto;
+import com.fade.bon.dto.request.CreateBonReq;
 import com.fade.bon.entity.Bon;
 import com.fade.bon.entity.BonComment;
 import com.fade.bon.entity.BonCommentLike;
@@ -32,18 +32,18 @@ public class BonService {
     @Transactional
     public Long createBon(
             Long memberId,
-            CreateBonReqDto createBonReqDto
+            CreateBonReq createBonReq
     ) {
         final var member = this.memberCommonService.findById(memberId);
 
         final var bon = this.bonRepository.save(new Bon(
                 member,
-                createBonReqDto.title(),
-                createBonReqDto.contents()
+                createBonReq.title(),
+                createBonReq.contents()
         ));
 
         this.attachmentService.linkAttachment(
-                createBonReqDto.attachmentId(),
+                createBonReq.attachmentId(),
                 AttachmentLinkableType.BON,
                 AttachmentLinkType.IMAGE,
                 bon.getId()
