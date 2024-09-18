@@ -2,7 +2,8 @@ package com.fade.attachment.constant;
 
 public enum AttachmentLinkableType {
     FEED("FEED"),
-    USER("USER");
+    USER("USER"),
+    BON("BON");
 
     private String type;
 
