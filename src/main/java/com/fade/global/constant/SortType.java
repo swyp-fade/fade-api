@@ -2,7 +2,9 @@ package com.fade.global.constant;
 
 public enum SortType {
     ASC("ASC"),
-    DESC("DESC");
+    DESC("DESC"),
+    RECENT("RECENT"),
+    POPULAR("POPULAR");
 
     private final String sortType;
 

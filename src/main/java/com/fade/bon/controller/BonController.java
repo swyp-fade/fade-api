@@ -2,12 +2,11 @@ package com.fade.bon.controller;
 
 import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReq;
-import com.fade.bon.dto.response.CreateBonCommentLikeRes;
-import com.fade.bon.dto.response.CreateBonCommentRes;
-import com.fade.bon.dto.response.CreateBonRes;
-import com.fade.bon.dto.response.DeleteBonCommentRes;
-import com.fade.bon.dto.response.DeleteBonRes;
+import com.fade.bon.dto.request.FindBonCommentRequest;
+import com.fade.bon.dto.request.FindBonRequest;
+import com.fade.bon.dto.response.*;
 import com.fade.bon.service.BonService;
+import com.fade.bon.dto.response.FindBonCommentResponse;
 import com.fade.member.constant.MemberRole;
 import com.fade.member.vo.UserVo;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,12 +18,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("bon")
 @RestController()
@@ -123,5 +117,54 @@ public class BonController {
         this.bonService.createBonCommentLike(userVo.getId(), commentId);
 
         return new CreateBonCommentLikeRes(commentId);
+    }
+
+    @GetMapping("")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindBonResponse.class))
+            )
+    )
+    public FindBonResponse findBons(
+            @AuthenticationPrincipal UserVo userVo,
+            @Valid FindBonRequest findBonRequest
+    ) {
+        return bonService.findBons(userVo.getId(), findBonRequest);
+    }
+
+    @GetMapping("{bonId}")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindBonDetailResponse.class))
+            )
+    )
+    public FindBonDetailResponse findBonDetail(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("bonId") Long bonId
+    ) {
+        return this.bonService.findBonDetail(userVo.getId(), bonId);
+    }
+
+    @GetMapping("{bonId}/comment")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = FindBonCommentResponse.class))
+            )
+    )
+    public FindBonCommentResponse findBonComments(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("bonId") Long bonId,
+            @Valid FindBonCommentRequest findBonCommentRequest
+    ) {
+        return this.bonService.findBonComments(userVo.getId(), bonId, findBonCommentRequest);
     }
 }

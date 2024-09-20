@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Table(name = "bon_votes")
 @Entity
 @Getter
@@ -27,6 +29,9 @@ public class BonVote {
     @Enumerated(EnumType.STRING)
     @Column(name = "bon_vote_type", nullable = false)
     private BonVoteType bonVoteType;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Builder
     public BonVote(Member member, Bon bon, BonVoteType bonVoteType) {
