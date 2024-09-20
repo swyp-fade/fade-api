@@ -11,7 +11,7 @@ public record FindBonCommentResponse(
 ) {
     public record FindBonCommentItemResponse(
             Long id,
-            String content,
+            String contents,
             BonVoteType votedType,
             String anonName,
             Long likeCount,
