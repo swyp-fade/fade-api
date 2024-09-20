@@ -32,9 +32,15 @@ public class Bon {
     @OneToMany(mappedBy = "bon", cascade = CascadeType.ALL)
     private List<BonComment> bonComments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "bon", cascade = CascadeType.ALL)
+    private List<BonVote> bonVotes = new ArrayList<>();
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "member_id")
     private Member member;
+
+    @OneToOne(mappedBy = "bon", cascade = CascadeType.ALL)
+    private HotBon hotBon;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

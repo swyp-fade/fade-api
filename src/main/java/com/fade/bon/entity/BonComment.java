@@ -37,6 +37,9 @@ public class BonComment {
     @JoinColumn(name = "bon_id", nullable = false)
     private Bon bon;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
@@ -45,5 +48,18 @@ public class BonComment {
         this.member = member;
         this.content = content;
         this.bon = bon;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BonComment that = (BonComment) o;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
