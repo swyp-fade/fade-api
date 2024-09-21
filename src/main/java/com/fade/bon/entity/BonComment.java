@@ -40,14 +40,18 @@ public class BonComment {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "anon_name", nullable = false)
+    private String anonName;
+
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     @Builder
-    public BonComment(Member member, String content, Bon bon) {
+    public BonComment(Member member, String content, Bon bon, String anonName) {
         this.member = member;
         this.content = content;
         this.bon = bon;
+        this.anonName = anonName;
     }
 
     @Override
