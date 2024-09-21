@@ -4,6 +4,7 @@ import com.fade.attachment.constant.AttachmentLinkType;
 import com.fade.attachment.constant.AttachmentLinkableType;
 import com.fade.attachment.service.AttachmentService;
 import com.fade.bon.constant.BonVoteType;
+import com.fade.bon.constant.CommentNickname;
 import com.fade.bon.dto.request.*;
 import com.fade.bon.dto.response.FindBonDetailResponse;
 import com.fade.bon.dto.response.FindBonResponse;
@@ -70,7 +71,8 @@ public class BonService {
         final var bonComment = this.bonCommentRepository.save(new BonComment(
                 member,
                 createBonCommentReq.content(),
-                bon
+                bon,
+                CommentNickname.getRandomNickname()
         ));
 
         return bonComment.getId();
@@ -210,7 +212,7 @@ public class BonService {
                             comment.getId(),
                             comment.getContent(),
                             findVotedValue(bonId, comment.getMember().getId()),
-                            "anonName",
+                            comment.getAnonName(),
                             countBonCommentLike(CommentLikeCountRequest.builder().commentId(comment.getId()).build()),
                             hasLike(comment.getId(), memberId),
                             isBestComment(bonId, comment.getId()),
@@ -228,7 +230,7 @@ public class BonService {
                         bestComment.getId(),
                         bestComment.getContent(),
                         findVotedValue(bonId, bestComment.getMember().getId()),
-                        "anonName",
+                        bestComment.getAnonName(),
                         countBonCommentLike(CommentLikeCountRequest.builder().commentId(bestComment.getId()).build()),
                         hasLike(bestComment.getId(), memberId),
                         isBestComment(bonId, bestComment.getId()),
