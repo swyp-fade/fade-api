@@ -121,6 +121,11 @@ public class BonService {
         return bonCommentLike.getId();
     }
 
+    @Transactional
+    public void deleteBonCommentLike(Long memberId, Long bonCommentId) {
+        this.bonCommentLikeRepository.deleteByBonCommentIdAndMemberId(bonCommentId, memberId);
+    }
+
     public boolean existsBonCommentLike(Long memberId, Long bonCommentId) {
         return this.bonCommentLikeRepository.existsByBonCommentIdAndMemberId(bonCommentId, memberId);
     }
