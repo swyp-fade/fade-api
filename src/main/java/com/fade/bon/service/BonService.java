@@ -68,6 +68,10 @@ public class BonService {
             throw new ApplicationException(ErrorCode.EXISTS_BON_COMMENT_BY_USER);
         }
 
+        if (!this.hasVote(bonId, memberId)) {
+            throw new ApplicationException(ErrorCode.CREATE_BON_COMMENT_MUST_BON_VOTE);
+        }
+
         final var bonComment = this.bonCommentRepository.save(new BonComment(
                 member,
                 createBonCommentReq.content(),
@@ -329,6 +333,11 @@ public class BonService {
         if (voteBonReq.bonVoteType().equals(BonVoteType.NOT)) {
             final var bonVote = this.bonVoteRepository.findByBonIdAndMemberId(bonId, memberId)
                     .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_BON_VOTE));
+
+            if (this.existsBonCommentByUser(memberId, bonId)) {
+                throw new ApplicationException(ErrorCode.REMOVE_BON_VOTE_MUST_REMOVE_COMMENT);
+            }
+
             final var bonVoteId = bonVote.getId();
 
             this.bonVoteRepository.deleteById(bonVote.getId());
