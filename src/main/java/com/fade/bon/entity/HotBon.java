@@ -23,7 +23,7 @@ public class HotBon {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "rank", nullable = false)
+    @Column(name = "ranking", nullable = false)
     private Integer rank;
 
     @Builder

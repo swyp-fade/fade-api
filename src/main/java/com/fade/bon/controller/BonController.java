@@ -119,6 +119,25 @@ public class BonController {
         return new CreateBonCommentLikeRes(commentId);
     }
 
+    @DeleteMapping("{bonId}/comment/{commentId}/like")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = DeleteBonCommentLikeRes.class))
+            )
+    )
+    public DeleteBonCommentLikeRes deleteBonCommentLike(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("commentId") Long commentId,
+            @PathVariable("bonId") Long bonId
+    ) {
+        this.bonService.deleteBonCommentLike(userVo.getId(), commentId);
+
+        return new DeleteBonCommentLikeRes(commentId);
+    }
+
     @GetMapping("")
     @SecurityRequirement(name = "access-token")
     @Secured(MemberRole.USER_TYPE)
