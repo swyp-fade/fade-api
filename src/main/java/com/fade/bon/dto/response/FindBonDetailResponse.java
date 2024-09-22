@@ -10,6 +10,7 @@ public record FindBonDetailResponse(
         Long commentCount,
         BonVoteType myVotedValue,
         BonCount bonCount,
+        Boolean isMine,
         Boolean hasCommented
 ) {
 
