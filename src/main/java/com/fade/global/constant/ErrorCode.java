@@ -52,14 +52,20 @@ public enum ErrorCode {
     // BON
     NOT_FOUND_BON(HttpStatus.NOT_FOUND, "찾을 수 없는 BoN입니다."),
     REMOVE_BON_FORBIDDEN(HttpStatus.FORBIDDEN, "BoN을 삭제할 수 있는 권한이 없습니다."),
+    ALREADY_EXISTS_BON_VOTE(HttpStatus.CONFLICT, "이미 투표한 BoN입니다."),
 
     // BON COMMENT
     EXISTS_BON_COMMENT_BY_USER(HttpStatus.CONFLICT, "이미 댓글을 작성한 이력이 있습니다."),
     NOT_FOUND_BON_COMMENT(HttpStatus.NOT_FOUND, "찾을 수 없는 댓글입니다."),
     REMOVE_BON_COMMENT_FORBIDDEN(HttpStatus.FORBIDDEN, "댓글을 삭제할 수 있는 권한이 없습니다."),
+    CREATE_BON_COMMENT_MUST_BON_VOTE(HttpStatus.CONFLICT, "댓글을 작성하기 위해선 투표를 먼저 해야합니다."),
 
     // BON COMMENT LIKE
     EXISTS_BON_COMMENT_LIKE(HttpStatus.CONFLICT, "이미 좋아요를 누른 댓글입니다."),
+
+    // BON VOTE
+    NOT_FOUND_BON_VOTE(HttpStatus.NOT_FOUND, "투표 내역이 없습니다."),
+    REMOVE_BON_VOTE_MUST_REMOVE_COMMENT(HttpStatus.CONFLICT, "투표 내역을 삭제하기 위해서는 댓글을 먼저 삭제해야 합니다.")
     ;
 
     private final HttpStatus httpStatus;

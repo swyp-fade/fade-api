@@ -5,5 +5,5 @@ import com.fade.bon.dto.request.VoteCountRequest;
 
 public interface CustomBonVoteRepository {
     Long countByCondition(VoteCountRequest voteCountRequest);
-    Long countByCondition(BonVoteType bonVoteType);
+    Long countByCondition(VoteCountRequest voteCountRequest, BonVoteType bonVoteType);
 }

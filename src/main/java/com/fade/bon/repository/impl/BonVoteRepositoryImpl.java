@@ -28,8 +28,10 @@ public class BonVoteRepositoryImpl extends QuerydslRepositorySupport implements 
     }
 
     @Override
-    public Long countByCondition(BonVoteType bonVoteType) {
+    public Long countByCondition(VoteCountRequest voteCountRequest, BonVoteType bonVoteType) {
         final var query = super.from(bonVoteQ);
+
+        query.where(this.bonIdEq(voteCountRequest.getBonId()));
 
         if (bonVoteType == BonVoteType.YES) {
             query.where(bonVoteQ.bonVoteType.eq(BonVoteType.YES));

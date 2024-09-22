@@ -68,6 +68,10 @@ public class BonService {
             throw new ApplicationException(ErrorCode.EXISTS_BON_COMMENT_BY_USER);
         }
 
+        if (!this.hasVote(bonId, memberId)) {
+            throw new ApplicationException(ErrorCode.CREATE_BON_COMMENT_MUST_BON_VOTE);
+        }
+
         final var bonComment = this.bonCommentRepository.save(new BonComment(
                 member,
                 createBonCommentReq.content(),
@@ -196,8 +200,8 @@ public class BonService {
                 countBonComment(CommentCountRequest.builder().bonId(bon.getId()).build()),
                 findVotedValue(bon.getId(), memberId),
                 new FindBonDetailResponse.BonCount(
-                        calculateBonVoteCount(BonVoteType.YES),
-                        calculateBonVoteCount(BonVoteType.NO)
+                        calculateBonVoteCount(bon.getId(), BonVoteType.YES),
+                        calculateBonVoteCount(bon.getId(), BonVoteType.NO)
                 ),
                 hasBonCommented(bon.getId(), memberId)
         );
@@ -241,7 +245,7 @@ public class BonService {
         );
     }
 
-    private Long countBonVote(VoteCountRequest voteCountRequest) {
+    public Long countBonVote(VoteCountRequest voteCountRequest) {
         return this.bonVoteRepository.countByCondition(voteCountRequest);
     }
 
@@ -281,16 +285,13 @@ public class BonService {
     }
 
     private BonVoteType findVotedValue(Long bonId, Long memberId) {
-        BonVote bonVote = this.bonVoteRepository.findByBonIdAndMemberId(bonId, memberId);
-
-        if (bonVote == null) {
-            return BonVoteType.NOT;
-        }
-        return bonVote.getBonVoteType();
+        return this.bonVoteRepository.findByBonIdAndMemberId(bonId, memberId)
+                .map(BonVote::getBonVoteType)
+                .orElse(BonVoteType.NOT);
     }
 
-    private Long calculateBonVoteCount(BonVoteType bonVoteType) {
-        return this.bonVoteRepository.countByCondition(bonVoteType);
+    public Long calculateBonVoteCount(Long bonId, BonVoteType bonVoteType) {
+        return this.bonVoteRepository.countByCondition(VoteCountRequest.builder().bonId(bonId).build(), bonVoteType);
     }
 
     private Boolean hasBonCommented(Long bonId, Long memberId) {
@@ -321,5 +322,36 @@ public class BonService {
         }
 
         return hotBon.getId();
+    }
+
+    @Transactional
+    public Long voteBon(Long memberId, Long bonId, VoteBonReq voteBonReq) {
+        if (!voteBonReq.bonVoteType().equals(BonVoteType.NOT) && this.hasVote(bonId,memberId)) {
+            throw new ApplicationException(ErrorCode.ALREADY_EXISTS_BON_VOTE);
+        }
+
+        if (voteBonReq.bonVoteType().equals(BonVoteType.NOT)) {
+            final var bonVote = this.bonVoteRepository.findByBonIdAndMemberId(bonId, memberId)
+                    .orElseThrow(() -> new ApplicationException(ErrorCode.NOT_FOUND_BON_VOTE));
+
+            if (this.existsBonCommentByUser(memberId, bonId)) {
+                throw new ApplicationException(ErrorCode.REMOVE_BON_VOTE_MUST_REMOVE_COMMENT);
+            }
+
+            final var bonVoteId = bonVote.getId();
+
+            this.bonVoteRepository.deleteById(bonVote.getId());
+
+            return bonVoteId;
+        }
+
+        final var member = this.memberCommonService.findById(memberId);
+        final var bon = this.bonCommonService.findById(bonId);
+
+        final var bonVote = new BonVote(member, bon, voteBonReq.bonVoteType());
+
+        this.bonVoteRepository.save(bonVote);
+
+        return bonVote.getId();
     }
 }

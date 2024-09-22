@@ -1,9 +1,12 @@
 package com.fade.bon.controller;
 
+import com.fade.bon.constant.BonVoteType;
 import com.fade.bon.dto.request.CreateBonCommentReq;
 import com.fade.bon.dto.request.CreateBonReq;
 import com.fade.bon.dto.request.FindBonCommentRequest;
 import com.fade.bon.dto.request.FindBonRequest;
+import com.fade.bon.dto.request.VoteBonReq;
+import com.fade.bon.dto.request.VoteCountRequest;
 import com.fade.bon.dto.response.*;
 import com.fade.bon.service.BonService;
 import com.fade.bon.dto.response.FindBonCommentResponse;
@@ -152,6 +155,31 @@ public class BonController {
             @Valid FindBonRequest findBonRequest
     ) {
         return bonService.findBons(userVo.getId(), findBonRequest);
+    }
+
+    @PostMapping("{bonId}/votes")
+    @SecurityRequirement(name = "access-token")
+    @Secured(MemberRole.USER_TYPE)
+    @ApiResponses(
+            @ApiResponse(
+                    responseCode = "200",
+                    content = @Content(schema = @Schema(implementation = VoteBonRes.class))
+            )
+    )
+    public VoteBonRes voteBon(
+            @AuthenticationPrincipal UserVo userVo,
+            @PathVariable("bonId") Long bonId,
+            @Valid VoteBonReq voteBonReq
+    ) {
+        this.bonService.voteBon(userVo.getId(), bonId, voteBonReq);
+
+        return new VoteBonRes(
+                new FindBonDetailResponse.BonCount(
+                    this.bonService.calculateBonVoteCount(bonId, BonVoteType.YES),
+                    this.bonService.calculateBonVoteCount(bonId, BonVoteType.NO)
+                ),
+                this.bonService.countBonVote(VoteCountRequest.builder().bonId(bonId).build())
+        );
     }
 
     @GetMapping("{bonId}")
