@@ -77,6 +77,9 @@ public class BonRepositoryImpl extends QuerydslRepositorySupport implements Cust
         final var query = super.from(bonQ);
 
         switch (searchType) {
+            case ALL:
+                query.where(nextCursorLt(lastCursor));
+                break;
             case MY_BON:
                 query.where(nextCursorLt(lastCursor).and(bonQ.member.id.eq(memberId)));
                 break;

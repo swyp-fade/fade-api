@@ -50,6 +50,9 @@ public class HotBonRepositoryImpl extends QuerydslRepositorySupport implements C
         final var query = super.from(hotBonQ);
 
         switch (searchType) {
+            case ALL:
+                query.where(nextCursorLt(lastCursor));
+                break;
             case MY_BON:
                 query.where(nextCursorLt(lastCursor).and(hotBonQ.bon.member.id.eq(memberId)));
                 break;
