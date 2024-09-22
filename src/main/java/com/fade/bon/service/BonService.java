@@ -203,6 +203,7 @@ public class BonService {
                         calculateBonVoteCount(bon.getId(), BonVoteType.YES),
                         calculateBonVoteCount(bon.getId(), BonVoteType.NO)
                 ),
+                isMyBon(bon.getId(), memberId),
                 hasBonCommented(bon.getId(), memberId)
         );
     }
@@ -326,7 +327,7 @@ public class BonService {
 
     @Transactional
     public Long voteBon(Long memberId, Long bonId, VoteBonReq voteBonReq) {
-        if (!voteBonReq.bonVoteType().equals(BonVoteType.NOT) && this.hasVote(bonId,memberId)) {
+        if (!voteBonReq.bonVoteType().equals(BonVoteType.NOT) && this.hasVote(bonId, memberId)) {
             throw new ApplicationException(ErrorCode.ALREADY_EXISTS_BON_VOTE);
         }
 
