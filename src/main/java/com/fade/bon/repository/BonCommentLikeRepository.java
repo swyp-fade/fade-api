@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BonCommentLikeRepository extends JpaRepository<BonCommentLike, Long>, CustomBonCommentLikeRepository {
     Boolean existsByBonCommentIdAndMemberId(Long bonCommentId, Long memberId);
-    Boolean deleteByBonCommentIdAndMemberId(Long bonCommentId, Long memberId);
+    Integer deleteByBonCommentIdAndMemberId(Long bonCommentId, Long memberId);
 }
