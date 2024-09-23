@@ -169,7 +169,7 @@ public class BonController {
     public VoteBonRes voteBon(
             @AuthenticationPrincipal UserVo userVo,
             @PathVariable("bonId") Long bonId,
-            @Valid VoteBonReq voteBonReq
+            @Valid @RequestBody VoteBonReq voteBonReq
     ) {
         this.bonService.voteBon(userVo.getId(), bonId, voteBonReq);
 
