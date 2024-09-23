@@ -308,14 +308,24 @@ public class BonService {
     }
 
     private Long findNextCursorFromBon(Long memberId, Long lastCursor, SearchType searchType) {
+        if (lastCursor == null) {
+            return null;
+        }
+
         Bon bon = this.bonRepository.findNextCursor(memberId, lastCursor, searchType);
+
         if (bon == null) {
             return null;
         }
+
         return bon.getId();
     }
 
     private Long findNextCursorFromHotBon(Long memberId, Long lastCursor, SearchType searchType) {
+        if (lastCursor == null) {
+            return null;
+        }
+
         HotBon hotBon = this.hotBonRepository.findNextCursor(memberId, lastCursor, searchType);
 
         if (hotBon == null) {
