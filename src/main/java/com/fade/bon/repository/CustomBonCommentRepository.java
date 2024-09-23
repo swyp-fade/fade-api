@@ -9,6 +9,6 @@ import java.util.List;
 public interface CustomBonCommentRepository {
     List<BonComment> findBonComments(Long bonId, FindBonCommentRequest findBonCommentRequest);
     List<BonComment> findBestBonComments(Long bonId);
-    BonComment findNextCursor(Long bonCommentId);
+    BonComment findNextCursor(Long bonId, Long bonCommentId);
     Long countByCondition(CommentCountRequest commentCountRequest);
 }

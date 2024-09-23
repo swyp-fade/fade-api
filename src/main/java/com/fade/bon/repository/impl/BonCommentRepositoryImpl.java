@@ -26,6 +26,7 @@ public class BonCommentRepositoryImpl extends QuerydslRepositorySupport implemen
         final var query = super.from(bonCommentQ);
 
         query.where(
+                this.bonIdEq(bonId),
                 this.nextCursorLoe(findBonCommentRequest.nextCursor())
         );
 
@@ -47,8 +48,9 @@ public class BonCommentRepositoryImpl extends QuerydslRepositorySupport implemen
     }
 
     @Override
-    public BonComment findNextCursor(Long lastCursor) {
+    public BonComment findNextCursor(Long bonId, Long lastCursor) {
         final var query = super.from(bonCommentQ);
+        query.where(bonIdEq(bonId), this.nextCursorLt(lastCursor));
         return query.orderBy(bonCommentQ.id.desc()).fetchFirst();
     }
 
@@ -63,6 +65,10 @@ public class BonCommentRepositoryImpl extends QuerydslRepositorySupport implemen
 
     private BooleanExpression nextCursorLoe(Long nextCursor) {
         return nextCursor != null ? bonCommentQ.id.loe(nextCursor) : null;
+    }
+
+    private BooleanExpression nextCursorLt(Long nextCursor) {
+        return nextCursor != null ? bonCommentQ.id.lt(nextCursor) : null;
     }
 
     private BooleanExpression bonIdEq(Long bonId) {

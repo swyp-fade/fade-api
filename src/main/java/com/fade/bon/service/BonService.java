@@ -224,7 +224,7 @@ public class BonService {
                             isMyComment(comment.getId(), memberId),
                             comment.getCreatedAt()))
                     ).toList(),
-                    findNextCursorFromComment(!comments.isEmpty() ? comments.get(comments.size() - 1).getId() : null)
+                    findNextCursorFromComment(bonId, !comments.isEmpty() ? comments.get(comments.size() - 1).getId() : null)
             );
         }
 
@@ -299,8 +299,13 @@ public class BonService {
         return this.bonCommentRepository.existsByIdAndMemberId(bonId, memberId);
     }
 
-    private Long findNextCursorFromComment(Long lastCursor) {
-        BonComment bonComment = this.bonCommentRepository.findNextCursor(lastCursor);
+    private Long findNextCursorFromComment(Long bonId, Long lastCursor) {
+        if (lastCursor == null) {
+            return null;
+        }
+
+        BonComment bonComment = this.bonCommentRepository.findNextCursor(bonId, lastCursor);
+
         if (bonComment == null) {
             return null;
         }
