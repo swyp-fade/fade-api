@@ -42,7 +42,7 @@ public class BonRepositoryImpl extends QuerydslRepositorySupport implements Cust
                 query.where(bonQ.bonVotes.any().member.id.eq(memberId));
                 break;
             case NOT_VOTED:
-                query.where(bonQ.bonVotes.any().member.id.eq(memberId).not());
+                query.where(bonQ.member.id.ne(memberId), bonQ.bonVotes.any().member.id.eq(memberId).not());
                 break;
         }
 
