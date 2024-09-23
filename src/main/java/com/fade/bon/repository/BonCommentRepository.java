@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BonCommentRepository extends JpaRepository<BonComment, Long>, CustomBonCommentRepository {
     boolean existsByIdAndMemberId(Long id, Long memberId);
+    boolean existsByBonIdAndMemberId(Long bonId, Long memberId);
 }

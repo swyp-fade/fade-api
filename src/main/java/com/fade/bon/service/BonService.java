@@ -296,7 +296,7 @@ public class BonService {
     }
 
     private Boolean hasBonCommented(Long bonId, Long memberId) {
-        return this.bonCommentRepository.existsByIdAndMemberId(bonId, memberId);
+        return this.bonCommentRepository.existsByBonIdAndMemberId(bonId, memberId);
     }
 
     private Long findNextCursorFromComment(Long bonId, Long lastCursor) {
