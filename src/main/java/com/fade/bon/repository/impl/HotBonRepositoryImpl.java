@@ -36,7 +36,7 @@ public class HotBonRepositoryImpl extends QuerydslRepositorySupport implements C
                 query.where(hotBonQ.bon.bonVotes.any().member.id.eq(memberId));
                 break;
             case NOT_VOTED:
-                query.where(hotBonQ.bon.bonVotes.any().member.id.eq(memberId).not());
+                query.where(hotBonQ.bon.member.id.ne(memberId), hotBonQ.bon.bonVotes.any().member.id.eq(memberId).not());
                 break;
         }
 
