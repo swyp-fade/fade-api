@@ -338,7 +338,7 @@ public class BonService {
     @Transactional
     public Long voteBon(Long memberId, Long bonId, VoteBonReq voteBonReq) {
         if (!voteBonReq.bonVoteType().equals(BonVoteType.NOT) && this.hasVote(bonId, memberId)) {
-            throw new ApplicationException(ErrorCode.ALREADY_EXISTS_BON_VOTE);
+            this.voteBon(memberId, bonId, new VoteBonReq(BonVoteType.NOT));
         }
 
         if (voteBonReq.bonVoteType().equals(BonVoteType.NOT)) {
