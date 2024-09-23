@@ -42,6 +42,7 @@ public class BonCommentRepositoryImpl extends QuerydslRepositorySupport implemen
                 .leftJoin(bonCommentLikeQ).on(bonCommentLikeQ.bonComment.id.eq(bonCommentQ.id))
                 .where(this.bonIdEq(bonId))
                 .groupBy(bonCommentQ.id)
+                .having(bonCommentLikeQ.count().gt(0))
                 .orderBy(bonCommentLikeQ.count().desc())
                 .limit(3);
         return query.fetch();
